@@ -2,9 +2,10 @@
 
 import graph
 import network as net
-import piecewise_linear as pl
-import right_constant as rc
+import utilities.piecewise_linear as pl
+import utilities.right_constant as rc
 import numpy as np
+import network_loader as nl
 
 #graph is the directed graph that forms the network, we only assume one commodity and we assume its source is always indexed by 0 and its sink always has the highest index, cap contains the capacities of the edges and travel the travel times, the order on cap and travel has to be the same as the indices in the graph, u is either just a constant or a right constant function, T is the time horizon, delta is the length of an interval, epsilon is the weight of the regularizer, numSteps is the number of learning steps that we want to have and lamb is the accuracy we want to achieve in the convergence
 def reg_fictitious_play(graph, cap, travel, u, T, delta, epsilon, numSteps, lamb):
