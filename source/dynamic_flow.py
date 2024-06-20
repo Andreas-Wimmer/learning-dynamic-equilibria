@@ -3,9 +3,9 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Dict, List, Optional, Set, Tuple
 
-from flow_rates_collection import FlowRatesCollection
-from machine_precision import eps
-from network import Network
+from core.flow_rates_collection import FlowRatesCollection
+from core.machine_precision import eps
+from core.network import Network
 from utilities.piecewise_linear import PiecewiseLinear
 from utilities.queues import PriorityQueue
 from utilities.right_constant import RightConstant

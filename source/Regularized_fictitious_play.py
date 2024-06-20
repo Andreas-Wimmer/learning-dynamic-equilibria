@@ -1,7 +1,7 @@
 #Here we want to implement the learning dynamics on general networks: for that we make use of the already implemented code: we need a network (and a graph?) we need to somehow get all the paths from the origin to the destination, we need an edge_loading procedure and thats basically it
 
-import graph
-import network as net
+import core.graph as graph
+import core.network as net
 import utilities.piecewise_linear as pl
 import utilities.right_constant as rc
 import numpy as np

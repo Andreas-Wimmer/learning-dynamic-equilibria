@@ -5,7 +5,7 @@ from typing import Dict, List
 
 import numpy as np
 
-from graph import DirectedGraph, Edge, Node
+from core.graph import DirectedGraph, Edge, Node
 from predictor_type import PredictorType
 from utilities.right_constant import RightConstant
 
