@@ -4,9 +4,9 @@ from typing import Dict, Generator, List, Set, Tuple
 
 from core.dijkstra import dynamic_dijkstra, reverse_dijkstra
 from core.dynamic_flow import DynamicFlow, FlowRatesCollection
-from core.graph import Edge, Node
-from core.machine_precision import eps
-from core.network import Network
+from graph import Edge, Node
+from machine_precision import eps
+from network import Network
 from utilities.queues import PriorityQueue
 from utilities.right_constant import RightConstant
 
