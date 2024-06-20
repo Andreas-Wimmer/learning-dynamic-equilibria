@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Dict, Optional
 
 from machine_precision import eps
-from utilities.arrays import merge_sorted
+from utilities.array import merge_sorted
 from utilities.piecewise_linear import PiecewiseLinear
 from utilities.right_constant import RightConstant
 
