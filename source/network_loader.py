@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, Generator, List, Set, Tuple
 
-from core.dijkstra import dynamic_dijkstra, reverse_dijkstra
-from core.dynamic_flow import DynamicFlow, FlowRatesCollection
+from dijkstra import dynamic_dijkstra, reverse_dijkstra
+from dynamic_flow import DynamicFlow, FlowRatesCollection
 from graph import Edge, Node
 from machine_precision import eps
 from network import Network
