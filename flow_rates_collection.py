@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import Dict, Optional
 
 from machine_precision import eps
-from utilities.array import merge_sorted
-from utilities.piecewise_linear import PiecewiseLinear
-from utilities.right_constant import RightConstant
+from arrays import merge_sorted
+from piecewise_linear import PiecewiseLinear
+from right_constant import RightConstant
 
 
 class FlowRatesCollectionItem:

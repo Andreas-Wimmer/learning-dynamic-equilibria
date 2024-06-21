@@ -4,7 +4,7 @@ from typing import Callable, Dict, FrozenSet, List, NamedTuple, Set, Tuple
 
 from graph import Edge, Node
 from machine_precision import eps
-from utilities.queues import PriorityQueue
+from queues import PriorityQueue
 
 
 def reverse_dijkstra(

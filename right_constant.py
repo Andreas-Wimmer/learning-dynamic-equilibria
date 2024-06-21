@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import List, Tuple
 
-from core.machine_precision import eps
-from utilities.arrays import elem_lrank, merge_sorted, merge_sorted_many
-from utilities.piecewise_linear import PiecewiseLinear
+from machine_precision import eps
+from arrays import elem_lrank, merge_sorted, merge_sorted_many
+from piecewise_linear import PiecewiseLinear
 
 
 class RightConstant:

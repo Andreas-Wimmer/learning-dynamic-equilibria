@@ -3,8 +3,8 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import List, Tuple, TypeVar
 
-from core.machine_precision import eps
-from utilities.arrays import elem_lrank, elem_rank, merge_sorted
+from machine_precision import eps
+from arrays import elem_lrank, elem_rank, merge_sorted
 
 
 class PiecewiseLinear:

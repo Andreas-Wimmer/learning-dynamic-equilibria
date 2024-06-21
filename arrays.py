@@ -1,6 +1,6 @@
 from typing import Iterable, List
 
-from core.machine_precision import eps
+from machine_precision import eps
 
 
 def arg_min(list: Iterable, key=lambda x: x):

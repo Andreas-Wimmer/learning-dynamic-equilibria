@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import Dict, Generator, List, Set, Tuple
 
-from core.dijkstra import dynamic_dijkstra, reverse_dijkstra
+from dijkstra import dynamic_dijkstra, reverse_dijkstra
 from dynamic_flow import DynamicFlow, FlowRatesCollection
-from core.graph import Edge, Node
-from core.machine_precision import eps
-from core.network import Network
-from utilities.queues import PriorityQueue
-from utilities.right_constant import RightConstant
+from graph import Edge, Node
+from machine_precision import eps
+from network import Network
+from queues import PriorityQueue
+from right_constant import RightConstant
 
 Path = List[Edge]
 
