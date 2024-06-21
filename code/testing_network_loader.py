@@ -16,7 +16,7 @@ s = Node(1,test_graph)
 v = Node(2, test_graph)
 t = Node(3, test_graph)
 
-test_graph.nodes = [s, v, t]
+test_graph.nodes = {1:s, 2:v, 3:t}
 test_network = Network()
 test_network.graph = test_graph
 
@@ -24,8 +24,10 @@ test_network.add_edge(1, 2, 1, 1)
 test_network.add_edge(1, 2, 0, 3)
 test_network.add_edge(2, 3, 0, 2)
 
-net_inflow = RightConstant([0,2],[2])
-test_network.add_commodity((1, net_inflow), 1)
+net_inflow = RightConstant([0,2],[2,0],(0, float("inf")))
+test_network.add_commodity({1: net_inflow}, 1, 1)
+
+
 
 
 
