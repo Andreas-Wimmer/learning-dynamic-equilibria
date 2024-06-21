@@ -4,12 +4,12 @@
 
 from __future__ import annotations
 
-from ..core.graph import *
-from ..core.network import Network
-from .dynamic_flow import DynamicFlow 
-from .network_loader import NetworkLoader
-from ..utilities.piecewise_linear import PiecewiseLinear
-from ..utilities.right_constant import RightConstant
+from core.graph import *
+from core.network import Network
+from dynamic_flow import DynamicFlow 
+from network_loader import NetworkLoader
+from utilities.piecewise_linear import PiecewiseLinear
+from utilities.right_constant import RightConstant
 
 test_graph = DirectedGraph()
 s = Node(1,test_graph)
