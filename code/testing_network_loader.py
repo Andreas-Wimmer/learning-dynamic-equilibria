@@ -44,6 +44,8 @@ inflow_2 = RightConstant([0,0.5,1],[0.5,1.5,2],(0,2))
 
 loader = NetworkLoader(test_network, [(path_1, inflow_1),(path_2, inflow_2)])
 result = loader.build_flow()
+while loader._flow.phi <= 2:
+    flow = next(result)
 print("Hello World")
 
 
