@@ -57,7 +57,7 @@ class NetworkLoader:
         }
         self._handle_nodes = set()
 
-    def build_flow(self) -> Generator[DynamicFlow, None, None]:
+    def build_flow(self) -> Generator[DynamicFlow,None,None]:
         if self._built:
             raise RuntimeError("Flow was already built. Initialize a new builder.")
         self._built = True
