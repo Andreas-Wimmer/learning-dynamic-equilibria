@@ -62,7 +62,7 @@ class NetworkLoader:
             raise RuntimeError("Flow was already built. Initialize a new builder.")
         self._built = True
 
-        yield self._flow
+        #yield self._flow
         while self._flow.phi < float("inf"):
             while self._flow.phi >= self._network_inflow_changes.min_key():
                 _, s, _ = self._network_inflow_changes.pop()
@@ -75,7 +75,7 @@ class NetworkLoader:
                 self.network.graph.edges[e].node_to for e in edges_with_outflow_change
             )
 
-            yield self._flow
+        yield self._flow
 
     def _get_active_edges(self, i: int, s: Node) -> List[Edge]:
         path = self.path_inflows[i][0]
