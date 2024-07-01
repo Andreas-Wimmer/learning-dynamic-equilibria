@@ -24,8 +24,8 @@ test_network.add_edge(0, 1, 1, 1)
 test_network.add_edge(0, 1, 0, 3)
 test_network.add_edge(1, 2, 0, 2)
 
-net_inflow = RightConstant([0,2],[2,0],(0, float("inf")))
-test_network.add_commodity({1: net_inflow}, 1, 1)
+net_inflow = RightConstant([0,1,1.75],[2.5,1,3],(0, float("inf")))
+test_network.add_commodity({1: net_inflow}, 0, 1)
 
 edge_1 = Edge(s, v, 0, test_graph)
 edge_2 = Edge(s, v, 1, test_graph)
@@ -40,11 +40,17 @@ path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
 
 inflow_1 = RightConstant([0,0.5,1],[1.5,0.5,0],(0,2))
-inflow_2 = RightConstant([0,0.5,1],[0.5,1.5,2],(0,2))
+inflow_2 = RightConstant([0,0.5,1,1.75],[1,2,1,3],(0,2))
+inflow_3 = RightConstant([0,1],[1,0],(0,2))
+inflow_4 = RightConstant([0,1,1.75],[1.5,1,3],(0,2))
 
-loader = NetworkLoader(test_network, [(path_1, inflow_1),(path_2, inflow_2)])
-result = loader.build_flow()
-flow = next(result)
+
+loader_1 = NetworkLoader(test_network, [(path_1, inflow_1),(path_2, inflow_2)])
+loader_2 = NetworkLoader(test_network, [(path_1, inflow_3),(path_2, inflow_4)])
+result_1 = loader_1.build_flow()
+result_2 = loader_2.build_flow()
+flow_1 = next(result_1)
+flow_2 = next(result_2)
 print("Hello World")
 
 

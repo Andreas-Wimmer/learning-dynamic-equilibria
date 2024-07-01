@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Dict, List, Set, Tuple
 
-
 class Edge:
     _node_from: Node
     _node_to: Node

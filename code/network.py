@@ -9,7 +9,7 @@ from graph import DirectedGraph, Edge, Node
 from predictor_type import PredictorType
 from right_constant import RightConstant
 
-
+Path = List[Edge]
 class Commodity:
     sources: Dict[Node, RightConstant]
     sink: Node
@@ -28,6 +28,7 @@ class Commodity:
 
 class Network:
     graph: DirectedGraph
+    paths: List[Path]
     capacity: np.ndarray[float]
     travel_time: np.ndarray[float]
     commodities: List[Commodity]
@@ -37,6 +38,7 @@ class Network:
         self.capacity = np.array([])
         self.travel_time = np.array([])
         self.commodities = []
+        self.paths = []
 
     def __getstate__(self):
         return {
@@ -84,6 +86,10 @@ class Network:
                 {nodes[s]: v for s, v in sources.items()}, nodes[sink], predictor_type
             )
         )
+
+    def add_path(self, edges: List[Edge]):
+        new_path = edges
+        self.paths.append(new_path)
 
     def _remove_edge(self, edge: Edge):
         edge.node_to.incoming_edges.remove(edge)

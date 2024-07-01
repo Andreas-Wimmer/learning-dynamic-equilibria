@@ -9,6 +9,7 @@ from machine_precision import eps
 from network import Network
 from queues import PriorityQueue
 from right_constant import RightConstant
+from piecewise_linear import PiecewiseLinear
 
 Path = List[Edge]
 
@@ -76,6 +77,11 @@ class NetworkLoader:
             )
 
         yield self._flow
+
+    def path_delay(self) -> List[PiecewiseLinear]:
+        for path in self.network.paths:
+            for edge in path:
+                
 
     def _get_active_edges(self, i: int, s: Node) -> List[Edge]:
         path = self.path_inflows[i][0]
