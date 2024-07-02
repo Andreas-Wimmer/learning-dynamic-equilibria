@@ -8,7 +8,7 @@ from graph import *
 from network import Network
 from dynamic_flow import DynamicFlow 
 from network_loader import NetworkLoader
-from piecewise_linear import PiecewiseLinear
+from piecewise_linear import PiecewiseLinear, identity
 from right_constant import RightConstant
 
 test_graph = DirectedGraph()
@@ -53,6 +53,8 @@ result_1 = loader_1.build_flow()
 result_2 = loader_2.build_flow()
 flow_1 = next(result_1)
 flow_2 = next(result_2)
+arrivals_1 = loader_1.expected_arr()
+arrivals_2 = loader_2.expected_arr()
 delays_1 = loader_1.path_delay()
 delays_2 = loader_2.path_delay()
 print("Hello World")

@@ -83,7 +83,7 @@ class NetworkLoader:
         arr_funcs = self.expected_arr()
         path_delays = []
         for path in self.network.paths:
-            delay_op = identity
+            delay_op = identity.restrict((0, float("inf")))
             for edge in path:
                 index = edge.id
                 delay_op = arr_funcs[index].compose(delay_op)
