@@ -85,7 +85,7 @@ class NetworkLoader:
         for path in self.network.paths:
             delay_op = identity
             for edge in path:
-                index = self.network.graph.edges.index(edge)
+                index = edge.id
                 delay_op = arr_funcs[index].compose(delay_op)
             path_delays.append(delay_op)
                 

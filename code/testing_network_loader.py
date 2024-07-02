@@ -44,6 +44,8 @@ inflow_2 = RightConstant([0,0.5,1,1.75],[1,2,1,3],(0,2))
 inflow_3 = RightConstant([0,1],[1,0],(0,2))
 inflow_4 = RightConstant([0,1,1.75],[1.5,1,3],(0,2))
 
+test_network.add_path(path_1)
+test_network.add_path(path_2)
 
 loader_1 = NetworkLoader(test_network, [(path_1, inflow_1),(path_2, inflow_2)])
 loader_2 = NetworkLoader(test_network, [(path_1, inflow_3),(path_2, inflow_4)])
