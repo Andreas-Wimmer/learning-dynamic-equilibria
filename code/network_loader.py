@@ -9,7 +9,7 @@ from machine_precision import eps
 from network import Network
 from queues import PriorityQueue
 from right_constant import RightConstant
-from piecewise_linear import PiecewiseLinear
+from piecewise_linear import PiecewiseLinear,identity
 
 Path = List[Edge]
 
@@ -77,11 +77,37 @@ class NetworkLoader:
             )
 
         yield self._flow
-
+    
+    
     def path_delay(self) -> List[PiecewiseLinear]:
+        arr_funcs = self.expected_arr()
+        path_delays = []
         for path in self.network.paths:
+            delay_op = identity
             for edge in path:
+                index = self.network.graph.edges.index(edge)
+                delay_op = arr_funcs[index].compose(delay_op)
                 
+
+        return path_delays
+
+    def expected_arr(self) -> List[PiecewiseLinear]:
+        arr_funcs = []
+        for i in range(len(self.network.graph.edges)):
+            times = self._flow.queues[i].times
+            values = []
+            for j in range(len(self._flow.queues[i].values)):
+                delay = self._flow.queues[i].values[j]/self.network.capacity[i]
+                curr_time = self._flow.queues[i].times[j]
+                values.append(self.network.travel_time[i] + curr_time + delay)
+            first_slope = self._flow.queues[i].first_slope/self.network.capacity[i]
+            last_slope = self._flow.queues[i].last_slope/self.network.capacity[i]
+            new_func = PiecewiseLinear(times, values, first_slope, last_slope, (0, float("inf")))
+
+        return arr_funcs
+
+
+
 
     def _get_active_edges(self, i: int, s: Node) -> List[Edge]:
         path = self.path_inflows[i][0]
