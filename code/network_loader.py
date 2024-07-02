@@ -87,6 +87,7 @@ class NetworkLoader:
             for edge in path:
                 index = self.network.graph.edges.index(edge)
                 delay_op = arr_funcs[index].compose(delay_op)
+            path_delays.append(delay_op)
                 
 
         return path_delays
@@ -103,6 +104,7 @@ class NetworkLoader:
             first_slope = self._flow.queues[i].first_slope/self.network.capacity[i]
             last_slope = self._flow.queues[i].last_slope/self.network.capacity[i]
             new_func = PiecewiseLinear(times, values, first_slope, last_slope, (0, float("inf")))
+            arr_funcs.append(new_func)
 
         return arr_funcs
 
