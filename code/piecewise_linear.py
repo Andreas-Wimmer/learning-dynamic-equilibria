@@ -622,6 +622,23 @@ class PiecewiseLinear:
             other.last_slope,
             (self.domain[0], other.domain[1]),
         )
+    
+    #Translation of piecewise linear function by a constant, i.e out of F(t) we make F(t + tau)
+    def translate(self, tau: float) -> PiecewiseLinear:
+        assert tau > eps
+        first_slope = self.first_slope
+        last_slope = self.last_slope
+        values = self.values
+        times = []
+        for time in self.times:
+            new_time = time + tau
+            times.append(new_time)
+        domain_1 = self.domain[0] + tau
+        domain_2 = self.domain[1] + tau
+        new_domain = (domain_1, domain_2)
+        translated = PiecewiseLinear(times, values, first_slope, last_slope, new_domain)
+        return translated
+
 
 
 identity = PiecewiseLinear([0.0], [0.0], 1.0, 1.0)
