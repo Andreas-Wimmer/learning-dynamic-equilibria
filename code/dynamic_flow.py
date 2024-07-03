@@ -255,3 +255,20 @@ class DynamicFlow:
             edge_load.domain = (float("-inf"), edge_load.domain[1])
 
         return edge_loads
+    
+    def get_queues(self) -> List[PiecewiseLinear]:
+        queues = []
+        for e in range(len(self.inflow)):
+            tau = self._network.travel_time[e]
+            queue_e = self.inflow[e].accumulative - self.outflow[e].accumulative.translate(tau)
+            queues.append(queue_e)
+        assert all(queue.domain[0] == 0.0 for queue in queues)
+        assert all(abs(queue(0.0)) < 1e-10 for queue in queues)
+        for queue in queues:
+            if queue.values[0] != 0.0:
+                queue.times.insert(0, 0.0)
+                queue.values.insert(0, 0.0)
+            queue.first_slope = 0.0
+            queue.domain = (float("-inf"), queue.domain[1])
+
+        return queues

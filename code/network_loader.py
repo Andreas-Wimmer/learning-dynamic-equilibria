@@ -93,16 +93,17 @@ class NetworkLoader:
         return path_delays
 
     def expected_arr(self) -> List[PiecewiseLinear]:
+        queues = self._flow.get_queues()
         arr_funcs = []
         for i in range(len(self.network.graph.edges)):
-            times = self._flow.queues[i].times
+            times = queues[i].times
             values = []
-            for j in range(len(self._flow.queues[i].values)):
-                delay = self._flow.queues[i].values[j]/self.network.capacity[i]
-                curr_time = self._flow.queues[i].times[j]
+            for j in range(len(queues[i].values)):
+                delay = values[j]/self.network.capacity[i]
+                curr_time = queues[i].times[j]
                 values.append(self.network.travel_time[i] + curr_time + delay)
-            first_slope = self._flow.queues[i].first_slope/self.network.capacity[i]
-            last_slope = self._flow.queues[i].last_slope/self.network.capacity[i]
+            first_slope = queues[i].first_slope/self.network.capacity[i]
+            last_slope = queues[i].last_slope/self.network.capacity[i]
             new_func = PiecewiseLinear(times, values, first_slope, last_slope, (0, float("inf")))
             arr_funcs.append(new_func)
 
