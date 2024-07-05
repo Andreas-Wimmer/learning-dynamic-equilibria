@@ -180,6 +180,8 @@ class RightConstant:
     #Computes the product of a piecewise linear function and a piecewise constant function,
     #but only on an interva, where both functions do not have a jump (to avoid discontinuities)
     def multiply(self, other: PiecewiseLinear, start: float, end: float) -> PiecewiseLinear:
+        assert (self.domain[0] <= start and self.domain[1] >= end)
+        assert (other.domain[0] <= start and other.domain[1] >= end)
         self_index_s = 0
         while self.times[self_index_s] < start:
             self_index_s = self_index_s + 1
@@ -189,9 +191,11 @@ class RightConstant:
         self_index_e = 0
         while self.times[self_index_e] < end:
             self_index_e = self_index_e + 1
+        self_index_e = self_index_e + 1
         other_index_e = 0
         while other.times[other_index_e] < end:
             other_index_e = other_index_e
+        other_index_e = other_index_e + 1
         assert (self_index_s == self_index_e - 1)
         assert (other_index_s == other_index_e - 1)
         times = [start, end]

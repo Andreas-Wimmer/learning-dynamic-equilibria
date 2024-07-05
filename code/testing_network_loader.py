@@ -64,12 +64,6 @@ test_2 = flow_1.inflow[0].accumulative
 test_3 = flow_1.outflow[0].accumulative.translate(0)
 diff_delay = [delays_1[0] - delays_2[0], delays_1[1] - delays_2[1]]
 diff_inflow = [inflow_1 - inflow_3, inflow_2 - inflow_4]
-steps = []
-for i in range(len(test_network.paths)):
-    for j in range(len(delays[i].times)):
-        steps.append(delays[i].times[j])
-    for k in range(len())
-print("Hello World")
 
 
 
