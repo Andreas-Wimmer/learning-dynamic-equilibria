@@ -630,10 +630,10 @@ class PiecewiseLinear:
         values = self.values
         times = []
         for time in self.times:
-            new_time = time + tau
+            new_time = time - tau
             times.append(new_time)
-        domain_1 = self.domain[0] + tau
-        domain_2 = self.domain[1] + tau
+        domain_1 = self.domain[0] - tau
+        domain_2 = self.domain[1] - tau
         new_domain = (domain_1, domain_2)
         translated = PiecewiseLinear(times, values, first_slope, last_slope, new_domain)
         return translated

@@ -59,7 +59,8 @@ arrivals_2 = loader_2.expected_arr()
 delays_1 = loader_1.path_delay()
 delays_2 = loader_2.path_delay()
 test_1 = flow_1.get_edge_loads()
-test_2 = flow_1.queues[0].translate(1)
+test_2 = flow_1.inflow[0].accumulative
+test_3 = flow_1.outflow[0].accumulative.translate(0)
 print("Hello World")
 
 
