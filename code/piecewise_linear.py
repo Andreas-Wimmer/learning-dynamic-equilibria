@@ -644,8 +644,5 @@ class PiecewiseLinear:
     
     
     
-
-
-
 identity = PiecewiseLinear([0.0], [0.0], 1.0, 1.0)
 zero = PiecewiseLinear([0.0], [0.0], 0.0, 0.0)

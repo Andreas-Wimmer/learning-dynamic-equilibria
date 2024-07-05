@@ -58,9 +58,17 @@ arrivals_1 = loader_1.expected_arr()
 arrivals_2 = loader_2.expected_arr()
 delays_1 = loader_1.path_delay()
 delays_2 = loader_2.path_delay()
+delays = [delays_1, delays_2]
 test_1 = flow_1.get_edge_loads()
 test_2 = flow_1.inflow[0].accumulative
 test_3 = flow_1.outflow[0].accumulative.translate(0)
+diff_delay = [delays_1[0] - delays_2[0], delays_1[1] - delays_2[1]]
+diff_inflow = [inflow_1 - inflow_3, inflow_2 - inflow_4]
+steps = []
+for i in range(len(test_network.paths)):
+    for j in range(len(delays[i].times)):
+        steps.append(delays[i].times[j])
+    for k in range(len())
 print("Hello World")
 
 
