@@ -261,9 +261,10 @@ class DynamicFlow:
         for e in range(len(self.inflow)):
             tau = self._network.travel_time[e]
             queue_e = self.inflow[e].accumulative - self.outflow[e].accumulative.translate(tau)
-            queue_e.times.insert(0,0)
-            queue_e.values.insert(0,0)
-            queue_e.domain = (0, float("inf"))
+            if 0 not in queue_e.times or queue_e.domain[0] > 0 + eps:
+                queue_e.times.insert(0,0)
+                queue_e.values.insert(0,0)
+                queue_e.domain = (0, float("inf"))
             queues.append(queue_e)
         assert all(queue.domain[0] == 0.0 for queue in queues)
         assert all(abs(queue(0.0)) < 1e-10 for queue in queues)

@@ -87,6 +87,7 @@ class NetworkLoader:
             for edge in path:
                 index = edge.id
                 delay_op = arr_funcs[index].compose(delay_op)
+            delay_op = delay_op - identity
             path_delays.append(delay_op)
                 
 
@@ -98,8 +99,8 @@ class NetworkLoader:
         for i in range(len(self.network.graph.edges)):
             times = queues[i].times
             values = []
-            for j in range(len(queues[i].values) + 1):
-                delay = values[j]/self.network.capacity[i]
+            for j in range(len(queues[i].values)):
+                delay = queues[i].values[j]/self.network.capacity[i]
                 curr_time = queues[i].times[j]
                 values.append(self.network.travel_time[i] + curr_time + delay)
             first_slope = queues[i].first_slope/self.network.capacity[i]
