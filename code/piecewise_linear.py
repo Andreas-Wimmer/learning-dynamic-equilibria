@@ -625,7 +625,6 @@ class PiecewiseLinear:
     
     #Translation of piecewise linear function by a constant, i.e out of F(t) we make F(t + tau)
     def translate(self, tau: float) -> PiecewiseLinear:
-        assert tau > eps
         first_slope = self.first_slope
         last_slope = self.last_slope
         values = self.values

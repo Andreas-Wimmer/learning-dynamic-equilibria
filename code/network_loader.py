@@ -98,7 +98,7 @@ class NetworkLoader:
         for i in range(len(self.network.graph.edges)):
             times = queues[i].times
             values = []
-            for j in range(len(queues[i].values)):
+            for j in range(len(queues[i].values) + 1):
                 delay = values[j]/self.network.capacity[i]
                 curr_time = queues[i].times[j]
                 values.append(self.network.travel_time[i] + curr_time + delay)
