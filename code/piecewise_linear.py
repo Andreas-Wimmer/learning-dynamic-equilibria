@@ -7,17 +7,22 @@ from machine_precision import eps
 from arrays import elem_lrank, elem_rank, merge_sorted
 
 
+
 class PiecewiseLinear:
     times: List[float]
     values: List[float]
     domain: Tuple[float, float] = (float("-inf"), float("inf"))
     last_slope: float
     first_slope: float
+    has_discontinuities: bool
+    discontinuities: List[float]
 
     def __json__(self):
         return {
             "times": self.times,
             "values": self.values,
+            "has_discontinuities": self.has_discontinuities,
+            "discontinuities": self.discontinuities,
             "domain": [
                 "-Infinity" if self.domain[0] == float("-inf") else self.domain[0],
                 "Infinity" if self.domain[1] == float("inf") else self.domain[1],
@@ -32,12 +37,30 @@ class PiecewiseLinear:
         values: List[float],
         first_slope: float,
         last_slope: float,
+        has_discontinuities: bool = False,
+        discontinuities: List[float] = [],
         domain: Tuple[float, float] = (float("-inf"), float("inf")),
+
     ):
-        self.times = times
-        self.values = values
-        self.first_slope = first_slope
-        self.last_slope = last_slope
+        assert (has_discontinuities == True and len(discontinuities) == 0) or (has_discontinuities == False and len(discontinuities) > 0)
+        if not has_discontinuities:
+            self.times = times
+            self.values = values
+            self.first_slope = first_slope
+            self.last_slope = last_slope
+        else:
+            collection = []
+            for time in times:
+                collection.append(time)
+            for disc in discontinuities:
+                collection.append(disc - 3*eps)
+            self.times = collection.sort()
+            self.values = values
+            self.first_slope = first_slope
+            self.last_slope = last_slope
+
+        self.has_discontinuities = has_discontinuities
+        self.discontinuities = discontinuities
         self.domain = domain
         assert len(self.values) == len(self.times) >= 1
         assert all(
@@ -51,6 +74,7 @@ class PiecewiseLinear:
         assert all(
             self.times[i] < self.times[i + 1] - eps for i in range(len(self.times) - 1)
         )
+        
 
     def __call__(self, at: float) -> float:
         return self.eval(at)
@@ -637,6 +661,9 @@ class PiecewiseLinear:
         new_domain = (domain_1, domain_2)
         translated = PiecewiseLinear(times, values, first_slope, last_slope, new_domain)
         return translated
+    
+    
+    
 
 
 

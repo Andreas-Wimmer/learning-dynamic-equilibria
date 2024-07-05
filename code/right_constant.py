@@ -176,3 +176,9 @@ class RightConstant:
         return PiecewiseLinear(
             times, values, self.values[0], self.values[-1], self.domain
         )
+    
+    #For checking monotonicity faster in a given network, we want to make a routine out of it,
+    #for that we need to multiply a piecewise linear function with a piecewise constant function
+    def multiply(self, other: PiecewiseLinear) -> PiecewiseLinear:
+        product = 0
+        return product
