@@ -61,7 +61,6 @@ delays_2 = loader_2.path_delay()
 test_1 = flow_1.get_edge_loads()
 test_2 = flow_1.inflow[0].accumulative
 test_3 = flow_1.outflow[0].accumulative.translate(0)
-test_4 = PiecewiseLinear([0,1,2],[0,1,2,4],0,0,True,[1],(0,2))
 print("Hello World")
 
 

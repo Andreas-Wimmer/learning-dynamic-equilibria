@@ -14,15 +14,11 @@ class PiecewiseLinear:
     domain: Tuple[float, float] = (float("-inf"), float("inf"))
     last_slope: float
     first_slope: float
-    has_discontinuities: bool
-    discontinuities: List[float]
 
     def __json__(self):
         return {
             "times": self.times,
             "values": self.values,
-            "has_discontinuities": self.has_discontinuities,
-            "discontinuities": self.discontinuities,
             "domain": [
                 "-Infinity" if self.domain[0] == float("-inf") else self.domain[0],
                 "Infinity" if self.domain[1] == float("inf") else self.domain[1],
@@ -37,30 +33,14 @@ class PiecewiseLinear:
         values: List[float],
         first_slope: float,
         last_slope: float,
-        has_discontinuities: bool = False,
-        discontinuities: List[float] = [],
         domain: Tuple[float, float] = (float("-inf"), float("inf")),
 
     ):
-        assert (has_discontinuities == True and len(discontinuities) == 0) or (has_discontinuities == False and len(discontinuities) > 0)
-        if not has_discontinuities:
-            self.times = times
-            self.values = values
-            self.first_slope = first_slope
-            self.last_slope = last_slope
-        else:
-            collection = []
-            for time in times:
-                collection.append(time)
-            for disc in discontinuities:
-                collection.append(disc - 3*eps)
-            self.times = collection.sort()
-            self.values = values
-            self.first_slope = first_slope
-            self.last_slope = last_slope
-
-        self.has_discontinuities = has_discontinuities
-        self.discontinuities = discontinuities
+        
+        self.times = times
+        self.values = values
+        self.first_slope = first_slope
+        self.last_slope = last_slope
         self.domain = domain
         assert len(self.values) == len(self.times) >= 1
         assert all(
