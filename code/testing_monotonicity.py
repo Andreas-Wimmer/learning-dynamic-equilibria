@@ -12,7 +12,7 @@ from machine_precision import eps
 
 def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_times: List[float],
                        network_inflow: RightConstant, T: float, paths = List[Path], 
-                       inflows_1 = List[RightConstant], inflows_2 = List[RightConstant]):
+                        inflows_1 = List[RightConstant], inflows_2 = List[RightConstant]) -> float:
     net_inflow = Commodity({0: network_inflow}, len(graph.edges) - 1, 1)
     network = Network()
     network.graph = graph
@@ -74,4 +74,30 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
 
     scalar_product = sum(integrals)
     return scalar_product
-    
+
+test_graph = DirectedGraph()
+s = Node(0, test_graph)
+v = Node(1, test_graph)
+t = Node(2, test_graph)
+edge_1 = Edge(s, v, 0, test_graph)
+edge_2 = Edge(s, v, 1, test_graph)
+edge_3 = Edge(v, t, 2, test_graph)
+
+test_graph.nodes = {0:s, 1:v, 2:t}
+
+capacitites = [1, 3, 2]
+travel_times = [1, 0, 0]
+net_inflow = RightConstant([0,1,1.75],[2.5,1,3],(0, 2))
+
+path_1 = [edge_1, edge_3]
+path_2 = [edge_2, edge_3]
+
+inflow_1 = RightConstant([0,0.5,1],[1.5,0.5,0],(0,2))
+inflow_2 = RightConstant([0,0.5,1,1.75],[1,2,1,3],(0,2))
+inflow_3 = RightConstant([0,1],[1,0],(0,2))
+inflow_4 = RightConstant([0,1,1.75],[1.5,1,3],(0,2))
+
+inflow_f = [inflow_1, inflow_2]
+inflow_g = [inflow_3, inflow_4]
+
+monotonicity_check(test_graph, capacitites, travel_times, net_inflow, 2, [path_1, path_2], inflow_f, inflow_g)
