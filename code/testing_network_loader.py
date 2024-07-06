@@ -10,6 +10,8 @@ from dynamic_flow import DynamicFlow
 from network_loader import NetworkLoader
 from piecewise_linear import PiecewiseLinear, identity
 from right_constant import RightConstant
+from machine_precision import eps
+
 
 test_graph = DirectedGraph()
 s = Node(0, test_graph)
@@ -59,11 +61,46 @@ arrivals_2 = loader_2.expected_arr()
 delays_1 = loader_1.path_delay()
 delays_2 = loader_2.path_delay()
 delays = [delays_1, delays_2]
-test_1 = flow_1.get_edge_loads()
-test_2 = flow_1.inflow[0].accumulative
-test_3 = flow_1.outflow[0].accumulative.translate(0)
 diff_delay = [delays_1[0] - delays_2[0], delays_1[1] - delays_2[1]]
 diff_inflow = [inflow_1 - inflow_3, inflow_2 - inflow_4]
+
+product_test = diff_inflow[1].multiply(diff_delay[1], 0, 0.5)
+
+steps = []
+for i in range(2):
+    steps.append([])
+for i in range(len(diff_delay[0].times)):
+    steps[0].append(diff_delay[0].times[i])
+for i in range(len(diff_delay[1].times)):
+    steps[1].append(diff_delay[1].times[i])
+for i in range(len(diff_inflow[0].times)):
+    if diff_inflow[0].times[i] not in steps[0]:
+        steps[0].append(diff_inflow[0].times[i])
+for i in range(len(diff_inflow[1].times)):
+    if diff_inflow[1].times[i] not in steps[1]:
+        steps[1].append(diff_inflow[1].times[i])
+
+steps[0].sort()
+steps[1].sort()
+sorted_steps = [steps[0], steps[1]]
+
+integral_1 = 0
+integral_2 = 0
+for i in range(len(sorted_steps[0]) - 1):
+    start = sorted_steps[0][i]
+    end = sorted_steps[0][i+1] - 2*eps
+    value = diff_inflow[0].multiply(diff_delay[0], start, end).integrate(start, end, True)
+    integral_1 = integral_1 + value
+for i in range(len(sorted_steps[1]) - 1):
+    start = sorted_steps[1][i]
+    end = sorted_steps[1][i+1] - 2*eps
+    value = diff_inflow[1].multiply(diff_delay[1], start, end).integrate(start, end, True)
+    integral_2 = integral_2 + value
+
+scalar_product = integral_1 + integral_2
+
+
+print("Hello World")
 
 
 

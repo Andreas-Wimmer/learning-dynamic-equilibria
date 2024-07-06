@@ -561,9 +561,10 @@ class PiecewiseLinear:
             and self.last_slope == other.last_slope
         )
 
-    def integrate(self, start: float, end: float):
+    def integrate(self, start: float, end: float, contains_negative_values: bool = False):
         assert self.domain[0] <= start < end <= self.domain[1]
-        assert min(self.values) >= 0
+        if not contains_negative_values:
+            assert min(self.values) >= 0
         # For two time steps, we integrate by adding (max + min) / 2 * delta_t
 
         value = 0.0
