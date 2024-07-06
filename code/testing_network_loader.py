@@ -12,7 +12,6 @@ from piecewise_linear import PiecewiseLinear, identity
 from right_constant import RightConstant
 from machine_precision import eps
 
-
 test_graph = DirectedGraph()
 s = Node(0, test_graph)
 v = Node(1, test_graph)
