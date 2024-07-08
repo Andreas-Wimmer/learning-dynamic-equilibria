@@ -104,7 +104,7 @@ inflow_2 = RightConstant([0,0.5,1],[1.5,0.5,0],(0,3))
 inflow_3 = RightConstant([0,0.5,1,3],[0,2,3,0],(0,3))
 inflow_4 = RightConstant([0,1],[1,0],(0,3))
 inflow_5 = RightConstant([0,1,2],[0,1,0],(0,3))
-inflow_6 = RightConstant([0,2,3],[1.5,2.5,0],(0,3))
+inflow_6 = RightConstant([0,2,3],[2,3,0],(0,3))
 
 inflow_f = [inflow_1, inflow_2, inflow_3]
 inflow_g = [inflow_4, inflow_5, inflow_6]
