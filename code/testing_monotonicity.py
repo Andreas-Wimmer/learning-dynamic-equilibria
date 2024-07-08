@@ -55,7 +55,7 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
         for j in range(len(diff_delays[i].times)):
             steps[i].append(diff_delays[i].times[j])
         for k in range(len(diff_inflows[i].times)):
-            if diff_inflows[i].times[j] not in steps[i]:
+            if diff_inflows[i].times[k] not in steps[i]:
                 steps[i].append(diff_inflows[i].times[k])
     
     for i in range(len(paths)):
@@ -66,13 +66,15 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
         integrals.append(0)
 
     for i in range(len(paths)):
-        for j in range(len(steps[j]) - 1):
+        for j in range(len(steps[i]) - 1):
             start = steps[i][j]
             end = steps[i][j+1] - 2*eps
             value = diff_inflows[i].multiply(diff_delays[i], start, end).integrate(start, end, True)
             integrals[i] = integrals[i] + value
 
     scalar_product = sum(integrals)
+    if abs(scalar_product) < eps:
+        scalar_product = 0
     print(str(scalar_product))
     return scalar_product
 
@@ -89,15 +91,15 @@ test_graph.edges = [edge_1, edge_2, edge_3]
 
 capacitites = [1, 3, 2]
 travel_times = [1, 0, 0]
-net_inflow = RightConstant([0,1,1.75],[2.5,1,3],(0, 2))
+net_inflow = RightConstant([0],[2.5],(0, 2))
 
 path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
 
 inflow_1 = RightConstant([0,0.5,1],[1.5,0.5,0],(0,2))
-inflow_2 = RightConstant([0,0.5,1,1.75],[1,2,1,3],(0,2))
+inflow_2 = RightConstant([0,0.5,1],[1,2,2.5],(0,2))
 inflow_3 = RightConstant([0,1],[1,0],(0,2))
-inflow_4 = RightConstant([0,1,1.75],[1.5,1,3],(0,2))
+inflow_4 = RightConstant([0,1],[1.5,2.5],(0,2))
 
 inflow_f = [inflow_1, inflow_2]
 inflow_g = [inflow_3, inflow_4]

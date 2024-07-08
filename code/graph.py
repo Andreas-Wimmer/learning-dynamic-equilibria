@@ -10,7 +10,9 @@ class Edge:
 
     def __init__(self, node_from: Node, node_to: Node, id: int, graph: DirectedGraph):
         self._node_from = node_from
+        node_from._outgoing_edges.append(self)
         self._node_to = node_to
+        node_to._incoming_edges.append(self)
         self.id = id
         self._graph = graph
 
