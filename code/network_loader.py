@@ -81,14 +81,33 @@ class NetworkLoader:
     
     def path_delay(self, T: float) -> List[PiecewiseLinear]:
         arr_funcs = self.expected_arr()
+        minimal_delay = []
+        for i in range(len(self.network.paths)):
+            minimal_delay.append(0)
+            for j in range(len(self.network.paths[i])):
+                index = self.network.paths[i][j].id
+                minimal_delay[i] = minimal_delay[i] + self.network.travel_time[index]
         path_delays = []
         for path in self.network.paths:
-            delay_op = identity.restrict((0, T))
+            delay_op = identity.restrict((0, float("inf")))
             for edge in path:
                 index = edge.id
                 delay_op = arr_funcs[index].compose(delay_op)
-            delay_op = delay_op - identity.restrict((0,T))
-            path_delays.append(delay_op.restrict((0,T)))
+            
+            for i in range(len(delay_op.times)):
+                assert delay_op.values[i] >= minimal_delay[self.network.paths.index(path)]
+            
+            ext_time = 0
+            last_value = delay_op.values[-1]
+            if last_value > minimal_delay[self.network.paths.index(path)]:
+                difference = last_value - minimal_delay[self.network.paths.index(path)]
+                ext_time = delay_op.times[-1] + difference
+                delay_op.times.append(ext_time)
+                delay_op.values.append(minimal_delay[self.network.paths.index(path)])
+
+            
+            delay_op = delay_op - identity.restrict((0,delay_op.times[-1]))
+            path_delays.append(delay_op.restrict((0,delay_op.times[-1])))
                 
 
         return path_delays
