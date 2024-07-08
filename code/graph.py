@@ -134,3 +134,13 @@ class DirectedGraph:
 
     def reverse(self):
         self.reversed = not self.reversed
+
+    def nodes_edge_setting(self):
+        for node in self.nodes:
+            for edge in self.edges:
+                if edge.node_from == node:
+                    node._outgoing_edges.append(edge)
+                elif edge.node_to == node:
+                    node._incoming_edges.append(edge)
+                else:
+                    continue

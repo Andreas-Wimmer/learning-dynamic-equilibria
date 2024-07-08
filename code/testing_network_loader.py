@@ -26,7 +26,7 @@ test_network.add_edge(0, 1, 0, 3)
 test_network.add_edge(1, 2, 0, 2)
 
 net_inflow = RightConstant([0,1,1.75],[2.5,1,3],(0, float("inf")))
-test_network.add_commodity({1: net_inflow}, 0, 1)
+test_network.add_commodity({0: net_inflow}, 0, 1)
 
 edge_1 = Edge(s, v, 0, test_graph)
 edge_2 = Edge(s, v, 1, test_graph)

@@ -13,7 +13,7 @@ from machine_precision import eps
 def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_times: List[float],
                        network_inflow: RightConstant, T: float, paths = List[Path], 
                         inflows_1 = List[RightConstant], inflows_2 = List[RightConstant]) -> float:
-    net_inflow = Commodity({0: network_inflow}, len(graph.edges) - 1, 1)
+    net_inflow = Commodity({s: network_inflow}, len(graph.edges) - 1, 1)
     network = Network()
     network.graph = graph
     network.capacity = capacities
@@ -73,6 +73,7 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
             integrals[i] = integrals[i] + value
 
     scalar_product = sum(integrals)
+    print(str(scalar_product))
     return scalar_product
 
 test_graph = DirectedGraph()
@@ -84,6 +85,7 @@ edge_2 = Edge(s, v, 1, test_graph)
 edge_3 = Edge(v, t, 2, test_graph)
 
 test_graph.nodes = {0:s, 1:v, 2:t}
+test_graph.edges = [edge_1, edge_2, edge_3]
 
 capacitites = [1, 3, 2]
 travel_times = [1, 0, 0]
