@@ -92,15 +92,15 @@ test_graph.edges = [edge_1, edge_2, edge_3]
 
 capacitites = [1, 3, 2]
 travel_times = [1, 0, 0]
-net_inflow = RightConstant([0,2],[2.75,0],(0, 2))
+net_inflow = RightConstant([0,2],[2.5,0],(0, 2))
 
 path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
 
-inflow_1 = RightConstant([0,0.5,1],[1.5,0.5,0],(0,2))
-inflow_2 = RightConstant([0,0.5,1,2],[1.25,2.25,2.75,0],(0,2))
+inflow_1 = RightConstant([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9],[2,1.9,1.8,1.7,1.6,0.4,0.3,0.2,0.1,0],(0,2))
+inflow_2 = RightConstant([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,2],[0.5,0.6,0.7,0.8,0.9,2.1,2.2,2.3,2.4,2.5,0],(0,2))
 inflow_3 = RightConstant([0,1],[1,0],(0,2))
-inflow_4 = RightConstant([0,1,2],[1.75,2.75,0],(0,2))
+inflow_4 = RightConstant([0,1,2],[1.5,2.5,0],(0,2))
 
 inflow_f = [inflow_1, inflow_2]
 inflow_g = [inflow_3, inflow_4]
