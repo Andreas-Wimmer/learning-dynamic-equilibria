@@ -92,7 +92,7 @@ test_graph.edges = [edge_1, edge_2, edge_3]
 
 capacitites = [1, 3, 2]
 travel_times = [1, 0, 0]
-net_inflow = RightConstant([0,2],[2.5,0],(0, 2))
+net_inflow = RightConstant([0,2],[3,0],(0, 2))
 
 path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
