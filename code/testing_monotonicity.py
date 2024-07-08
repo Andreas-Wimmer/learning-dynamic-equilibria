@@ -110,14 +110,14 @@ path_2 = [edge_2, edge_5, edge_7]
 path_3 = [edge_2, edge_6, edge_8]
 path_4 = [edge_3, edge_9]
 
-inflow_1 = RightConstant([0,3,5],[1,0.5,0],(0,5))
-inflow_2 = RightConstant([0,3,5],[1,0.5,0],(0,5))
-inflow_3 = RightConstant([0,3,5],[1,0.5,0],(0,5))
-inflow_4 = RightConstant([0,3,5],[0,1.5,0],(0,5))
-inflow_5 = RightConstant([0,5],[1, 0],(0,5))
+inflow_1 = RightConstant([0],[0],(0,5))
+inflow_2 = RightConstant([0,3],[3,0],(0,5))
+inflow_3 = RightConstant([0],[0],(0,5))
+inflow_4 = RightConstant([0,3,5],[0,3,0],(0,5))
+inflow_5 = RightConstant([0],[0],(0,5))
 inflow_6 = RightConstant([0,5],[1, 0],(0,5))
-inflow_7 = RightConstant([0,5],[1, 0],(0,5))
-inflow_8 = RightConstant([0,5],[0, 0],(0,5))
+inflow_7 = RightConstant([0],[0],(0,5))
+inflow_8 = RightConstant([0,5],[2, 0],(0,5))
 
 inflow_f = [inflow_1, inflow_2, inflow_3, inflow_4]
 inflow_g = [inflow_5, inflow_6, inflow_7, inflow_8]
