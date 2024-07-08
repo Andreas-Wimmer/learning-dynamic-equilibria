@@ -53,7 +53,8 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
     for i in range(len(paths)):
         steps.append([])
         for j in range(len(diff_delays[i].times)):
-            steps[i].append(diff_delays[i].times[j])
+            if diff_delays[i].times[j] <= T:
+                steps[i].append(diff_delays[i].times[j])
         for k in range(len(diff_inflows[i].times)):
             if diff_inflows[i].times[k] not in steps[i]:
                 steps[i].append(diff_inflows[i].times[k])

@@ -96,19 +96,15 @@ class NetworkLoader:
             
             for i in range(len(delay_op.times)):
                 assert delay_op.values[i] >= minimal_delay[self.network.paths.index(path)]
-            
-            ext_time = 0
-            last_value = delay_op.values[-1]
-            if last_value > minimal_delay[self.network.paths.index(path)]:
-                difference = last_value - minimal_delay[self.network.paths.index(path)]
-                ext_time = delay_op.times[-1] + difference
-                delay_op.times.append(ext_time)
-                delay_op.values.append(minimal_delay[self.network.paths.index(path)])
 
-            
-            delay_op = delay_op - identity.restrict((0,delay_op.times[-1]))
-            delay_op.last_slope = 0.0
-            path_delays.append(delay_op.restrict((0,T)))
+            if delay_op.times[-1] >= T:
+                delay_op = delay_op - identity.restrict((0,delay_op.times[-1]))
+                delay_op.last_slope = 0.0
+                path_delays.append(delay_op.restrict((0,delay_op.times[-1])))
+            else:
+                delay_op = delay_op - identity.restrict((0,T))
+                delay_op.last_slope = 0.0
+                path_delays.append(delay_op.restrict((0,T)))
                 
 
         return path_delays
