@@ -79,16 +79,16 @@ class NetworkLoader:
         yield self._flow
     
     
-    def path_delay(self) -> List[PiecewiseLinear]:
+    def path_delay(self, T: float) -> List[PiecewiseLinear]:
         arr_funcs = self.expected_arr()
         path_delays = []
         for path in self.network.paths:
-            delay_op = identity.restrict((0, float("inf")))
+            delay_op = identity.restrict((0, T))
             for edge in path:
                 index = edge.id
                 delay_op = arr_funcs[index].compose(delay_op)
-            delay_op = delay_op - identity
-            path_delays.append(delay_op)
+            delay_op = delay_op - identity.restrict((0,T))
+            path_delays.append(delay_op.restrict((0,T)))
                 
 
         return path_delays

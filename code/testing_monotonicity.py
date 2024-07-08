@@ -38,8 +38,8 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
     flow_1 = next(result_1)
     flow_2 = next(result_2)
 
-    delays_1 = loader_1.path_delay()
-    delays_2 = loader_2.path_delay()
+    delays_1 = loader_1.path_delay(T)
+    delays_2 = loader_2.path_delay(T)
 
     diff_delays = []
     for i in range(len(paths)):
@@ -97,9 +97,9 @@ path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
 
 inflow_1 = RightConstant([0,0.25,0.5,0.75],[2,1.5,0.5,0],(0,2))
-inflow_2 = RightConstant([0,0.25,0.5,0.75],[0.5,1,2,2.5],(0,2))
+inflow_2 = RightConstant([0,0.25,0.5,0.75,2],[0.5,1,2,2.5,0],(0,2))
 inflow_3 = RightConstant([0,1],[1,0],(0,2))
-inflow_4 = RightConstant([0,1],[1.5,2.5],(0,2))
+inflow_4 = RightConstant([0,1,2],[1.5,2.5,0],(0,2))
 
 inflow_f = [inflow_1, inflow_2]
 inflow_g = [inflow_3, inflow_4]
