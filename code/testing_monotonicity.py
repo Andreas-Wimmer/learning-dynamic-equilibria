@@ -85,24 +85,28 @@ v = Node(1, test_graph)
 t = Node(2, test_graph)
 edge_1 = Edge(s, v, 0, test_graph)
 edge_2 = Edge(s, v, 1, test_graph)
-edge_3 = Edge(v, t, 2, test_graph)
+edge_3 = Edge(s, v, 2, test_graph) 
+edge_4 = Edge(v, t, 3, test_graph)
 
 test_graph.nodes = {0:s, 1:v, 2:t}
-test_graph.edges = [edge_1, edge_2, edge_3]
+test_graph.edges = [edge_1, edge_2, edge_3, edge_4]
 
-capacitites = [1, 3, 2]
-travel_times = [1, 0, 0]
-net_inflow = RightConstant([0,2],[2.5,0],(0, 2))
+capacitites = [1, 1, 3, 2]
+travel_times = [2, 1, 0, 0]
+net_inflow = RightConstant([0,3],[2.5,0],(0, 3))
 
-path_1 = [edge_1, edge_3]
-path_2 = [edge_2, edge_3]
+path_1 = [edge_1, edge_4]
+path_2 = [edge_2, edge_4]
+path_3 = [edge_3, edge_4]
 
-inflow_1 = RightConstant([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9],[2,1.9,1.8,1.7,1.6,0.4,0.3,0.2,0.1,0],(0,2))
-inflow_2 = RightConstant([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,2],[0.5,0.6,0.7,0.8,0.9,2.1,2.2,2.3,2.4,2.5,0],(0,2))
-inflow_3 = RightConstant([0,1],[1,0],(0,2))
-inflow_4 = RightConstant([0,1,2],[1.5,2.5,0],(0,2))
+inflow_1 = RightConstant([0,0.5,1],[1.5,0.5,0],(0,3))
+inflow_2 = RightConstant([0,1,1.5,2],[0,1.5,0.5,0],(0,3))
+inflow_3 = RightConstant([0,0.5,1,1.5,2,3],[1,2,1,2,2.5,0],(0,3))
+inflow_4 = RightConstant([0,1],[1,0],(0,3))
+inflow_5 = RightConstant([0,1,2],[0,1,0],(0,3))
+inflow_6 = RightConstant([0,2,3],[1.5,2.5,0],(0,3))
 
-inflow_f = [inflow_1, inflow_2]
-inflow_g = [inflow_3, inflow_4]
+inflow_f = [inflow_1, inflow_2, inflow_3]
+inflow_g = [inflow_4, inflow_5, inflow_6]
 
 monotonicity_check(test_graph, capacitites, travel_times, net_inflow, 2, [path_1, path_2], inflow_f, inflow_g)
