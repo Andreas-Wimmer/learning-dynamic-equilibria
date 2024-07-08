@@ -107,7 +107,8 @@ class NetworkLoader:
 
             
             delay_op = delay_op - identity.restrict((0,delay_op.times[-1]))
-            path_delays.append(delay_op.restrict((0,delay_op.times[-1])))
+            delay_op.last_slope = 0.0
+            path_delays.append(delay_op.restrict((0,T)))
                 
 
         return path_delays
@@ -122,8 +123,8 @@ class NetworkLoader:
                 delay = queues[i].values[j]/self.network.capacity[i]
                 curr_time = queues[i].times[j]
                 values.append(self.network.travel_time[i] + curr_time + delay)
-            first_slope = queues[i].first_slope/self.network.capacity[i]
-            last_slope = queues[i].last_slope/self.network.capacity[i]
+            first_slope = queues[i].first_slope/self.network.capacity[i] + 1
+            last_slope = queues[i].last_slope/self.network.capacity[i] + 1
             new_func = PiecewiseLinear(times, values, first_slope, last_slope, (0, float("inf")))
             arr_funcs.append(new_func)
 
