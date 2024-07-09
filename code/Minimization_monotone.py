@@ -184,9 +184,9 @@ s = Node(0, graph)
 v = Node(1, graph)
 t = Node(2, graph)
 
-e_1 = Edge(0, 1, 0, graph)
-e_2 = Edge(0, 1, 1, graph)
-e_3 = Edge(1, 2, 2, graph)
+e_1 = Edge(s, v, 0, graph)
+e_2 = Edge(s, v, 1, graph)
+e_3 = Edge(v, t, 2, graph)
 
 graph.nodes = {s:0,v:1,t:2}
 graph.edges = [e_1,e_2,e_3]
