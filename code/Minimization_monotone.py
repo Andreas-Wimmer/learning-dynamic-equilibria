@@ -4,6 +4,7 @@
 #difference of two path inflow vectors in the given situation with the discretization as
 #in the best response problem
 
+import scipy.optimize
 from graph import *
 from network import Network,Commodity
 from dynamic_flow import DynamicFlow 
@@ -13,6 +14,7 @@ from right_constant import RightConstant
 from machine_precision import eps
 import scipy
 import math
+import arrays
 
 def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_times: List[float],
                       net_inflow: RightConstant, paths: List[Path], 
@@ -91,6 +93,88 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
         for i in range(len(network.paths)):
             diff_inflows.append(inflow_dict_1[i] - inflow_dict_2[i])
 
+        steps = []
+        for i in range(len(network.paths)):
+            steps.append([])
+            for j in range(len(diff_delays[i].times)):
+                steps[i].append(diff_delays[i].times[j])
+            for k in range(len(break_points)):
+                if diff_inflows[i].times[k] not in steps[i]:
+                    steps[i].append(diff_inflows[i].times[k])
         
+        for i in range(len(network.paths)):
+            steps[i].sort()
+
+        sums = []
+        for i in range(len(network.paths)):
+            sums.append(0)
+
+        for i in range(len(network.paths)):
+            for j in range(len(steps[i]) - 1):
+                value_s = diff_delays[i].eval(steps[i][j])
+                value_e = diff_delays[i].eval(steps[i][j+1])
+                value_p = (value_s + value_e)/2
+                index_step = arrays.elem_lrank(break_points, steps[i][j])
+                value_i = diff_inflows[i].eval[steps[i[j]]]
+                sums[i] = sums[i] + value_p*value_i
         
-    return 0
+        return sum(sums)
+    
+    A = []
+    for i in range(2*(len(break_points) - 1)):
+        A.append([])
+        for j in range(len(network.paths)):
+            for k in range(len(break_points) - 1):
+                if k % (len(break_points) - 1) == i:
+                    A[i].append(1)
+                else:
+                    A[i].append(0)
+
+    B = []
+    for i in range(2*len(network.paths)):
+        B.append([])
+        for j in range(len(network.paths)):
+            for k in range(len(break_points) - 1):
+                if k == len(break_points) - 1:
+                    B[i].append(1)
+                else:
+                    B[i].append(0)
+
+    constraint_1 = scipy.optimize.LinearConstraint(A, lb= net_inflow.values[0], ub= net_inflow.values[0])
+    constraint_2 = scipy.optimize.LinearConstraint(B, lb = 0, ub = 0)
+    bounds = []
+    for i in range(2):
+        for j in range(len(network.paths)):
+            for k in range(len(break_points) - 1):
+                bounds.append((0, None))
+        
+    min_cap = []
+    for i in range(len(network.paths)):
+        caps = []
+        for j in range(len(network.paths[i])):
+            index = network.graph.edges.index(network.paths[i][j])
+            caps.append(network.capacity[index])
+        min_cap.append(min(caps))
+
+    path_min = min_cap.index(min(min_cap))
+    path_max = min_cap.index(max(min_cap))
+    start = []
+    for i in range(len(network.paths)):
+        for j in range(len(break_points) - 1):
+            if network.paths[i] == path_min:
+                start.append(net_inflow.values[0])
+            else:
+                start.append(0)
+    for i in range(len(network.paths)):
+        for j in range(len(break_points) - 1):
+            if network.pahts[i] == path_max:
+                start.append(net_inflow.values[0])
+            else: 
+                start.append(0)
+        
+    constraints = [constraint_1, constraint_2]
+    sol = scipy.optimize.minimize(obj, x0 = start, bounds = bounds, constraints = constraints )
+
+
+    print(str(sol.obj))
+    return sol.obj
