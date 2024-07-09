@@ -178,3 +178,28 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
 
     print(str(sol.obj))
     return sol.obj
+
+graph = DirectedGraph()
+s = Node(0, graph)
+v = Node(1, graph)
+t = Node(2, graph)
+
+e_1 = Edge(0, 1, 0, graph)
+e_2 = Edge(0, 1, 1, graph)
+e_3 = Edge(1, 2, 2, graph)
+
+graph.nodes = {s:0,v:1,t:2}
+graph.edges = [e_1,e_2,e_3]
+
+capacities = [1,3,2]
+travel_times = [1,0,0]
+
+horizon = 2
+network_inflow = RightConstant([0,2],[2,0],(0,2))
+delta = 1
+
+p_1 = [e_1, e_3]
+p_2 = [e_2, e_3]
+
+paths = [p_1, p_2]
+minimize_monotone(graph, capacities, travel_times,network_inflow, paths, horizon, delta)
