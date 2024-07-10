@@ -94,15 +94,15 @@ graph.edges = [e_1, e_2, e_3]
 
 caps = [1, 3, 2]
 times = [1, 0, 0]
-net_inflow = RightConstant([0,2],[1.6, 0],(0, 2))
+net_inflow = RightConstant([0,2],[1.7, 0],(0, 2))
 
 p_1 = [e_1, e_3]
 p_2 = [e_2, e_3]
 
 inflow_1 = RightConstant([0, 0.5, 1],[1.5, 0.5, 0],(0,2))
-inflow_2 = RightConstant([0, 0.5, 1, 2],[0.1, 1.1, 1.6, 0],(0,2))
+inflow_2 = RightConstant([0, 0.5, 1, 2],[0.2, 1.2, 1.7, 0],(0,2))
 inflow_3 = RightConstant([0, 1],[1, 0],(0,2))
-inflow_4 = RightConstant([0, 1, 2],[0.6 , 1.6, 0],(0,2))
+inflow_4 = RightConstant([0, 1, 2],[0.7, 1.7, 0],(0,2))
 
 f = [inflow_1, inflow_2]
 g = [inflow_3, inflow_4]
