@@ -23,13 +23,13 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
     network.graph = graph
     network.capacity = capacities
     network.travel_time = travel_times
-    network_inflow = Commodity({graph.nodes[0]: net_inflow}, graph.nodes[len(graph.nodes) - 1], 1)
+    network_inflow = Commodity({s: net_inflow}, t, 1)
     network.commodities = [network_inflow]
     network.paths = paths
     
     break_points = []
     counter = 0
-    while counter*delta < horizon - delta:
+    while counter*delta <= horizon - delta:
         break_points.append(counter*delta)
         counter = counter + 1
     break_points.append(horizon)
@@ -121,31 +121,35 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
         return sum(sums)
     
     A = []
-    for i in range(2*(len(break_points) - 1)):
-        A.append([])
-        for j in range(len(network.paths)):
-            for k in range(len(break_points) - 1):
-                if k % (len(break_points) - 1) == i:
-                    A[i].append(1)
-                else:
-                    A[i].append(0)
+    for i in range(2):
+        for j in range(len(break_points) - 1):
+            A.append([])
+            for h in range(2):
+                for k in range(len(network.paths)):
+                    for g in range(len(break_points)):
+                        if j == g and h == i:
+                            A[2*i+j].append(1)
+                        else:
+                            A[2*i+j].append(0)
 
     B = []
-    for i in range(2*len(network.paths)):
-        B.append([])
+    for i in range(2):
         for j in range(len(network.paths)):
-            for k in range(len(break_points) - 1):
-                if k == len(break_points) - 1:
-                    B[i].append(1)
-                else:
-                    B[i].append(0)
+            B.append([])
+            for h in range(2):
+                for k in range(len(network.paths)):
+                    for g in range(len(break_points)):
+                        if g == len(break_points) - 1 and h == i and k == j:
+                            B[2*i + j].append(1)
+                        else:
+                            B[2*i + j].append(0)
 
-    constraint_1 = scipy.optimize.LinearConstraint(A, lb= net_inflow.values[0], ub= net_inflow.values[0])
-    constraint_2 = scipy.optimize.LinearConstraint(B, lb = 0, ub = 0)
+    constraint_1 = scipy.optimize.LinearConstraint(A, net_inflow.values[0], net_inflow.values[0])
+    constraint_2 = scipy.optimize.LinearConstraint(B, 0, 0)
     bounds = []
     for i in range(2):
         for j in range(len(network.paths)):
-            for k in range(len(break_points) - 1):
+            for k in range(len(break_points)):
                 bounds.append((0, None))
         
     min_cap = []
@@ -160,14 +164,14 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
     path_max = min_cap.index(max(min_cap))
     start = []
     for i in range(len(network.paths)):
-        for j in range(len(break_points) - 1):
-            if network.paths[i] == path_min:
+        for j in range(len(break_points)):
+            if i == path_min and j == 0:
                 start.append(net_inflow.values[0])
             else:
                 start.append(0)
     for i in range(len(network.paths)):
-        for j in range(len(break_points) - 1):
-            if network.pahts[i] == path_max:
+        for j in range(len(break_points)):
+            if i == path_max and j == 0:
                 start.append(net_inflow.values[0])
             else: 
                 start.append(0)
