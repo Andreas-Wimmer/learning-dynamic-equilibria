@@ -94,17 +94,17 @@ graph.edges = [e_1, e_2, e_3]
 
 caps = [1, 3, 2]
 times = [1, 0, 0]
-net_inflow = RightConstant([0,6],[6, 0],(0, 6))
+net_inflow = RightConstant([0,7],[6, 0],(0, 7))
 
 p_1 = [e_1, e_3]
 p_2 = [e_2, e_3]
 
-inflow_1 = RightConstant([0, 1],[6, 0],(0,6))
-inflow_2 = RightConstant([0, 1, 6],[0, 6, 0],(0,6))
-inflow_3 = RightConstant([0, 6],[1, 0],(0,6))
-inflow_4 = RightConstant([0, 6],[5, 0],(0,6))
+inflow_1 = RightConstant([0, 1],[6, 0],(0,7))
+inflow_2 = RightConstant([0, 1, 7],[0, 6, 0],(0,7))
+inflow_3 = RightConstant([0, 7],[1, 0],(0,7))
+inflow_4 = RightConstant([0, 7],[5, 0],(0,7))
 
 f = [inflow_1, inflow_2]
 g = [inflow_3, inflow_4]
 
-monotonicity_check(graph, caps, times, net_inflow, 6, [p_1, p_2], f, g)
+monotonicity_check(graph, caps, times, net_inflow, 7, [p_1, p_2], f, g)
