@@ -107,4 +107,4 @@ inflow_4 = RightConstant([0, 4, 6],[5, 6, 0],(0,6))
 f = [inflow_1, inflow_2]
 g = [inflow_3, inflow_4]
 
-monotonicity_check(graph, caps, times, net_inflow, 2, [p_1, p_2], f, g)
+monotonicity_check(graph, caps, times, net_inflow, 6, [p_1, p_2], f, g)
