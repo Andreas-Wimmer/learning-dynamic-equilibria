@@ -92,7 +92,7 @@ e_3 = Edge(v, t, 2, graph)
 graph.nodes = {0:s, 1:v, 2:t}
 graph.edges = [e_1, e_2, e_3]
 
-caps = [1, 3, 2]
+caps = [1, 3, 1]
 times = [1, 1, 0]
 net_inflow = RightConstant([0,7],[6, 0],(0, 7))
 
