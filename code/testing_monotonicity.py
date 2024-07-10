@@ -101,8 +101,8 @@ p_2 = [e_2, e_3]
 
 inflow_1 = RightConstant([0, 2, 4],[2, 1, 0],(0,6))
 inflow_2 = RightConstant([0, 2, 4, 6],[4, 5, 6, 0],(0,6))
-inflow_3 = RightConstant([0, 4],[1, 0],(0,6))
-inflow_4 = RightConstant([0, 4, 6],[5, 6, 0],(0,6))
+inflow_3 = RightConstant([0, 4],[2, 0],(0,6))
+inflow_4 = RightConstant([0, 4, 6],[4, 6, 0],(0,6))
 
 f = [inflow_1, inflow_2]
 g = [inflow_3, inflow_4]
