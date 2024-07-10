@@ -99,10 +99,10 @@ net_inflow = RightConstant([0,6],[6, 0],(0, 6))
 p_1 = [e_1, e_3]
 p_2 = [e_2, e_3]
 
-inflow_1 = RightConstant([0, 1, 4],[5, 0, 0],(0,6))
-inflow_2 = RightConstant([0, 1, 4, 6],[1, 6, 6, 0],(0,6))
-inflow_3 = RightConstant([0, 5],[1, 0],(0,6))
-inflow_4 = RightConstant([0, 5, 6],[5, 6, 0],(0,6))
+inflow_1 = RightConstant([0, 1],[6, 0],(0,6))
+inflow_2 = RightConstant([0, 1, 6],[0, 6, 0],(0,6))
+inflow_3 = RightConstant([0, 6],[1, 0],(0,6))
+inflow_4 = RightConstant([0, 6],[5, 0],(0,6))
 
 f = [inflow_1, inflow_2]
 g = [inflow_3, inflow_4]
