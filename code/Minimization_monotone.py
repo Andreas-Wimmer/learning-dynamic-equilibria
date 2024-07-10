@@ -91,7 +91,7 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
 
         diff_inflows = []
         for i in range(len(network.paths)):
-            diff_inflows.append(inflow_dict_1[i] - inflow_dict_2[i])
+            diff_inflows.append(inflow_funcs_1[i] - inflow_funcs_2[i])
 
         steps = []
         for i in range(len(network.paths)):
@@ -115,7 +115,7 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
                 value_e = diff_delays[i].eval(steps[i][j+1])
                 value_p = (value_s + value_e)/2
                 index_step = arrays.elem_lrank(break_points, steps[i][j])
-                value_i = diff_inflows[i].eval[steps[i[j]]]
+                value_i = diff_inflows[i].eval(steps[i][j])
                 sums[i] = sums[i] + value_p*value_i
         
         return sum(sums)
@@ -180,8 +180,8 @@ def minimize_monotone(graph: DirectedGraph, capacities: List[float], travel_time
     sol = scipy.optimize.minimize(obj, x0 = start, bounds = bounds, constraints = constraints )
 
 
-    print(str(sol.obj))
-    return sol.obj
+    print(str(sol.fun))
+    return sol.fun
 
 graph = DirectedGraph()
 s = Node(0, graph)
@@ -192,7 +192,7 @@ e_1 = Edge(s, v, 0, graph)
 e_2 = Edge(s, v, 1, graph)
 e_3 = Edge(v, t, 2, graph)
 
-graph.nodes = {s:0,v:1,t:2}
+graph.nodes = {0:s, 1:v, 2:t}
 graph.edges = [e_1,e_2,e_3]
 
 capacities = [1,3,2]
@@ -207,3 +207,5 @@ p_2 = [e_2, e_3]
 
 paths = [p_1, p_2]
 minimize_monotone(graph, capacities, travel_times,network_inflow, paths, horizon, delta)
+
+#Does not seem to work
