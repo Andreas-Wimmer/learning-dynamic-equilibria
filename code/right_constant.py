@@ -208,3 +208,11 @@ class RightConstant:
         last_slope = 0
         product = PiecewiseLinear(times, values, first_slope, last_slope)
         return product
+
+    #multiplies the given function with a arbitrary scalar    
+    def mult_scalar(self, scalar: float) -> RightConstant:
+        new_vals = []
+        for i in range(len(self.values)):
+            new_vals.append(self.values[i]*scalar)
+        scalared_self = RightConstant(self.times, new_vals, self.domain)
+        return scalared_self

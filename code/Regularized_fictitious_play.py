@@ -1,12 +1,15 @@
 #Here we want to implement the learning dynamics on general networks
 from __future__ import annotations
 
+import scipy.optimize
+
 from graph import DirectedGraph, Node, Edge
 from network import Network, Commodity
 from dynamic_flow import DynamicFlow
 from piecewise_linear import PiecewiseLinear 
 from right_constant import RightConstant 
 import numpy 
+import scipy
 from network_loader import NetworkLoader, Path
 from machine_precision import eps
 from typing import List
@@ -102,7 +105,73 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 value_3 = ((value_1 + value_2)/2)*h[var_index]
                 value_4 = epsilon*(h[var_index] - inflows[i].eval(breaks[i][j]))
                 sum = sum + value_3 + value_4
-    #3. Update the flow and run the edge-loading procedure
+        
+    A = []
+    for j in range(len(steps) - 1):
+        A.append([])
+        for k in range(len(network.paths)):
+            for g in range(len(steps)):
+                if j == g:
+                    A[j].append(1)
+                else:
+                    A[j].append(0)
+
+    B = []
+    for j in range(len(network.paths)):
+        B.append([])
+        for k in range(len(network.paths)):
+            for g in range(len(steps)):
+                if g == len(steps) - 1 and k == j:
+                    B[j].append(1)
+                else:
+                    B[j].append(0)
+
+    net_bound = []
+    for i in range(len(steps)):
+        net_bound.append(net_inflow.eval(steps[i]))
+    constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
+    constraint_2 = scipy.optimize.LinearConstraint(B, 0, 0)
+    bounds = []
+    for j in range(len(network.paths)):
+        for k in range(len(steps)):
+            bounds.append((0, None))
+
+    start = []
+    for i in range(len(network.paths)):
+        for j in range(len(steps)):
+            start.append(inflows[i].eval(steps[j]))
+        
+    sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = [constraint_1, constraint_2])
+    
+    #3. Update the path inflows and run the edge-loading procedure
+    old_inflows = inflows.copy()
+    old_inflows_dict = inflow_dict.copy()
+
+    inflows = []
+    values = []
+    for i in range(len(network.paths)):
+        values.append([])
+        for j in range(len(steps)):
+            values[i].append(sol.x[len(steps)*i + j])
+
+    for i in range(len(network.paths)):
+        inflows.append(RightConstant(steps, values[i], (0, horizon)))
+
+    inflow_dict = []
+    for i in range(len(network.paths)):
+        inflow_dict.append((network.paths[i], inflows[i]))
+
+    loader_new = NetworkLoader(network, inflow_dict)
+    result_new = loader_new.build_flow()
+    flow_new = next(result_new)
+    delays_new = loader_new.path_delay()
+    counter_steps = counter_steps + 1
     #4. Update the population average and run the edge-loading procedure again
+    old_avg = inflow_avg.copy()
+    old_avg_delays = delays_avg.copy()
+    
+
+
+
     #5. Calculate the difference of the new flow and the last flow for checking convergence
     #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
