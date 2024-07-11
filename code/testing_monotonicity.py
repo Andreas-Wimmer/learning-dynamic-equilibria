@@ -79,30 +79,32 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
     print(str(scalar_product))
     return scalar_product
 
-test_graph = DirectedGraph()
-s = Node(0, test_graph)
-v = Node(1, test_graph)
-t = Node(2, test_graph)
-edge_1 = Edge(s, v, 0, test_graph)
-edge_2 = Edge(s, v, 1, test_graph)
-edge_3 = Edge(v, t, 2, test_graph)
+graph = DirectedGraph()
+s = Node(0, graph)
+v = Node(0, graph)
+t = Node(0, graph)
+e_1 = Edge(s, v, 0, graph)
+e_2 = Edge(s, v, 1, graph)
+e_3 = Edge(v, t, 2, graph) 
 
-test_graph.nodes = {0:s, 1:v, 2:t}
-test_graph.edges = [edge_1, edge_2, edge_3]
 
-capacitites = [1, 3, 2]
-travel_times = [1, 0, 0]
-net_inflow = RightConstant([0,2],[2.75,0],(0, 2))
 
-path_1 = [edge_1, edge_3]
-path_2 = [edge_2, edge_3]
+graph.nodes = {0:s, 1:v, 2:t}
+graph.edges = [e_1, e_2, e_3]
 
-inflow_1 = RightConstant([0,0.5,1],[1.5,0.5,0],(0,2))
-inflow_2 = RightConstant([0,0.5,1,2],[1.25,2.25,2.75,0],(0,2))
-inflow_3 = RightConstant([0,1],[1,0],(0,2))
-inflow_4 = RightConstant([0,1,2],[1.75,2.75,0],(0,2))
+caps = [1, 3, 3]
+times = [1, 1, 0]
+net_inflow = RightConstant([0,7],[5, 0],(0, 7))
 
-inflow_f = [inflow_1, inflow_2]
-inflow_g = [inflow_3, inflow_4]
+p_1 = [e_1, e_3]
+p_2 = [e_2, e_3]
 
-monotonicity_check(test_graph, capacitites, travel_times, net_inflow, 2, [path_1, path_2], inflow_f, inflow_g)
+inflow_1 = RightConstant([0, 1],[5, 0],(0,7))
+inflow_2 = RightConstant([0, 1, 7],[0, 5, 0],(0,7))
+inflow_3 = RightConstant([0, 1, 7],[4, 2, 0],(0,7))
+inflow_4 = RightConstant([0, 1, 7],[1, 3, 0],(0,7))
+
+f = [inflow_1, inflow_2]
+g = [inflow_3, inflow_4]
+
+monotonicity_check(graph, caps, times, net_inflow, 7, [p_1, p_2], f, g)
