@@ -200,7 +200,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         if round(diff, 12) <= lamb:
             accuracy_reached = True
 
-        print("Norm difference to the last flow" + str(diff))
+        print("Norm difference to the last flow: " + str(diff))
         #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
         gap_steps = []
         for i in range(len(network.paths)):
@@ -212,7 +212,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     gap_steps.append(delays_new[i].times[k])
             gap_steps[i].sort()
 
-        def g(h):
+        def obj_gap(h):
             sum_1 = 0
             for i in range(len(network.paths)):
                 for j in range(len(gap_steps[i]) - 1):
@@ -228,7 +228,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             return sum_1
 
         A = []
-        for j in range(len(steps) - 1):
+        for j in range(len(steps)):
             A.append([])
             for k in range(len(network.paths)):
                 for g in range(len(steps)):
@@ -244,24 +244,26 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         bounds = []
         for j in range(len(network.paths)):
             for k in range(len(steps)):
-                bounds.append((0, None))
+                bounds.append((0, float("inf")))
 
         start = []
         for i in range(len(network.paths)):
             for j in range(len(steps)):
                 start.append(inflows[i].eval(steps[j]))
-        sol_gap = scipy.optimize.minimize(g, start, bounds=bounds, constraints=constraint_1)
+        sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         
-        if round(sol.gap, 5) == 0:
+        if round(sol_gap.fun, 5) == 0:
             equilibrium_reached = True
             print("Regularized equilibrium reached")
 
-        print("Gap at " + str(sol.gap))
+        print("Gap at " + str(sol_gap.fun))
 
-    if accuracy_reached == False or equilibrium_reached == False:
-        print("The learning dynamics did not converge to a equilibrium with the given accuracy")
+    if equilibrium_reached:
+        print("The learning dynamics reached a regularized equilibrium")
+    elif accuracy_reached:
+        print("The learning dynamics converged")
     else:
-        print("The learning dynamics did converge to a regularized equilibrium with the given accuracy")
+        print("The learning dynamics neither reached a regularized equilibrium nor converged wtih the given accuracy in the given number of steps")
 
 graph = DirectedGraph
 s = Node(0, graph)
@@ -282,7 +284,7 @@ p_1 = [e_1, e_3]
 p_2 = [e_2, e_3]
 
 paths = [p_1, p_2]
-net_inflow = RightConstant([0, 2], [2, 0], (0, 2))
+net_inflow = RightConstant([0, 2], [2.5, 0], (0, 2))
 horizon = 2
 delta = 1
 epsilon = 0.2
