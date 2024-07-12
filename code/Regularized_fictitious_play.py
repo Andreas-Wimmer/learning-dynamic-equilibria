@@ -27,7 +27,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network.capacity = cap
     network.travel_time = travel
     s = graph.nodes[0]
-    t = graph.nodes[-1]
+    t = graph.nodes[len(graph.nodes) - 1]
     network_inflow = Commodity({s, net_inflow}, t, 1)
     network.commodities = [network_inflow]
     network.paths = paths
@@ -45,7 +45,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for j in range(len(network.paths[i])):
             index = network.paths[i][j].id
             caps.append(network.capacity[index])
-        min_cap.append(min(caps))
+        min_cap[i] = min(caps)
 
     sum_min_caps = sum(min_cap)
     portions = []
@@ -68,7 +68,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     loader_beg = NetworkLoader(network, inflow_dict)
     result_beg = loader_beg.build_flow()
     flow_beg = next(result_beg)
-    delays_beg = loader_beg.path_delay()
+    delays_beg = loader_beg.path_delay(horizon)
     flow_avg = flow_beg
     delays_avg = delays_beg
     inflow_avg = inflows.copy()
@@ -80,36 +80,42 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         stop = 0
         steps = []
         while stop*delta <= horizon - delta:
-            for i in range(len(network.paths)):
-                steps.append(stop*delta)
+            steps.append(stop*delta)
             stop = stop + 1
+        steps.append(horizon)
 
         breaks = []
         for i in range(len(network.paths)):
-            breaks.append(steps.copy())
-            for j in range(len(delays_avg[i].times[j])):
-                if delays_avg[i].times[j] not in breaks[i]:
-                    breaks[i].append(delays_avg[i].times[j])
+            breaks.append([])
+            for j in range(len(steps)):
+                breaks[i].append(steps[j])
+            for k in range(len(delays_avg[i].times)):
+                if delays_avg[i].times[k] not in steps:
+                    breaks[i].append(delays_avg[i].times[k])
             breaks[i].sort()
         #2. Best-response problem: 
         def obj(h):
-            sum = 0
+            sums = 0
             for i in range(len(network.paths)):
                 for j in range(len(breaks[i]) - 1):
-                    value_1 = delays_avg[i].eval(breaks[i][j])
-                    value_2 = delays_avg[i].eval(breaks[i][j+1])
-                    if breaks[i][j] in steps:
-                        index = steps.index(breaks[i][j])
-                        var_index = (len(steps) - 1)*i + index
+                    if breaks[i][j + 1] <= steps[-1]:
+                        value_1 = delays_avg[i].eval(breaks[i][j])
+                        value_2 = delays_avg[i].eval(breaks[i][j+1])
+                        if breaks[i][j] in steps:
+                            index = steps.index(breaks[i][j])
+                            var_index = (len(steps) - 1)*i + index
+                        else: 
+                            index = elem_rank(steps, breaks[i][j])
+                            var_index = (len(steps) - 1)*i + index
+                        value_3 = ((value_1 + value_2)/2)*h[var_index]
+                        value_4 = epsilon*(h[var_index] - inflow_avg[i].eval(breaks[i][j]))
+                        sums = sums + value_3 + value_4
                     else: 
-                        index = elem_rank(steps, breaks[i][j])
-                        var_index = (len(steps) - 1)*i + index
-                    value_3 = ((value_1 + value_2)/2)*h[var_index]
-                    value_4 = epsilon*(h[var_index] - inflow_avg[i].eval(breaks[i][j]))
-                    sum = sum + value_3 + value_4
+                        continue
+            return sums 
         
         A = []
-        for j in range(len(steps) - 1):
+        for j in range(len(steps)):
             A.append([])
             for k in range(len(network.paths)):
                 for g in range(len(steps)):
@@ -118,32 +124,21 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     else:
                         A[j].append(0)
 
-        B = []
-        for j in range(len(network.paths)):
-            B.append([])
-            for k in range(len(network.paths)):
-                for g in range(len(steps)):
-                    if g == len(steps) - 1 and k == j:
-                        B[j].append(1)
-                    else:
-                        B[j].append(0)
-
         net_bound = []
         for i in range(len(steps)):
             net_bound.append(net_inflow.eval(steps[i]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
-        constraint_2 = scipy.optimize.LinearConstraint(B, 0, 0)
         bounds = []
         for j in range(len(network.paths)):
             for k in range(len(steps)):
-                bounds.append((0, None))
+                bounds.append((0, float("inf")))
 
         start = []
         for i in range(len(network.paths)):
             for j in range(len(steps)):
                 start.append(inflows[i].eval(steps[j]))
         
-        sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = [constraint_1, constraint_2])
+        sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = constraint_1)
     
         #3. Update the path inflows and run the edge-loading procedure
         old_inflows = inflows.copy()
@@ -166,7 +161,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         loader_new = NetworkLoader(network, inflow_dict)
         result_new = loader_new.build_flow()
         flow_new = next(result_new)
-        delays_new = loader_new.path_delay()
+        delays_new = loader_new.path_delay(horizon)
         counter_steps = counter_steps + 1
         #4. Update the population average and run the edge-loading procedure again
         old_avg = inflow_avg.copy()
@@ -279,3 +274,32 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("The learning dynamics did not converge to a equilibrium with the given accuracy")
     else:
         print("The learning dynamics did converge to a regularized equilibrium with the given accuracy")
+
+graph = DirectedGraph
+s = Node(0, graph)
+v = Node(1, graph)
+t = Node(2, graph)
+e_1 = Edge(s, v, 0, graph)
+e_2 = Edge(s, v, 1, graph)
+e_3 = Edge(v, t, 2, graph)
+
+graph.nodes = {0:s, 1:v, 2:t}
+graph.edges = [e_1, e_2, e_3]
+graph.reversed = False
+
+capacities = [1, 3, 2]
+travel_times = [1, 0, 0]
+
+p_1 = [e_1, e_3]
+p_2 = [e_2, e_3]
+
+paths = [p_1, p_2]
+net_inflow = RightConstant([0, 2], [2, 0], (0, 2))
+horizon = 2
+delta = 1
+epsilon = 0.2
+numSteps = 10
+lamb = 0.1
+
+reg_fictitious_play(graph, capacities, travel_times,
+                    net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
