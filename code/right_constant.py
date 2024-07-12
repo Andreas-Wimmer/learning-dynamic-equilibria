@@ -216,3 +216,16 @@ class RightConstant:
             new_vals.append(self.values[i]*scalar)
         scalared_self = RightConstant(self.times, new_vals, self.domain)
         return scalared_self
+    
+    #returns the function in absolute value
+    def abs_val(self) -> RightConstant:
+        times = self.times
+        domain = self.domain
+        values = []
+        for i in range(len(self.values)):
+            if self.values[i] < 0:
+                values.append(-self.values[i])
+            else:
+                values.append(self.values[i])
+        abs_val_func = RightConstant(times, values, domain)
+        return abs_val_func

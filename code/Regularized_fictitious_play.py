@@ -74,7 +74,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     inflow_avg = inflows.copy()
     
     counter_steps = 1
-    while counter_steps < numSteps:
+    accuracy_reached = False
+    equilibrium_reached = False
+    while counter_steps < numSteps and not accuracy_reached and not equilibrium_reached:
         stop = 0
         steps = []
         while stop*delta <= horizon - delta:
@@ -89,89 +91,191 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 if delays_avg[i].times[j] not in breaks[i]:
                     breaks[i].append(delays_avg[i].times[j])
             breaks[i].sort()
-    #2. Best-response problem: 
-    def obj(h):
-        sum = 0
+        #2. Best-response problem: 
+        def obj(h):
+            sum = 0
+            for i in range(len(network.paths)):
+                for j in range(len(breaks[i]) - 1):
+                    value_1 = delays_avg[i].eval(breaks[i][j])
+                    value_2 = delays_avg[i].eval(breaks[i][j+1])
+                    if breaks[i][j] in steps:
+                        index = steps.index(breaks[i][j])
+                        var_index = (len(steps) - 1)*i + index
+                    else: 
+                        index = elem_rank(steps, breaks[i][j])
+                        var_index = (len(steps) - 1)*i + index
+                    value_3 = ((value_1 + value_2)/2)*h[var_index]
+                    value_4 = epsilon*(h[var_index] - inflow_avg[i].eval(breaks[i][j]))
+                    sum = sum + value_3 + value_4
+        
+        A = []
+        for j in range(len(steps) - 1):
+            A.append([])
+            for k in range(len(network.paths)):
+                for g in range(len(steps)):
+                    if j == g:
+                        A[j].append(1)
+                    else:
+                        A[j].append(0)
+
+        B = []
+        for j in range(len(network.paths)):
+            B.append([])
+            for k in range(len(network.paths)):
+                for g in range(len(steps)):
+                    if g == len(steps) - 1 and k == j:
+                        B[j].append(1)
+                    else:
+                        B[j].append(0)
+
+        net_bound = []
+        for i in range(len(steps)):
+            net_bound.append(net_inflow.eval(steps[i]))
+        constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
+        constraint_2 = scipy.optimize.LinearConstraint(B, 0, 0)
+        bounds = []
+        for j in range(len(network.paths)):
+            for k in range(len(steps)):
+                bounds.append((0, None))
+
+        start = []
         for i in range(len(network.paths)):
-            for j in range(len(breaks[i]) - 1):
-                value_1 = delays_avg[i].eval(breaks[i][j])
-                value_2 = delays_avg[i].eval(breaks[i][j+1])
-                if breaks[i][j] in steps:
-                    index = steps.index(breaks[i][j])
-                    var_index = (len(steps) - 1)*i + index
-                else: 
-                    index = elem_rank(steps, breaks[i][j])
-                    var_index = (len(steps) - 1)*i + index
-                value_3 = ((value_1 + value_2)/2)*h[var_index]
-                value_4 = epsilon*(h[var_index] - inflows[i].eval(breaks[i][j]))
-                sum = sum + value_3 + value_4
+            for j in range(len(steps)):
+                start.append(inflows[i].eval(steps[j]))
         
-    A = []
-    for j in range(len(steps) - 1):
-        A.append([])
-        for k in range(len(network.paths)):
-            for g in range(len(steps)):
-                if j == g:
-                    A[j].append(1)
-                else:
-                    A[j].append(0)
+        sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = [constraint_1, constraint_2])
+    
+        #3. Update the path inflows and run the edge-loading procedure
+        old_inflows = inflows.copy()
+        old_inflows_dict = inflow_dict.copy()
 
-    B = []
-    for j in range(len(network.paths)):
-        B.append([])
-        for k in range(len(network.paths)):
-            for g in range(len(steps)):
-                if g == len(steps) - 1 and k == j:
-                    B[j].append(1)
-                else:
-                    B[j].append(0)
+        inflows = []
+        values = []
+        for i in range(len(network.paths)):
+            values.append([])
+            for j in range(len(steps)):
+                values[i].append(sol.x[len(steps)*i + j])
 
-    net_bound = []
-    for i in range(len(steps)):
-        net_bound.append(net_inflow.eval(steps[i]))
-    constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
-    constraint_2 = scipy.optimize.LinearConstraint(B, 0, 0)
-    bounds = []
-    for j in range(len(network.paths)):
-        for k in range(len(steps)):
-            bounds.append((0, None))
+        for i in range(len(network.paths)):
+            inflows.append(RightConstant(steps, values[i], (0, horizon)))
 
-    start = []
-    for i in range(len(network.paths)):
-        for j in range(len(steps)):
-            start.append(inflows[i].eval(steps[j]))
+        inflow_dict = []
+        for i in range(len(network.paths)):
+            inflow_dict.append((network.paths[i], inflows[i]))
+
+        loader_new = NetworkLoader(network, inflow_dict)
+        result_new = loader_new.build_flow()
+        flow_new = next(result_new)
+        delays_new = loader_new.path_delay()
+        counter_steps = counter_steps + 1
+        #4. Update the population average and run the edge-loading procedure again
+        old_avg = inflow_avg.copy()
+        old_avg_delays = delays_avg.copy()
+
+        values_avg = []
+        for i in range(len(network.paths)):
+            values_avg.append([])
+            for j in range(len(steps)):
+                new_value_1 = (1/counter_steps)*inflows[i].values[j]
+                new_value_2 = ((counter_steps - 1)/counter_steps)*old_avg[i].values[j]
+                values_avg[i].append(new_value_1 + new_value_2)
+
+        inflow_avg = []
+        for i in range(len(network.paths)):
+            inflow_avg.append(RightConstant(steps, values_avg[i], (0, horizon)))
+    
+        inflow_dict_avg = []
+        for i in range(len(network.paths)):
+            inflow_dict_avg.append((network.paths[i], inflow_avg[i]))
+
+        loader_avg = NetworkLoader(network, inflow_dict_avg)
+        result_avg = loader_avg.build_flow()
+        flow_avg = next(result_avg)
+    
+        #5. Calculate the difference of the new flow and the last flow for checking convergence
+        diff_inflows = []
+        for i in range(len(network.paths)):
+            curr_diff = inflows[i] - old_inflows[i]
+            diff_inflows.append(curr_diff.abs())
+    
+        diff = 0
+        for i in range(len(network.paths)):
+            diff = diff + diff_inflows[i].integral()
+    
+        if round(diff, 12) <= lamb:
+            accuracy_reached = True
+
+        print("Norm difference to the last flow" + str(diff))
+        #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
+        gap_steps = []
+        for i in range(len(network.paths)):
+            gap_steps.append([])
+            for j in range(len(steps)):
+                gap_steps[i].append(steps[j])
+            for k in range(len(delays_new[i].times)):
+                if delays_new[i].times[k] not in gap_steps[i]:
+                    gap_steps.append(delays_new[i].times[k])
+            gap_steps[i].sort()
+
+        def g(h):
+            sum_1 = 0
+            for i in range(len(network.paths)):
+                for j in range(len(gap_steps[i]) - 1):
+                    if gap_steps[i][j] in steps:
+                        varindex = steps.index(gap_steps[i][j])
+                    else:
+                        varindex = elem_lrank(steps, gap_steps[i][j])
+                    val_1 = delays_new[i].eval(gap_steps[i][j+1])
+                    val_2 = delays_new[i].eval(gap_steps[i][j])
+                    val_3 = 2*epsilon*(-h[len(steps)*i + varindex] + inflows[i].eval(gap_steps[i][j]))
+                    val_4 = h[len(steps)*i + varindex] - inflows[i].eval(gap_steps[i][j])
+                    sum_1 = sum_1 + (((val_1 + val_2)/2) - val_3)*val_4
+            return sum_1
+
+        A = []
+        for j in range(len(steps) - 1):
+            A.append([])
+            for k in range(len(network.paths)):
+                for g in range(len(steps)):
+                    if j == g:
+                        A[j].append(1)
+                    else:
+                        A[j].append(0)
+
+        B = []
+        for j in range(len(network.paths)):
+            B.append([])
+            for k in range(len(network.paths)):
+                for g in range(len(steps)):
+                    if g == len(steps) - 1 and k == j:
+                        B[j].append(1)
+                    else:
+                        B[j].append(0)
+
+        net_bound = []
+        for i in range(len(steps)):
+            net_bound.append(net_inflow.eval(steps[i]))
+        constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
+        constraint_2 = scipy.optimize.LinearConstraint(B, 0, 0)
+        bounds = []
+        for j in range(len(network.paths)):
+            for k in range(len(steps)):
+                bounds.append((0, None))
+
+        start = []
+        for i in range(len(network.paths)):
+            for j in range(len(steps)):
+                start.append(inflows[i].eval(steps[j]))
+        constraints = [constraint_1, constraint_2]
+        sol_gap = scipy.optimize.minimize(g, start, bounds=bounds, constraints=constraints)
         
-    sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = [constraint_1, constraint_2])
-    
-    #3. Update the path inflows and run the edge-loading procedure
-    old_inflows = inflows.copy()
-    old_inflows_dict = inflow_dict.copy()
+        if round(sol.gap, 5) == 0:
+            equilibrium_reached = True
+            print("Regularized equilibrium reached")
 
-    inflows = []
-    values = []
-    for i in range(len(network.paths)):
-        values.append([])
-        for j in range(len(steps)):
-            values[i].append(sol.x[len(steps)*i + j])
+        print("Gap at " + str(sol.gap))
 
-    for i in range(len(network.paths)):
-        inflows.append(RightConstant(steps, values[i], (0, horizon)))
-
-    inflow_dict = []
-    for i in range(len(network.paths)):
-        inflow_dict.append((network.paths[i], inflows[i]))
-
-    loader_new = NetworkLoader(network, inflow_dict)
-    result_new = loader_new.build_flow()
-    flow_new = next(result_new)
-    delays_new = loader_new.path_delay()
-    counter_steps = counter_steps + 1
-    #4. Update the population average and run the edge-loading procedure again
-    old_avg = inflow_avg.copy()
-    old_avg_delays = delays_avg.copy()
-    
-
-
-
-    #5. Calculate the difference of the new flow and the last flow for checking convergence
-    #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
+    if accuracy_reached == False or equilibrium_reached == False:
+        print("The learning dynamics did not converge to a equilibrium with the given accuracy")
+    else:
+        print("The learning dynamics did converge to a regularized equilibrium with the given accuracy")
