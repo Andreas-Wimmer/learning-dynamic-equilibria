@@ -168,7 +168,7 @@ class RightConstant:
         """
         Returns the integral starting from self.times[0] to x of self.
         """
-        assert self.times[0] == self.domain[0] and self.domain[1] >= self.times[-1] + 1
+        assert self.times[0] == self.domain[0] and self.domain[1] >= self.times[-1]
         times = self.times
         values = [0.0] * len(times)
         for i in range(len(times) - 1):

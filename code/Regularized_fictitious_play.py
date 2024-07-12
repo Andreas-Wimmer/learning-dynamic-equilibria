@@ -171,8 +171,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(network.paths)):
             values_avg.append([])
             for j in range(len(steps)):
-                new_value_1 = (1/counter_steps)*inflows[i].values[j]
-                new_value_2 = ((counter_steps - 1)/counter_steps)*old_avg[i].values[j]
+                new_value_1 = (1/counter_steps)*inflows[i].eval(steps[j])
+                new_value_2 = ((counter_steps - 1)/counter_steps)*old_avg[i].eval(steps[j])
                 values_avg[i].append(new_value_1 + new_value_2)
 
         inflow_avg = []
@@ -191,11 +191,11 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         diff_inflows = []
         for i in range(len(network.paths)):
             curr_diff = inflows[i] - old_inflows[i]
-            diff_inflows.append(curr_diff.abs())
+            diff_inflows.append(curr_diff.abs_val())
     
         diff = 0
         for i in range(len(network.paths)):
-            diff = diff + diff_inflows[i].integral()
+            diff = diff + diff_inflows[i].integral().eval(horizon)
     
         if round(diff, 12) <= lamb:
             accuracy_reached = True
@@ -237,21 +237,10 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     else:
                         A[j].append(0)
 
-        B = []
-        for j in range(len(network.paths)):
-            B.append([])
-            for k in range(len(network.paths)):
-                for g in range(len(steps)):
-                    if g == len(steps) - 1 and k == j:
-                        B[j].append(1)
-                    else:
-                        B[j].append(0)
-
         net_bound = []
         for i in range(len(steps)):
             net_bound.append(net_inflow.eval(steps[i]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
-        constraint_2 = scipy.optimize.LinearConstraint(B, 0, 0)
         bounds = []
         for j in range(len(network.paths)):
             for k in range(len(steps)):
@@ -261,8 +250,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(network.paths)):
             for j in range(len(steps)):
                 start.append(inflows[i].eval(steps[j]))
-        constraints = [constraint_1, constraint_2]
-        sol_gap = scipy.optimize.minimize(g, start, bounds=bounds, constraints=constraints)
+        sol_gap = scipy.optimize.minimize(g, start, bounds=bounds, constraints=constraint_1)
         
         if round(sol.gap, 5) == 0:
             equilibrium_reached = True
