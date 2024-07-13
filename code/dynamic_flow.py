@@ -281,17 +281,19 @@ class DynamicFlow:
     def info(self):
         print("Information about the flow")
         for i in range(len(self._network.graph.edges)):
-            for j in range(len(self.inflow[i]._functions_dict)):
-                times = self.inflow[i]._functions_dict[j].times
-                values = self.inflow[i]._functions_dict[j].values
-                domain = self.inflow[i]._functions_dict[j].domain
-                print("The " + str(j) + "th entry in the functions dictionary of the inflows on edge " + str(i) + " has the times " + str(times) + " and the values " + str(values) + " and the domain " + str(domain))
+            for j in range(len(self._network.paths)):
+                if self._network.graph.edges[i] in self._network.paths[j]:
+                    times = self.inflow[i]._functions_dict[j].times
+                    values = self.inflow[i]._functions_dict[j].values
+                    domain = self.inflow[i]._functions_dict[j].domain
+                    print("The " + str(j) + "th entry in the functions dictionary of the inflows on edge " + str(i) + " has the times " + str(times) + " and the values " + str(values) + " and the domain " + str(domain))
         for i in range(len(self._network.graph.edges)):
-            for j in range(len(self.outflow[i]._functions_dict)):
-                times = self.outflow[i]._functions_dict[j].times
-                values = self.outflow[i]._functions_dict[j].values
-                domain = self.outflow[i]._functions_dict[j].domain
-                print("The " + str(j) + "th entry in the functions dictionary of the outflows on edge " + str(i) + " has the times " + str(times) + " and the values " + str(values) + " and the domain " + str(domain))
+            for j in range(len(self._network.paths)):
+                if self._network.graph.edges[i] in self._network.paths[j]:
+                    times = self.outflow[i]._functions_dict[j].times
+                    values = self.outflow[i]._functions_dict[j].values
+                    domain = self.outflow[i]._functions_dict[j].domain
+                    print("The " + str(j) + "th entry in the functions dictionary of the outflows on edge " + str(i) + " has the times " + str(times) + " and the values " + str(values) + " and the domain " + str(domain))
         for i in range(len(self._network.graph.edges)):
             times = self.queues[i].times
             values = self.queues[i].values
