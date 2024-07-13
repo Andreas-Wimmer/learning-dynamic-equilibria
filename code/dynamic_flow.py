@@ -282,14 +282,14 @@ class DynamicFlow:
         print("Information about the flow")
         for i in range(len(self._network.graph.edges)):
             for j in range(len(self._network.paths)):
-                if self._network.graph.edges[i] in self._network.paths[j]:
+                if self._network.graph.edges[i] in self._network.paths[j] and len(self.inflow[i]._functions_dict) != 0:
                     times = self.inflow[i]._functions_dict[j].times
                     values = self.inflow[i]._functions_dict[j].values
                     domain = self.inflow[i]._functions_dict[j].domain
                     print("The " + str(j) + "th entry in the functions dictionary of the inflows on edge " + str(i) + " has the times " + str(times) + " and the values " + str(values) + " and the domain " + str(domain))
         for i in range(len(self._network.graph.edges)):
             for j in range(len(self._network.paths)):
-                if self._network.graph.edges[i] in self._network.paths[j]:
+                if self._network.graph.edges[i] in self._network.paths[j] and len(self.inflow[i]._functions_dict) != 0:
                     times = self.outflow[i]._functions_dict[j].times
                     values = self.outflow[i]._functions_dict[j].values
                     domain = self.outflow[i]._functions_dict[j].domain
