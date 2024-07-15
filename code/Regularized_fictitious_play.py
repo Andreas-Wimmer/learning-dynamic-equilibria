@@ -118,15 +118,15 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for j in range(len(steps)):
             A.append([])
             for k in range(len(network.paths)):
-                for g in range(len(steps)):
+                for g in range(len(net_inflow.times)):
                     if j == g:
                         A[j].append(1)
                     else:
                         A[j].append(0)
 
         net_bound = []
-        for i in range(len(steps)):
-            net_bound.append(net_inflow.eval(steps[i]))
+        for i in range(len(net_inflow.times)):
+            net_bound.append(net_inflow.eval(net_inflow.times[j]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
         bounds = []
         for j in range(len(network.paths)):
@@ -286,7 +286,7 @@ p_2 = [e_2, e_3]
 paths = [p_1, p_2]
 net_inflow = RightConstant([0, 1, 1.75, 2], [2.5, 1, 3, 0], (0, 2))
 horizon = 2
-delta = 1
+delta = 0.25
 epsilon = 0.2
 numSteps = 10
 lamb = 0.1
