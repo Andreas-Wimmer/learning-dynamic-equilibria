@@ -1,0 +1,725 @@
+\documentclass[reqno,openany]{amsbook}
+
+\usepackage{natbib}
+\usepackage{enumerate}
+\usepackage{amsthm}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{chngcntr}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{lmodern}
+\usepackage[subpreambles=true]{standalone}
+\usepackage{import}
+\usepackage{hyperref}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{hypothesis}[definition]{Situation}
+\newtheorem{example}[definition]{Example}
+\theoremstyle{plain}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{theorem}[definition]{Theorem}
+
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+
+\lstdefinestyle{mystyle}{
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+\pgfplotsset{compat=1.17}
+\usetikzlibrary{positioning}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+
+
+
+\begin{document}
+\begin{titlepage}
+	\centering
+	\includegraphics[width = 7cm, height = 5cm]{C:/Users/gu3-w/Unterlagen zur Bachelorarbeit/logo.pdf}\par
+	\vspace{0.5cm}
+	{\LARGE\bfseries Learning dynamic equilibria \par}
+	\vspace{1cm}
+	{\Large\bfseries Masterarbeit im Fach Mathematik\par}
+	\vspace{0.1cm}
+	{\scshape \large an der Fakultät für Informatik und Mathematik der Universität Passau\par}
+	\vspace{2cm}
+	{\Large \bfseries Autor:\par}
+	\vspace{0.1cm}
+	{\Large \bfseries Andreas Wimmer\par}
+	\vspace{0.1cm}
+	{\scshape \Large Matrikelnummer 90022\par}
+	\vspace{2cm}
+	{\Large\bfseries Prüfer: \par}
+	\vspace{0.1cm}
+	{\scshape \Large Prof. Dr. Tobias Harks\par}
+	\vfill
+	{\large \today\par}
+\end{titlepage}	
+\tableofcontents
+\newpage
+\chapter{Introduction}
+Here we are going to write the introduction consisting of a short story about the content of the master thesis and why this content is interesting to consider and after that a short summary about what the single chapters are all about. \\
+First rough idea: As we will see, a dynamic equilirbrium ist guaranteed to exist, they can also be computed (reference), but how can agents find them while choosing paths to traverse ?
+Content structure:
+\begin{itemize}
+	\item{At first we have a chapter for the whole notation we need}
+	\item{The third chapter is about flow theory basics and queueing}
+	\item{The fourth chapter includes the description of our model, some learning theory and the discretization in our model}
+	\item{The fifth chapter is about convergence of a learning dynamics in special networks with only one congested edge per path or one path per congested edge, where we (most probably) can show monotonicity and hence convergence}
+	\item{The sixth chapter is about general networks, where we consider a example of non-monotonicity and the behaviour of a learning dynamics in that example, this chapter will (currently) mostly consist of experiments}
+\end{itemize}
+
+
+
+
+
+\chapter{Notation}
+In this chapter we want to introduce some basic notation that we want to use throughout this thesis. We use $\mathbb{N}$ for the natural numbers including zero and $\mathbb{N}_+$ for the positive natural numbers. We denote by $\mathbb{Z}$ the integers, by $\mathbb{Q}$ the rational numbers and by $\mathbb{R}$ the real numbers. If we write an index like $\mathbb{R}_{\geq 0}$, we mean a limitation $\mathbb{R}_{\geq 0} := \{ x \in \mathbb{R} \vert x \geq 0\}$. \\
+By $[k]$ for some $k \in \mathbb{N}_+$ we denote the set $\{1, \dots, k\}$.\\
+In this thesis also graphs in form of networks play a fundamental role, we denote them by $G = (V, E)$, where $V$ denotes the vertex set and $E \subseteq V \times V = \{ (u,v) \vert u, v \in V\}$ denotes the edge set. We will only consider directed graphs, meaning that we will not have $(u, v) \in E $ and $(v, u) \in E$ at the same time for some $u, v \in V$. We will mostly write $uv$ instead of $(u , v)$ to make notation more convenient. There will also be cases where we allow multiple edges between two nodes. For some subset $W \subseteq V$ we denote by \[ \delta^+(W) := \{ wv \in E \vert w \in W, v \notin W\} \text{       and        } \delta^-(W) := \{ vw \in E \vert v \notin W, w \in W\} \] the set of edges leaving $W$ and the set of edges entering $W$. For some single vertex $v \in V$ we also denote \[ \delta^+(v) = \delta^+(\{v\}) \text{     and     } \delta^-(v) = \delta^-(\{v\}).\]
+A path is a consecutive and finite sequence of edges that visits no vertex twice, i.e. a path is $p = v_1w_1, v_2w_2, \dots, v_nw_n$ with $v_i, w_i \in V$ for all $i \in [n]$ such that $w_i = v_{i+1}$ for all $i \in [n-1]$ and $v_i \neq v_j \forall i \neq j \in [n]$ and $v_1 \neq w_n$.\\
+We denote the concatenation of two paths $p, q$ by $pq$ and the concatenation of a path $p$ and an edge $e \in E$ by $p,e$. Also we denote by $\lvert p \rvert$ the length of a path $p$, i.e. the number of edges it contains. \\
+With $\mathcal{P}_{u,v}$ we denote the set of all paths from some $u \in V$ to some $v \in V$.\\
+We also recall the following function spaces: \\
+$L^1(\Omega) := \{ f: \Omega \to \mathbb{R} \vert \text{$f$ is measurable}, \int_{\Omega} \lvert f(\zeta) \rvert d\zeta < \infty \}$ the set of all absolutely integrable functions, where $\Omega \subseteq \mathbb{R}$ and measurability is w.r.t. the Lebesgue measure $\lambda$ and two functions $f, g \in L^1(\Omega)$ are said to be equal, if they coincide almost everywhere, i.e. $f(\theta) = g(\theta)$ for almost all $\theta \in \Omega$. Similiarly we recall $L^2(\Omega) := \{ f: \Omega \to \mathbb{R} \vert \text{$f$ is measurable}, \int_{\Omega} (\lvert f(\zeta) \rvert^2)^{\frac{1}{2}} d\zeta < \infty\}$ as the space of quadratically integrable functions and $L^{\infty}(\Omega) := \{ f: \Omega \to \mathbb{R} \vert \text{$f$ is measurable}, \text{ess}\sup_{\zeta \in \Omega} \lvert f(\zeta) \rvert < \infty\}$ as the space of essentially bounded functions on $\Omega$. \\
+\emph{TODO: 
+\begin{itemize} 
+	\item{Probably one has to introduce what it means to be locally integrable, because it is mentioned in some definitions}
+\end{itemize}}
+
+
+
+
+
+\chapter{Dynamic Flows, Vickrey Queueing and Dynamic Equilibria}
+In this chapter we introduce some fundamental definitions and facts regarding dynamic flows, the Vickrey Queueing Model and dynamic equilibria. These basics are crucial for the chapters 5 and 6.
+\section{Dynamic Networks and dynamic flows}
+In this first section we want to introduce some basics regarding dynamic flows. It is mainly based on \cite{SKU01}.\\
+At first we will define what a dynamic flow network is.
+
+\begin{definition}[Dynamic Flow Network]
+A dynamic flow network or dynamic s-t-network \\ $\mathcal{N} = (G, s, t, (\nu_e)_{e \in E}, (\tau_e)_{e \in E})$ consists of a directed graph $G = (V, E)$, an origin/source node $s \in V$, a destination/sink node $t \in V$, a given capacitiy $\nu_e \in \mathbb{R}_{\geq 0}$ for every edge $e \in E$ and a travel time $\tau_e \in \mathbb{R}_{\geq 0}$ for every edge $e \in E$ that flow needs to traverse the edge.
+\end{definition}
+
+Next we will define what an edge-based dynamic flow in a dynamic flow network is.
+
+\begin{definition}[Edge-based dynamic flows]
+Given a dynamic flow network, an edge-based dynamic flow $(f_e^+, f_e^-)_{e \in E}$ in that network consists of a pair of non-negative, locally integrable functions $f_e^+, f_e^-: \mathbb{R} \to \mathbb{R}_{\geq 0}$ for every edge $e \in E$, where $f_e^+(\theta)$ denotes the inflow rate into an edge at time $\theta \in \mathbb{R}$ and $f_e^-(\theta)$ denotes the outflow rate out of an edge at time $\theta \in \mathbb{R}$. For a (edge-based) dynamic flow we assume $f_e^+(\theta) = 0$ and $f_e^-(\theta) = 0$ for all $\theta < 0$. We denote by 
+\[ F_e^+(\theta) = \int_0^{\theta} f_e^+(\zeta) d\zeta \quad \text{and} \quad F_e^-(\theta) = \int_0^{\theta} f_e^-(\zeta) d\zeta \]
+the cumulative inflow into edge $e$ and the cumulative outflow out of edge $e$ up to time $\theta \in \mathbb{R}$. \\
+We define the value of a dynamic flow $f$ up to some time horizon $T \in \mathbb{R}_{\geq 0}$ as the cumulative inflow into the destination $t$, i.e. as
+\[value(f, T) := \sum_{e \in \delta^-(t)} F_e^-(T) - \sum_{e \in \delta^+(t)} F_e^+(T). \]
+\end{definition}
+
+\newpage
+
+In the next definition we will look at some properties a dynamic flow can have.
+
+\begin{definition}[Properties of edge-based dynamic flows]
+A dynamic flow $f$ satisifies weak flow conservation on edges, if 
+\[F_e^-(\theta + \tau_e) \leq F_e^+(\theta) \quad \text{for all $e \in E$ and $\theta \in \mathbb{R}_{\geq 0}$} \]
+and it satisfies strong flow conservation on edges, if for all $e \in E$ and $\theta \in \mathbb{R}_{\geq 0}$ the above inequality holds with equality.\\
+A dynamic flow $f$ satisfies weak flow conservation at nodes, if  
+\[ \sum_{e \in \delta^+(v)} F_e^+(\theta) \leq \sum_{e \in \delta^-(v)} F_e^-(\theta) \quad \text{for all $v \in V\setminus\{s\}$ and $\theta \in \mathbb{R}_{\geq 0}$}\]
+and it satisfies strong flow conservation at nodes, if for all $v \in V\setminus\{s, t\}$ and $\theta \in \mathbb{R}_{\geq 0}$ the above inequality holds with equality while  the mapping $\theta \mapsto value(f, \theta)$ is non-decreasing. \\
+A dynamic flow $f$ respects edge capacities, if 
+\[ f_e^-(\theta) \leq \nu_e \quad \text{for all $e \in E$ and almost all $\theta \in \mathbb{R}_{\geq 0}$.}\]
+Finally we call a dynamic flow feasible, if it satisfies weak flow conservation both on edges and at nodes and it respects edge capacitities, and we call it a direct dynamic flow, if it satisfies strong flow conservation both on edges and at nodes.
+\end{definition}
+
+In the last two definitions we considered edge-based dynamic flows. One can also define dynamic flows based on s-t-paths as we will see in the next definition. One can then also define a correspondence of edge-based dynamic flows to path-based dynamic flows.
+
+\begin{definition}[Path-based dynamic flows]
+A path-based dynamic flow $(f_p)_{p \in \mathcal{P}_{s,t}}$ consists of a non-negative, locally integrable function $f_p: \mathbb{R} \to \mathbb{R}_{\geq 0}$ for every s-t-path p with $f_p(\theta) = 0$ for all $p \in \mathcal{P}_{s,t}$ and $\theta < 0$. The corresponding edge-based dynamic flow is the direct dynamic flow $(f_e^+, f_e^-)_{e \in E}$ defined by 
+\[ f_e^+(\theta) = \sum_{p \in \mathcal{P}: e \in p} f_p^+(\theta - \tau_{p\vert_{<e}}) \quad \text{and} \quad f_e^-(\theta) = f_e^+(\theta - \tau_e),\]
+where we denote by $e \in p$ that $e$ is an edge on path $p$ and by $\tau_p = \sum_{e \in p}$ the total travel time when travelling on path $p$ and by $p\vert_{<e}$ we denote the subpath of path $p$ until edge $e$ but not including edge $e$ itself.
+\end{definition}
+
+We have now gathered the most important basic facts about dynamic flows and will in the next section proceed to define and characterize the Vickrey Queueing model, where the basic idea is that if inflow exceeds capacitiy of an edge then there forms a queue vertically at the beginning of this edge and if inflow is below the capacity of an edge and queue has built up then the queue will also empty.
+
+\section{Vickrey Queueing Model and Network Loading}
+In this second section of this chapter we will introduce some basic defintions and characterizations of the Vickrey Queueing Model that we will need later on. In this section we mainly follow the presentation given in \cite[Chapter 3]{GRA1}. At first we define, how the Vickrey Queueing model works, and this will at first be done by just considering a single edge and will be later on be extended to a whole network:
+
+\begin{definition}[Vickrey Queueing]
+Let $e \in E$ be an edge with capacitiy $\nu_e \in \mathbb{R}_{> 0}$ and travel time $\tau_e \in \mathbb{R}_{\geq 0}$ given. Let $(f_e^+, f_e^-)$ be a dynamic flow on that edge, i.e. a tuple of non-negative, locally-integrable functions that also fullfill $f_e^+(\theta) = f_e^-(\theta) = 0$ for all $\theta < 0$.\\
+Now the queue length in time $\theta \in \mathbb{R}_{\geq 0}$ under the dynamic flow $f_e$ is defined as 
+\[ Q_e^f(\theta) = F_e^+(\theta) - F_e^-(\theta + \tau_e) = \int_0^{\theta} f_e^+(\zeta) d\zeta - \int_0^{\theta + \tau_e} f_e^-(\zeta) d\zeta \]
+and we define the expected arrival time when starting in time $\theta \in \mathbb{R}_{\geq 0}$ (under the dynamic flow $f_e$) as 
+\[ A_e^f(\theta) = \theta + \tau_e + \frac{Q_e^f(\theta)}{\nu_e}. \]
+We call the dynamic edge flow $f_e$ a Vickrey flow, if the queue operates at capacitiy and the queue starts empty. We say that the queue operates at capacitiy, if 
+\[ f_e^-(\theta + \tau_e) = \begin{cases} \nu_e, & Q_e(\theta) > 0 \\ \min\{f_e^+(\theta), \nu_e\},& else \end{cases} \]
+holds true for almost all $\theta \in \mathbb{R}_{\geq 0}$ and we say that the queue starts empty, if $Q_e(0) = 0$.
+\end{definition}
+
+In most cases the exponent for $Q_e^f$ and $A_e^f$ will be omitted due to convenience of notation and will only be used, if we want to stress out that we have two different dynamic flows at hand, which therefore also leads to two different queueing behaviours and therefore also to two different expected arrival time functions. Next we want to introduce some characterisations of Vickrey flows that will be useful especially in chapter 5:
+
+\begin{lemma}[Characterisation of Vickrey Flows]
+Let $(f_e^+, f_e^-)$ be a tuple of non-negative, locally integrable functions with $f_e^+(\theta) = f_e^-(\theta) = 0$ for all $\theta < 0$. Then the following statements are equivalent:
+\begin{enumerate}
+	\item{$f_e$ is a Vickrey flow.}
+	\item{We have \[\partial Q_e(\theta) = \begin{cases} f_e^+(\theta) - \nu_e,& Q_e(\theta) > 0 \\ \max\{f_e^+(\theta) - \nu_e
+	, 0\},& else \end{cases}\] for almost all $\theta \in \mathbb{R}_{\geq 0}$ and $Q_e(0) = 0$.}
+	\item{The flow $f_e$ satisfies weak flow conservation, respects capacity on edge $e$ and the cumulative outflow satisfies
+	\[F_e^-(\theta + \tau_e) = F_e^+(\bar{\theta}) + (\theta - \bar{\theta}) \cdot \nu_e \]
+	for all $\theta \in \mathbb{R}_{\geq 0}$, where $\bar{\theta} = \max\{\theta^{\prime} \leq \theta \vert Q_e(\theta^{\prime}
+	) = 0\}$ is the last point in time before $\theta$ where the queue is empty.}
+	\item{The cumulative outflow is determined by the cumulative inflow for all $\theta \in \mathbb{R}_{\geq 0}$ as follows:
+	\[F_e^-(\theta - \tau_e) = \min_{\theta^{\prime} \leq \theta} F_e^+(\theta^{\prime}) + (\theta - \theta^{\prime}) \cdot 
+	\nu_e.\]}
+	\item{The flow $f_e$ satisfies weak flow conservation, respects capacitiy of edge $e$ and for all $\theta \in \mathbb{R}_{\geq 
+	0}$ it satisfies that \[F_e^-(A_e(\theta)) = F_e^+(\theta). \]}
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+For the proof of the above lemma we refer to \cite[Proposition 3.19]{GRA1}.
+\end{proof}
+
+From the above lemma one can also show that for every non-negative, locally integrable function $f_e^+$ with $f_e^+(\theta) = 0$ for all $\theta < 0$ there exists a unique non-negative and locally integrable function $f_e^-$ with $f_e^-(\theta) = 0$ for all $\theta < 0$ such that $(f_e^+, f_e^-)$ is a Vickrey flow. We will not go into more detail about that, it can be read up for example in \emph{TODO: insert citation}. The operator that maps a $f_e^+$ onto a $f_e^-$ such that $(f_e^+, f_e^-)$ is a Vickrey flow is called the Vickrey edge-loading mapping and will be defined next.
+
+\begin{definition}[Vickrey edge-loading mapping]
+Let $e \in E$ be an edge with capacity $\nu_e \in \mathbb{R}_{> 0}$ and travel time $\tau_e \in \mathbb{R}_{\geq 0}$. The Vickrey edge-loading mapping is defined as
+\begin{align}
+	\begin{split}
+		\Phi_e: \{f_e^+ \in L_{loc}^1(\mathbb{R}) \vert supp(f_e^+) \subseteq \mathbb{R}_{\geq 0}, &f_e^+ \geq 0\} \to 
+		L_{loc}^1(\mathbb{R}), \\
+		f_e^+ &\mapsto f_e^- \quad \text{s.th. $(f_e^+, f_e^-)$ is a Vickrey flow}
+	\end{split}
+\end{align}
+\end{definition}
+
+Now when making some restrictions the above defined Vickrey edge-loading mapping can be shown to be continous in the following way:
+
+\begin{lemma}[Continuity of edge-loading]
+For any finite time horizon $T > 0$ the restricted Vickrey edge-loading mapping 
+\begin{align}
+	\begin{split}
+		\Phi_e: \{f_e^+ \in L^2(\mathbb{R}) \vert supp(f_e^+) \subseteq [0, T], f_e^+ \geq 0\} &\to L_{loc}^1(\mathbb{R})\\
+		f_e^+ &\mapsto \Phi_e(f_e^+)
+	\end{split}
+\end{align}
+is weak-weak sequentially continous.
+\end{lemma}
+
+\begin{proof}
+For the proof we refer to {\cite[Corollary 3.46]{GRA1}}.
+\end{proof}
+
+We now defined what a Vickrey flow on a single edge is and in the rest of the section we will define and talk about Vickrey flows in whole networks and the rest of the section is based on \cite{CCL1}.
+
+\begin{definition}[Vickrey Flows in networks]
+Let $\mathcal{N}$ be a dynamic s-t-network and $f = (f_e^+, f_e^-)_{e \in E}$ be an edge based dynamic flow in $\mathcal{N}$. We call $f$ a Vickrey flow, if it is a Vickrey flow on every edge of the network and if it satisfies strong flow conservation at nodes. For every path $p$ in the network we define the arrival time at the end of path $p$ when entering path $p$ at time $\theta \in \mathbb{R}_{\geq 0}$ as 
+\[A_p(\theta) = \begin{cases} \theta,& p = ()\\ A_e(A_{p^{\prime}}(\theta)),& p = p^{\prime}, e \end{cases}, \]
+where $()$ stands for the empty path that contains no edges.
+\end{definition}
+
+\begin{definition}[Corresponding Vickrey Flows to path-based dynamic flows]
+Let $\mathcal{N}$ be a dynamic s-t-network, $f$ a Vickrey flow in $\mathcal{N}$ and $(f_p)_{p \in \mathcal{P}}$  a path-based flow. We say that $f$ is corresponding Vickrey flow to $(f_p)_{p \in \mathcal{P}}$, if for every s-t-path $p \in \mathcal{P}_{s,t}$ there exist locally-integrable functions $f_{p,j}^+, f_{p,j}^-: \mathbb{R} \to \mathbb{R}_{\geq 0}$ for $f \in [\lvert p \rvert]$ such that
+\[ f_{p,j}^+(\theta) = \begin{cases} f_p(\theta),& j = 1 \\ f_{p,j-1}^-(\theta) ,& else \end{cases} \quad \text{and} \quad \int_0^{A_{p[j]}(\theta)} f_{p,j}^-(\zeta) d\zeta = \int_0^{\theta} f_{p,j}^+(\zeta) d\zeta \]
+and
+\[ \sum_{p \in \mathcal{P}: \exists j: p[j] = e} f_{p,j}^+(\theta) = f_e^+(\theta) \quad \text{and} \quad \sum_{p \in \mathcal{P}: \exists j: p[j] = e} f_{p,j}^-(\theta) = f_e^-(\theta) \]
+holds for all $e \in E$, for all $p \in \mathcal{P}$, for all $j \in [\lvert p \rvert]$ and for almost all $\theta \in \mathbb{R}_{\geq 0}$, where we denote by $p[j]$ the $j$-th edge on path $p \in \mathcal{P}$ and by $A_{p[j]}(\theta)$ the arrival time at the end of the $j$-th edge on path $p$ when starting at $\theta \in \mathbb{R}_{\geq 0}$ and travelling along path $p$.
+\end{definition}
+
+One can now show that when making some assumptions for every path-based dynamic flow $(f_p)_{p \in \mathcal{P}}$ there exist a unique corresponding Vickrey flow $(f_e^+, f_e^-)_{e \in E}$. We will not go deeper into that fact, but it can be found in \cite[Lemma 13]{CCL1}. Similiarly as for Vickrey flows on a single edge, where we defined the Vickrey edge loading mapping, one can define the so called Vickrey network loading mapping, which will be done in the next definition.
+
+\begin{definition}[Vickrey network loading mapping]
+Let $\mathcal{N}$ be a dynamic flow network with strictly positive travel times $\tau_e \in \mathbb{R}_{> 0}$ for all $e \in E$. The Vickrey network-loading mapping is then defined as 
+\begin{align}
+	\begin{split}
+		\Phi: \{ (f_p)_{p \in \mathcal{P}} \in &L_{loc}^1(\mathbb{R})^{\mathcal{P}} \vert supp(f_p) \subseteq 
+		\mathbb{R}_{\geq 0}, f_p \geq 0 \} \to L_{loc}^1(\mathbb{R})^{E \times \{+,-\}}, \\
+		(f_p) \mapsto (f_e^+, f_e^-) \quad &\text{s.th. $(f_e^+, f_e^-)$ is the Vickrey flow corresponding to $(f_p)$.}
+	\end{split}
+\end{align}
+\end{definition}
+
+Similiarly as for the Vickrey egde-loading mapping we get weak-weak sequential continuity when making some assumptions as we will see in the next lemma. The proof can be found in \cite[Lemma 18]{CCL1}.
+
+\begin{lemma}[Continuity of the network loading mapping]
+For any finite time horizon $T > 0$ and any finite flow volume bound $M \geq 0$ the restricted Vickrey network loading mapping defined as 
+\begin{align}
+	\begin{split}
+		\Phi^{T, M}:\{(f_p) \in L^2(\mathbb{R})^{\mathcal{P}} \vert supp(f_p) \subseteq [0, T],
+		f_p \geq 0, \sum_{p \in \mathcal{P}}\int_0^T f_p(\zeta) d\zeta \leq M \} &\to L_{loc}^1(\mathbb{R})^{E \times \{+,-\}}			\\
+		(f_p)_{p \in \mathcal{P}} &\mapsto \Phi((f_p))
+	\end{split}
+\end{align}
+is weak-weak sequentially continous.
+\end{lemma}
+
+Now we also have gathered the most important informations about the Vickrey Queueing Model and will in the next chapter proceed to define one of the main concepts of interest in this thesis, namely the full information dynamic equilibrium.
+
+\section{Dynamic Equilibira}
+In this last section of this chapter we want to introduce full information dynamic equilibria and we will talk about a characterization of dynamic equilibria and consider a setting, where dynamic equilibria are guaranteed to exist. This section is based on \cite{ZM1}\\
+Before we can define full-information dynamic equilibria, we need the definition of a network inflow rate function, which will be given below.
+
+\begin{definition}[Network inflow rate function]
+Let  $u: \mathbb{R} \to \mathbb{R}_{\geq 0}$ be a non-negative, locally integrable function. We say that a dynamic flow $f$ has $u$ as its network inflow rate function, if it satisfies
+\[ u(\theta) = \sum_{e \in \delta^+(s)} f_e^+(\theta) - \sum_{e \in \delta^-(s)} f_e^-(\theta) \quad \text{for almost all $\theta \in \mathbb{R}_{\geq 0}$.}\]
+\end{definition}
+
+Loosely speaking the network inflow rate function gives for every point in time the rate in which flow enters the network at the origin from outside. Next we will define the set of feasible path-based flows for a fixed network inflow rate function.
+
+\begin{definition}[Feasible flows]
+Let $\mathcal{N}$ be a dynamic s-t-network and $u \in L_{loc}^1(\mathbb{R})$ be a fixed network inflow rate function with $supp(u) \subseteq \mathbb{R}_{\geq 0}$. We then define the set of all feasible path inflows by 
+\[ \Lambda(u) := \{ (f_p)_{p \in \mathcal{P}} \in L_{loc}^1(\mathbb{R})^{\mathcal{P}} \vert f_p \geq 0, \sum_{p \in \mathcal{P}} f_p(\theta) = u(\theta) \quad \text{for almost all $\theta \in \mathbb{R}_{\geq 0}$}\}.\]
+\end{definition}
+
+The last definition we need is the definition of a path-delay operator, which will come next.
+
+\begin{definition}[Path-delay operator]
+Let $\mathcal{N}$ be a dynamic s-t-network and $u \in L_{loc}^1(\mathbb{R})$ a non-negative and fixed network inflow rate function and $\Lambda(u)$ the set of all feasible path inflows. Then a path delay operator is an operator $\Psi: \Lambda(u) \to C(\mathbb{R})^{\mathcal{P}}$ mapping path inflow vectors $h \in \Lambda(u)$ to a vector of path cost functions $\Psi_p(h) :\mathbb{R} \to \mathbb{R}$.
+\end{definition}
+
+Now that we have all the definitions that we need to define a dynamic equilibrium at hand, we will define next what an dynamic equilibrium is.
+
+\begin{definition}[Path-based formulation for dynamic equilibria]
+Let $\mathcal{N}$ be a dynamic s-t-network, $u$ a network inflow rate function, $\Lambda(u)$ the set of feasible flows and $\Psi: \Lambda(u) \to C(\mathbb{R})^{\mathcal{P}}$ a path delay operator. Then $h \in \Lambda(u)$ is a (full - information) dynamic equilibrium w.r.t. $\Psi$, if it satisfies
+\[ h_p(\theta) > 0 \Rightarrow \Psi_p(h)(\theta) \leq \Psi_q(h)(\theta) \]
+for all $p, q \in \mathcal{P}$ and for almost all $\theta \in \mathbb{R}_{\geq 0}$.
+\end{definition}
+
+As a small remark we want to note that in the definition we explicitly talk about full information, since in contrast to that one can also assume that flow decides which edge it traverses based on current information. The equilibria that arise in that situation are then called instantaneous dynamic equilibria, which are for example well studied in \cite{GRA1}. The next lemma shows us that dynamic equilibria are a solution to a certain variational inequality.
+
+\begin{lemma}[Characterisation via Variational Inequality]\label{lemma: CharacterisationViaVI}
+Let $\mathcal{N}$ be a dynamic s-t-network, $u$ a network inflow rate function and $\Psi: \Lambda(u) \to C(\mathbb{R})^{\mathcal{P}}$ a path delay operator. Then a path-based dynamic flow $h \in \Lambda(u)$ is a dynamic equilibrium w.r.t. $\Psi$ if and only if it is a solution to the following variational inequality:
+\begin{equation}\tag{VI}\label{eq: VI}
+	\langle \Psi(h), h^{\prime} - h \rangle \geq 0 \quad \text{for all $h^{\prime} \in \Lambda(u)$}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+$\Rightarrow$: Let $f \in \Lambda(u)$ be a dynamic equilibrium w.r.t. $\Psi$ and let $g \in \Lambda(u)$ be another path-based dynamic flow. Then we define the function 
+\[\Psi_{\min}: \mathbb{R} \to \mathbb{R}, \theta \mapsto \min\{\Psi_p(f)(\theta) \vert p \in \mathcal{P}\},\] 
+which is well-defined, since the minimum is attained for every $\theta \in \mathbb{R}$, since the set of s-t-paths $\mathcal{P}$ is finite. We also define for every s-t-path $p \in \mathcal{P}$ the set $N_p := \{ \theta \in [0, T] \vert g_p(\theta) \geq f_p(\theta) \}$. We then get the following:
+\begin{align*}
+	\begin{split}
+		&\langle \Psi(f), g - f \rangle = \sum_{p \in \mathcal{P}} \int_0^T \Psi_p(f)(\zeta)(g_p(\zeta) - f_p(\zeta)) d\zeta =\\
+		&= \sum_{p \in \mathcal{P}} \Bigl(\int_{N_p} \Psi_p(f)(\zeta)(g_p(\zeta) - f_p(\zeta)) d\zeta + 
+		\int_{[0, T]\setminus N_p} \Psi_p(f)(\zeta)(g_p(\zeta) - f_p(\zeta)) d\zeta \Bigr) \geq \\
+		&\geq \sum_{p \in \mathcal{P}} \int_0^T \Psi_{\min}(\zeta)(g_p(\zeta) - f_p(\zeta)) d\zeta = \int_0^T \Psi_{\min}(\zeta)
+		\Bigl(\sum_{p \in \mathcal{P}} g_p(\zeta) - \sum_{p \in \mathcal{P}} f_p(\zeta)\Bigr) d\zeta =\\
+		&= 0,
+	\end{split}
+\end{align*}
+where the inequality follows by $\Psi_p(f) \geq \Psi_{\min}$ for all $p \in \mathcal{P}$ and $g_p(\theta) - f_p(\theta) \geq 0$ for all $\theta \in N_p$ by definition of $N_p$ in the first integral and by $f_p(\theta) > g_p(\theta) \geq 0$ for $\theta \in [0, T]\setminus N_p$ and $\Psi_p(f)(\theta) = \Psi_{\min}(\theta)$ for $\theta \in [0, T]\setminus N_p$ by the assumption that $f$ is an dynamic equilibrium in the second integral. The last step follows by $f, g \in \Lambda(u)$ and hence $\sum_{p \in \mathcal{P}} g_p(\theta) - \sum_{p \in \mathcal{P}} f_p(\theta) = u(\theta) - u(\theta) = 0$ for all $\theta \in [0, T]$.\\
+$\Leftarrow$: Now for the reverse direction let $f \in \Lambda(u)$ be a solution to \eqref{eq: VI} and $p^{\prime}, p^* \in \mathcal{P}$ be two s-t-paths. We define $M := \{ \theta \in [0, T] \vert f_{p^{\prime}}(\theta) > 0 \quad \text{and} \quad \Psi_{p^{\prime}}(f)(\theta) > \Psi_{p^*}(f)(\theta) \}$ as the set of times, where we have inflow into path $p^{\prime}$ and $p^*$ is a shorter path then $p^{\prime}$. Now to show that $f$ is a dynamic equilibrium w.r.t $\Psi$ we have to show that the set $M$ has measure zero. To do that we define a new flow $g \in \Lambda(u)$ by 
+\[ g_p(\theta) = \begin{cases} 0,& \theta \in M, p = p^{\prime} \\ f_{p^*}(\theta) + f_{p^{\prime}}(\theta),& \theta \in M, p = p^* \\ f_p(\theta),& \text{else} \end{cases}, \]
+i.e. for $g$ we shift all the inflow into path $p^{\prime}$ during the times in $M$ to the path $p^*$. We can now calculate:
+\begin{align*}
+	\begin{split}
+		0 &\leq \langle \Psi(f), g - f \rangle = \sum_{p \in \mathcal{P}} \int_0^T \Psi_p(f)(\zeta)(g_p(\zeta) - f_p(\zeta)) d\zeta \\
+		&= \int_M \Psi_{p^*}(f)(\zeta)(f_{p^*}(\zeta) + f_{p^{\prime}}(\zeta) - f_{p^*}(\zeta)) d\zeta + \int_M 
+		\Psi_{p^{\prime}}(f)(\zeta)(0 - f_{p^{\prime}}(\zeta)) d\zeta =\\
+		&= \int_M (\Psi_{p^*}(f)(\zeta) - \Psi_{p^{\prime}}(f)(\zeta))f_{p^{\prime}}(\zeta) d\zeta, 
+	\end{split}
+\end{align*}
+where $(\Psi_{p^*}(f)(\zeta) - \Psi_{p^{\prime}}(f)(\zeta)) < 0$ and $f_{p^{\prime}}(\zeta) > 0$ for $\zeta \in M$ by definition of $M$ and hence $(\Psi_{p^*}(f)(\zeta) - \Psi_{p^{\prime}}(f)(\zeta))f_{p^{\prime}}(\zeta) < 0$ for $\zeta \in M$, which directly implies that $M$ is a set of measure zero, since otherwise the integral in the last line would be strictly negative in contrast to the assumption.
+\end{proof}
+Before we can look at the theorem that gives us that a dynamic equilibrium is guaranteed to exist under some assumptions we need the following auxiliary lemma on the existence of solutions of variational inequalites, where for the proof we refer to \cite{JL}.
+
+\newpage
+
+\begin{lemma}[Solution Varational Inequality]\label{lemma: SolutionVI}
+Let $C \subseteq L^2([a, b])^m$ be a non-empty, closed, convex and bounded subset and $\mathcal{A}: C \to L^2([a, b])^m$ be a weak-strong sequentially mapping. Then there exists a solution $f \in C$ to the following variational inequality:
+\[\sum_{i = 1}^m \int_a^b \mathcal{A}(\zeta)(g(\zeta) - f(\zeta)) d\zeta \geq \quad \text{for all $g \in C$}.\]
+\end{lemma}
+
+Now we can prove the following theorem about the existence of dynamic equilibria:
+
+\begin{theorem}[Existence of dynamic equilibria general case]\label{thm: ExistenceGeneral}
+Let $\mathcal{N}$ be a dynamic s-t-network, wherein the destination $t$ is reachable from the origin $s$, $u \in L^p(\mathbb{R})$ a network inflow rate function with bounded support and $p, q > 1$ with $\frac{1}{p} + \frac{1}{q} = 1$. Then for any weak-strong sequentially continous path delay operator $\Psi: \Lambda(u) \to (L^q(\mathbb{R}))^{\mathcal{P}}$ there exists a dynamic equilibrium with respect to $\Psi$.
+\end{theorem}
+
+\begin{proof}
+For the proof we now use the lemmata \ref{lemma: CharacterisationViaVI} and \ref{lemma: SolutionVI}. By Lemma \ref{lemma: CharacterisationViaVI}  we know that $h \in Lambda(u)$ is a dynamic equilibrium w.r.t $\Psi$ if and only if it is a solution to \eqref{eq: VI}. With Lemma \ref{lemma: SolutionVI}. we now show that such a solution exists. Here we use $m = \lvert \mathcal{P} \rvert, C = \Lambda(u)$ and $\mathcal{A} = \Psi$ and by assumption $\Psi$ is weak-strong sequentially continous. The non-emptiness of $\Lambda(u)$ we get from the assumption that $t$ is reachable from $s$ and hence there exists at least one s-t-path and therefore also at least one $h \in \Lambda(u)$. $\Lambda(u)$ is also closed and convex, since the linear inequality and the linear equation defining $\Lambda(u)$ stay valid when considering the limit of a weakly convergent sequence in $\Lambda(u)$ or when taking a convex combination of two elements in $\Lambda(u)$. Lastely, $\Lambda(u)$ is bounded, since $u$ is bounded and integrable by assumption. Now by Lemma \ref{lemma: SolutionVI}. we get that there exists a solution to \eqref{eq: VI}, which is by Lemma \ref{lemma: CharacterisationViaVI} equivalent to the existence of a dynamic equilibrium w.r.t $\Psi$.
+\end{proof}
+
+\begin{example}[Vickrey path-delay]\label{exp: VickreyPathDelay}
+One natural choice for the path-delay operator is to build $\Psi$ in such a way that it maps path inflow rates $h \in \Lambda(u)$ to actual travel times with respect to a certain network-loading procedure. For example for the Vickrey network-loading one can define the path-delay operator as 
+\[ \Psi: \Lambda(u) \to (C(\mathbb{R}))^{\mathcal{P}}, h \mapsto (\Psi_p(h))_{p \in \mathcal{P}} \quad \text{with $\Psi_p(h)(\theta) = A_p(\theta) - \theta$} \]
+\end{example}
+
+The last content in this chapter is a specification of Theorem \ref{thm: ExistenceGeneral} regarding the Vickrey network-loading and the path-delay operator defined in Example \ref{exp: VickreyPathDelay}.
+
+\begin{corollary}[Existence of dynamic equilibria Vickrey Case]
+Let $\mathcal{N}$ be a dynamic flow network with strictly positive travel times for all $e \in E$, wherein the destination $t$ is reachable from the origin $s$ and let $u \in L^2(\mathbb{R})$ be a network inflow rate function with bounded support. Then there exists a dynamic equilibrium with respect to the Vickrey path-delay operator.
+\end{corollary}
+
+Now that we collected some important background on dynamic flows, Vickrey Queueing and dynamic equilibria, we will also collect some basics about learning theory and learning dynamics in the next chapter. There we will also formally describe the model we introduced informally already in the introduction and we will talk about the discretization we make to be able run experiments.
+
+
+
+
+
+
+\chapter{Our model, Learning theory}
+\section{The model}
+\emph{TODO: think about, if we maybe change section 1 and 2 in this chapter. AND if it is even necessary to mention dual averaging at all (but maybe one could also do some experiments with dual averaging, lets see)}
+We now will introduce the formal model behind the idea that agents choose an origin-destination path and experience therefore costs in the sense of spending time on traversing that path. For that we are given a time horizon $T \in \mathbb{R}_{>0}$ such that we consider the time interval $[0, T]$, which could be interpreted to mimic say a whole day. Also we are given a constant network inflow rate $r \in \mathbb{R}_{>0}$ such that $[0, r]$ stands for the amount of agents that start at the origin at every point in time. We then get the whole population of agents by $[0, r] \times [0,T]$. \\
+Every agent needs to choose a path, so the set of strategies is just the set of all origin-destination-paths $\mathcal{P} := \{p \vert p = sv_1,v_1v_2, \dots, v_{n-1}t \text{  for  } v_1, v_2, \dots, v_{n-1} \in V\}$. \\
+The strategic behaviour of the agents is then defined as a measurable function $\mathcal{X}: [0, r] \times [0, T] \to \mathcal{P}$, where $\mathcal{X}(i, \theta)$ then is the strategy of agent $i$ at time $\theta$. Given a path $p \in \mathcal{P}$ we set $(\mathcal{X}^{-1}(p))(\theta) := \{ i \in [0, r] \vert \mathcal{X}(i, \theta) = p \}$ to be the set of agents that choose path $p$ at time $\theta \in [0, T]$. We then define the state of population to be $\mu \circ \mathcal{X}^{-1}: \mathcal{P} \times [0, T] \to \mathbb{R}_{\geq 0 }$ that gives for every $p \in \mathcal{P}$ and every $\theta \in [0, T]$ the Lebesgue measure of the set of agents, which choose path $p \in \mathcal{P}$ at time $\theta \in [0, T]$. Hence the state of the population that we now denote by $h$ is such that 
+\[h \in \Lambda(r) = \{ (h_p) \in (L_2([0,T]))^{\lvert \mathcal{P} \rvert} \vert h_p \geq 0 \forall p \in \mathcal{P}, \sum_{p \in \mathcal{P}} h_p(\theta) = r \forall \theta \in [0, T]\} \]
+For every $p \in \mathcal{P}$ we define a cost operator to be $\Psi_p: \Lambda(r) \to L_2([0, T]), (h_p)_{p \in \mathcal{P}} \mapsto \Psi_p(h)$, where $\Psi_p(h): \mathbb{R}_{\geq 0} \to \mathbb{R}_{\geq 0}, \theta \mapsto \Psi_p(h)(\theta)$. So informally the cost operator for every path maps a whole state of the population to a function that gives for every point in the interval $[0, T]$ the actual travel time experienced when choosing a certain path at a specific time under some specific flow profile. We also write $\Psi(h) := (\Psi_p(h))_{p \in \mathcal{P}}$ for the cost vector for some $h \in \Lambda(r)$. \\
+Now we want to define what it means for some $h^* \in \Lambda(r)$ to be an equilibrium in the game described above. Since agents want to minimize their travel times we consider cost minimization instead of utility maximization as it is often considered in the learning literature. A state of population $h^* \in \Lambda(r)$ now is an equilibrium, if at every point in time every agent that starts at that specific time is taking a at that moment shortest path and is hence satisfied with his choice, i.e. if 
+\[ \Psi_p(h^*)(\theta) \geq \Psi_q(h^*)(\theta) \Rightarrow h_p^*(\theta) = 0  \text{  for all  } p, q \in \mathcal{P} \text{  and for all  } \theta \in [0, T] \]
+Now this requirement for $h^* \in \Lambda(r)$ to be an equilibrium is equivalent to $h^*$ fullfilling the following variational inequality: 
+\[ \langle \Psi(h^*) , h - h^* \rangle \geq 0 \text{  for all  } h \in \Lambda(r), \]
+where $\langle \cdot, \cdot \rangle$ denotes the $L_2$ scalar product. \\
+Hence we can also observe that equilibria in the game described above are exactly also dynamic equilibria in the sense of the definition in chapter 2 section 3.
+
+\section{Learning theory}
+In this second section of this chapter I want to introduce some basics about learning theory, i.e. the two learning dynamics fictitious play and dual-averaging and the regularized variants of fictitious play and maybe also of dual averaging. For this I also have to introduce the notation of the following objects: regularizer functions, choice maps and best-response, but we will not dive into too much detail here. We will also differentiate between discrete-time dynamics and continous-time dynamics, because it coul be important that the continous-time fictitious play is a dynamical system/differential inclusion, because that is what many papers on learning deal with. We also need the notation of regularized equilibria, because those we mostly get when we run regularized fictitious play.\\
+Rough plan for this section:
+\begin{enumerate}
+	\item{If necessary(especially when section 1 and 2 are switched) introduce the general setting}
+	\item{Introduce the fictitious play dynamics in discrete-times.}
+	\item{Define regularizer and choice maps}
+	\item{Introduce dual averaging in discrete-times.}
+	\item{Define regularized equilibria.}
+	\item{Introduce regularized fictitious play and regularized dual averaging in discrete-times.}
+	\item{Introduce fictitious play in continous-times and also its regularized variant}
+	\item{UNSURE: introduce dual averaging in continous-times.}
+\end{enumerate}
+
+\section{Discretization}
+In this short third section of this chapter we will explain, how we modified the best-response problem that arises in fictitious play and its regularized variants in our experiments. The basic idea is to bring the dimensionality of the best-response problem from infinite down to a least finite. We do that by not looking for the best-response in full generality by searching all integrable functions that are feasible w.r.t. the given network inflow rate, but we only look among the piecewise constant functions that can be described by a finite set of values and a finite set of break points. One way is to fix a constant $\delta \in \mathbb{R}_{\geq 0}$ and divide the interval $[0, T]$ into smaller intervals of length $\delta$ and then assume that the path inflows are constant on each of those intervals. One can also give a set of intervals $\mathcal{J}$, where then the path inflows should be constant on each of the intervals in $\mathcal{J}$.
+
+
+
+
+
+\chapter{Two special cases of networks}
+In this chapter I want to talk about two special cases of networks, where I now assume we get monotonicity. This monotonicity for this two special cases is proven by Mounce for the bottleneck queueing model, but the proofs should work also for the Vickrey queueing model, since the only differences seem to be that for the bottleneck queueing model the queueing takes place vertically at the exit of the link whereas the queueing for the Vickrey queueing model takes place vertically at the start of the edge and in the bottleneck queueing model we allow variable capacities of the edges whereas in the Vickrey queueing model the capacities of the edges are most certainly always constant over time. \\
+\section{First case: only one congested edge per path}
+The first special case of networks we get is the case, where on every path there is only one congested edge. A obvious subcase of this case are the parallel link networks. I am quite convinced that one can show the monotonicity that we get for the bottleneck queueing model and was proven by Smith and Ghali also for the Vickrey Queueing Model.
+\section{Second case: only one path per congested edge}
+The second special case of networks we get is the case, where we have only one path per congested edge. Monotonicity here was proven by Mounce for the Bottleneck Queueing Model and will most probably also hold for the Vickrey Queueing model.
+The aim of this section is to prove monotonicity of the variational inequalitiy, i.e. monotonicity of the path delay operator with respect to the path flow vector for the case, where we only have one path going thorugh each of the congested edges. This of course depends heavily on the flow we consider. Hence in the long run we want to show that in the above described case we have the inequality below:
+\[ \langle \Psi(h^{\prime}) - \Psi(h), h^{\prime} - h \rangle := \sum_{p \in \mathcal{P}} \int_0^T (\Psi_p(h^{\prime})(\zeta) - \Psi_p(h)(\zeta))(h_p^{\prime}(\zeta) - h_p(\zeta)) d\zeta \geq 0 \quad \text{for all   } h, h^{\prime} \in \Lambda(u) \]
+In the following I want to explicitly assume that the network inflow rate function $u$ is non-negative, compactly supported and essentially bounded. Our usual assumption is that $u$ is in say $L_2$, which should implicitly include that $u$ is bounded somehow. But for now and what follows we need that $u$ is essentially bounded.\\
+Now we first want to notice and briefly show two integral equations that both are true for Vickrey flows:
+At first we want to consider the integral equation 
+\[ \int_0^{\theta} f_e^+(\zeta) d\zeta = \int_0^{\theta + \tau_i + \frac{Q_e^f(\theta)}{\nu_e}} f_e^-(\zeta) d\zeta. \]
+This should basically already follow from the Lemma that can be found for example in ``Dynamic Network Flows'' by Lukas Graf as Lemma 4.1.1, at least for edge flows.\\
+The second integral equation we consider is 
+\[ \int_{\theta_0}^{\theta} f_e^+(\zeta) d\zeta = \int_{\theta_0}^{\theta + \frac{Q_e^f(\theta)}{\nu_e}} \nu_e d\zeta, \]
+which should hold true, if $\theta \in [\theta_0, \theta_1]$, where $[\theta_0, \theta_1]$ is a so called congested period, hence we have that $Q_e^f(\theta) > 0$ for all $\theta \in [\theta_0, \theta_1]$.
+If now $[\theta_0, \theta_1]$ is a congested period, then for $\theta \in [\theta_0, \theta_1]$ we have: 
+\begin{align}
+	\begin{split}
+		\int_{\theta_0}^{\theta + \frac{Q_e^f(\theta)}{\nu_e}} \nu_e &= [ \nu_e \cdot \zeta ]_{\zeta = \theta_0}^{\theta + 
+		\frac{Q_e^f(\theta)}{\nu_e}} = \nu_e \cdot (\theta + \frac{Q_e^f(\theta)}{\nu_e} - \theta_0) =\\
+		&= \nu_e \cdot (\theta - \theta_0) + Q_e(\theta) = \nu_e \cdot (\theta - \theta_0) + F_e^+(\theta) - F_e^-(\theta + 
+		\tau_e) =\\
+		&= \nu_e \cdot (\theta - \theta_0) + \int_0^{\theta_0} f_e^+(\zeta) d\zeta + \int_{\theta_0}^{\theta} f_e^+(\zeta)
+		d\zeta - F_e^-(\theta + \tau_e) =\\
+		&= \int_{\theta_0}^{\theta} f_e^+(\zeta) d\zeta + (F_e^+(\theta_0) + \nu_e \cdot (\theta - \theta_0) - F_e^-(\theta + 
+		\tau_e) = \int_{\theta_0}^{\theta} f_e^+(\zeta) d\zeta,
+	\end{split}
+\end{align}
+where the last equation follows from the facts that $\theta_0 = \max\{\hat{\theta} \leq \theta \vert Q_e(\hat{\theta}) = 0\}$ and 
+$F_e^-(\theta + \tau_e) = F_e^+(\hat{\theta}) + \nu_e \cdot (\theta - \hat{\theta})$ for all $\theta \in \mathbb{R}_+$ and for 
+$\hat{\theta} = \max\{\theta^{\prime} \leq \theta \vert Q_e(\theta^{\prime}) = 0\}$ (see for example Lemma 4.1.1 in the dynamic network flow script).\\
+Now to prove the statement that path delay is monotone with respect to the path inflow or alternatively that the variational inequality is monotone in the case of having one path per congested edge we take the following steps (maybe we can even erase some of them later on): 
+\begin{enumerate}
+	\item{We show that the Vickrey edge delay/cost functions form an equicontinous family of functions on the feasible set and that 
+	the edge delay functions are Lipschitz continous, where the Lipschitz constant is independent of the flow.}
+	\item{We present a way of norming path inflow and edge inflow vectors of functions.}
+	\item{We show that the Vickrey edge delay function is a Lipschitz continous function of edge inflow.}
+	\item{We show that the path delay operator is a Lipschitz continous function of the path inflow, if there is only one congested
+	edge per path.}
+	\item{We show that the path delay operator is monotone w.r.t. the path inflow vector, if there is only one path per congested 
+	edge.}
+	\item{Then we would need the step of referring maybe to a paper (unknown yet) that from the above monotonicity in the case 
+	of one path per congested edge we also get convergence of learning dynamics in that case.}
+\end{enumerate}
+Now we want to begin with the first step: the Vickrey delay on edge $e \in E$ under the dynamic flow $f$ is defined as $d_e^f(\theta) = \frac{Q_e^f(\theta)}{\nu_e}$ and the cost is defined as $\psi_e(\theta) = \tau_e + \frac{Q_e^f(\theta)}{\nu_e}$. At first we notice that given some $h \in \Lambda(u)$ we know that there is some constant $M \geq 0$ such that $h_p(\theta) \leq M$ for all $p \in \mathcal{P}$ and almost all $\theta \in \mathbb{R}_{\geq 0}$, since we assumed that the network inflow rate function $u$ is non-negative and essentially bounded. Also there is only a finite amount of paths in the network, at least if the network itself is finite (what we will also assume), hence we can denote $N := \lvert \mathcal{P} \rvert \in \mathbb{N}$, where $N = 0$ could happen, if there just is no origin-destination path in the network. We denote by $\nu_{\max} := \max\{ \nu_e \vert e \in E \}$ the maximal capacity of an edge in the network. Now following from the above, we know for the edge-flow $f$ that is the corresponding Vickrey flow to the path-based flow $h$ that $f_e^+(\theta) \leq N \cdot \max\{M, \nu_{\max}\}$ for all $e \in E$ and almost all $\theta \in \mathbb{R}_{\geq 0}$. \\
+Now let $\theta_1, \theta_2 \in \mathbb{R}_{\geq 0}$ and w.l.o.g. we have $\theta_2 > \theta_1$ and get:
+\begin{align}
+	\begin{split}
+		\int_{\theta_1}^{\theta_2} f_e^+(\zeta) d\zeta &= \int_{\theta_0}^{\theta_2} f_e^+(\zeta) d\zeta - 
+		\int_{\theta_0}^{\theta_1} f_e^+(\zeta) d\zeta \\
+		&= \nu_e \cdot (\theta_2 + d_e^f(\theta_2) - \theta_0) - \nu_e \cdot (\theta_1 + d_e^f(\theta_1) - \theta_0)  =\\
+		&= \nu_e \cdot (\theta_2 + d_e^f(\theta_2) - \theta_1 - d_e^f(\theta_1)) \geq\\
+		&\geq \nu_{\min} \cdot (\theta_2 + d_e^f(\theta_2) - \theta_1 - d_e^f(\theta_1)),
+	\end{split}
+\end{align}
+where the inequality holds true, since $\theta_2 + d_e^f(\theta_2) \geq \theta_1 + d_e^f(\theta_1)$, since $\theta_1 < \theta_2$ and $d_e^f$ can by definition only decrease at a rate of $1$.\\
+Now we have. 
+\begin{align}
+	\begin{split}
+		&\int_{\theta_1}^{\theta_2} f_e^+(\zeta) d\zeta \geq \nu_{\min} \cdot (\theta_2 + d_e^f(\theta_2) - \theta_1 
+		- d_e^f(\theta_1))\\
+		&\Leftrightarrow \frac{\int_{\theta_1}^{\theta_2} f_e^+(\zeta) d\zeta}{\nu_{\min}} \geq \theta_2 + d_e^f(\theta_2) - 				\theta_1 - d_e^f(\theta_1)\\
+		&\Leftrightarrow \frac{\int_{\theta_1}^{\theta_2} f_e^+(\zeta) d\zeta}{\nu_{\min}} + (\theta_1 - \theta_2) \geq 
+		d_e^f(\theta_2) - d_e^f(\theta_1)\\
+		&\Rightarrow \lvert \frac{\int_{\theta_1}^{\theta_2} f_e^+(\zeta) d\zeta}{\nu_{\min}} \rvert + \lvert \theta_1 - \theta_2 
+		\rvert = \lvert \frac{\int_{\theta_1}^{\theta_2} f_e^+(\zeta) d\zeta}{\nu_{\min}} \rvert + \lvert \theta_2 - \theta_1 
+		\rvert \geq \\
+		&\geq \lvert \frac{\int_{\theta_1}^{\theta_2} f_e^+(\zeta) d\zeta}{\nu_{\min}} + (\theta_1 - \theta_2) \rvert \geq
+		\lvert d_e^f(\theta_2) - d_e^f(\theta_1) \rvert \\
+		&\Rightarrow (\frac{N \cdot \max\{M, \nu_{\max}\}}{\nu_{\min}} + 1) \cdot \lvert \theta_2 - \theta_1 \rvert \geq 
+		\lvert d_e^f(\theta_2) - d_e^f(\theta_1) \rvert,
+	\end{split}
+\end{align}
+where the last implication follows from our obsveration that $f_e^+(\theta) \leq N \cdot \max\{M, \nu_{\max}\}$ holds true for all $e \in E$ and almost all $\theta \in \mathbb{R}_{\geq 0}$. Since we have that $\frac{N \cdot \max\{M, \nu_{\max}\}}{\nu_{\min}} + 1 > 0$, it follows that the Vickrey delay $d_e^f$ is Lipschitz continous w.r.t. time and the Lipschitz constant above, which is indeed independent of the flow itself. I also think that since the Lipschitz constant is also independent of the edge, we can also call the Vickrey edge delays a equicontinous family of functions on the feasible set.\\
+Now one can denote by $\psi: (L_2([0,T]))^{\lvert E \rvert} \mapsto (C([0,T]))^{\lvert E \rvert}$ an edge delay operator that maps an dynamic edge flow onto the vector of edge cost functions defined as $\psi_e(f)(\theta) = \theta + \tau_e + \frac{Q_e^f(\theta)}{\nu_e}$ for all $e \in E$ and $\theta \in \mathbb{R}_{\geq 0}$. For the image space of $\psi$ we choose the following norm:
+\[ \lVert \psi(f) \rVert = \sup_{e \in E} \sup_{\theta \in [0,T]} \lvert \psi_e(f)(\theta) \rvert \]
+for some $f \in (L_2([0,T]))^{\lvert E \rvert}$ and just for clarity the metric that is induced by the above norm is then defined as
+\[ \lVert \psi(f) - \psi(g) \rVert = \sup_{e \in E} \sup_{\theta \in [0, T]} \lvert \psi_e(f)(\theta) - \psi_e(g)(\theta) \rvert \]
+for some $f, g \in (L_2([0,T]))^{\lvert E \rvert}$. \\
+Now since the edge cost functions are continous, we also know that the path cost functions are also continous, since the path cost is defined as composition of edge cost functions (later: see chapter 3 and so on) and the composition of continous functions is itself continous again. Hence we can consider the norm for $\Psi(h) \in (C([0, T]))^{\lvert \mathcal{P} \rvert}$ as
+\[ \lVert \Psi(h) \rVert = \sup_{p \in \mathcal{P}} \sup_{\theta \in [0, T]} \lvert \Psi_p(h)(\theta) \rvert \]
+or similiarly we also have the induced metric defined as 
+\[ \lVert \Psi(h) - \Psi(h^{\prime}) \rVert = \sup_{p \in \mathcal{P}} \sup_{\theta \in [0, T]} \lvert \Psi_p(h)(\theta) - \Psi_p(h^{\prime})(\theta) \rvert \]
+for $h, h^{\prime} \in \Lambda(u)$, where $\Psi: (L_2([0, T]))^{\lvert \mathcal{P} \rvert} \mapsto (C([0, T]))^{\lvert \mathcal{P} \rvert}$ again refers to the path delay operator that was introduced in something like chapter 3 section 3.\\
+Now as some scetch for the beginning (if need be we can probably make this part here more deep and specific): roughly speaking we know that the space of cumulative path inflows and also the space of cumulative edge inflows is compact, since one can show that the space of path inflows is weakly compact and also the space of edge inflows is weakly compact and also one can show that integrating a functions is a weak-strong sequentially continous mapping and hence it should also map compact sets onto compact sets (rough idea). \\
+Now we are done with step 1 and step 2 and are now going for step 3, where we want to show that the Vickrey edge delay is a Lipschitz continous function of the edge inflow: \\
+For that we at first observe for some edge flow $f$, some $e \in E$ and some $\theta \in \mathbb{R}_{\geq 0}$ and $\hat{\theta} = \max\{\theta^{\prime} \leq \theta \vert Q_e(\theta^{\prime}) = 0\}$ that
+\begin{align}
+	\begin{split}
+		Q_e(\theta) &= F_e^+(\theta) - F_e^-(\theta + \tau_e) = F_e^+(\theta) - (F_e^+(\hat(\theta)) + (\theta - \hat{\theta})
+		 \cdot \nu_e = \\
+		 &= \int_0^{\theta} f_e^+(\zeta) d\zeta - \int_0^{\hat{\theta}} f_e^+(\zeta) d\zeta - \int_{\hat{\theta}}^{\theta} \nu_e
+		 d\zeta = \\
+		 &= \int_{\hat{\theta}}^{\theta} f_e^+(\zeta) d\zeta - \int_{\hat{\theta}}^{\theta} \nu_e d\zeta = 
+		 \int_{\hat{\theta}}^{\theta} f_e^+(\zeta) - \nu_e d\zeta
+	\end{split}
+\end{align}
+Now we let $f, g \in (L_2([0,T]))^{\lvert E \rvert}$ be two edge flows and for some $\theta \in \mathbb{R}_{\geq 0}$ let us denote by $\hat{\theta}_f = \max\{\theta^{\prime} \leq \theta \vert Q_e^f(\theta^{\prime}) = 0\}$ the last time before $\theta$, where the queue on edge $e$ was empty under the flow $f$, and $\hat{\theta}_g$ is defined analogously.\\
+W.l.o.g. we assume that $\hat{\theta}_f \leq \hat{\theta}_g$ and let $\theta^{\prime} \in  [\hat{\theta}_f, \hat{\theta}_g]$:
+\[\int_{\hat{\theta}_f}^{\theta^{\prime}} f_e^+(\zeta) d\zeta \geq \int_{\hat{\theta}_f}^{\theta^{\prime}} \nu_e d\zeta. \]
+TODO: here is something not quite right or at least not quite consistent.\\
+We also get:
+\begin{align}
+	\begin{split}
+		\lVert f_e^+ - g_e^+ \rVert &= \int_{\mathbb{R}} \lvert f_e^+(\zeta) - g_e^+(\zeta) d\zeta \rvert =\\
+		&= \int_0^T \lvert f_e^+(\zeta) - g_e^+(\zeta) \rvert d\zeta \geq \int_{\hat{\theta}_f}^{\hat{\theta}_g} \lvert f_e^+				(\zeta) - g_e^+(\zeta) \rvert d\zeta \geq\\
+		&\geq  \int_{\hat{\theta}_f}^{\hat{\theta}_g} f_e^+(\zeta) - g_e^+(\zeta) d\zeta
+	\end{split}
+\end{align}
+From the above two inequalities we get that
+\[\int_{\hat{\theta}_f}^{\hat{\theta}_g} g_e^+(\zeta) d\zeta \geq \int_{\hat{\theta}_f}^{\hat{\theta}_g} \nu_e d\zeta - \lVert f_e^+ - g_e^+ \rVert. \]
+Since we have that $Q_e^g(\hat{\theta}_g) = 0$ we get that $\int_{\theta^{\prime}}^{\hat{\theta}_g} g_e^+(\zeta) d\zeta \leq \int_{\theta^{\prime}}^{\hat{\theta}_g} \nu_e d\zeta$ for all $\theta^{\prime} \in [0, \hat{\theta}_g]$ and especially for $\theta^{\prime} = \hat{\theta}_f$. Hence we get 
+\begin{align}
+	\begin{split}
+		\lvert Q_e^f(\theta) - Q_e^g(\theta) \rvert &= \lvert \int_{\hat{\theta}_f}^{\theta} f_e^+(\zeta) - \nu_e d\zeta - 
+		\int_{\hat{\theta}_g}^{\theta} g_e^+(\zeta) - \nu_e d\zeta \rvert =\\
+		&= \lvert \int_{\hat{\theta}_f}^{\theta} f_e^+(\zeta) d\zeta - \int_{\hat{\theta}_f}^{\hat{\theta}_g} \nu_e d\zeta
+		- \int_{\hat{\theta}_f}^{\theta} g_e^+(\zeta) d\zeta + \int_{\hat{\theta}_f}^{\hat{\theta}_g} g_e^+(\zeta) d\zeta 					\leq\\
+		&\leq \lvert \int_{\hat{\theta}_f}^{\theta} f_e^+(\zeta) - g_e^+(\zeta) d\zeta \rvert + \lvert 
+		\int_{\hat{\theta}_f}^{\hat{\theta}_g} g_e^+(\zeta) - \nu_e d\zeta \rvert \leq 2 \cdot \lVert f_e^+ - g_e^+ \rVert,
+	\end{split}
+\end{align}
+where I maybe should do a little more explanation for the last inequality (I am also not really sure about the $2$, but since we got a $1$ in the inequality above instead of $2$ it should also be a $2$ instead of $4$). From this inequality we get that 
+\begin{align}
+	\begin{split}
+		\lvert \frac{Q_e^f(\theta)}{\nu_e} - \frac{Q_e^g(\theta)}{\nu_e} \rvert &= \frac{\lvert Q_e^f(\theta) - Q_e^g(\theta) 
+		\rvert}{\nu_e} \leq\\
+		&\leq \frac{\lvert Q_e^f(\theta) - Q_e^g(\theta) \rvert}{\nu_{\min}} \leq \frac{2}{\nu_{\min}} \cdot \lVert f_e^+ - 
+		g_e^+ \rVert 
+	\end{split}
+\end{align}
+The same argumentation gives the case $\hat{\theta}_f > \hat{\theta}_g$.\\
+Now that we know that the Vickrey delay is a Lipschitz continous function of the edge inflow, we want to go forth to step 4 and show that the path delay is a Lipschitz continous function of path inflow in the case, where there is only one congested edge per path, i.e. on every path there is only one edge, where there exists an interval $I \subset \mathbb{R}_{\geq 0}$ that has measure bigger zero and $Q_e(\theta) > 0$ for all $\theta \in I$. \\
+At first we notice that, since there is only one congested edge for each path, the time to reach that edge is constant and will be denoted by $\bar{\theta}_p$ for each $p \in \mathcal{P}$. Since the traversing time for each edge that is congested at no time, we get for $h, h^{\prime} \in \Lambda(u)$, where for both flows there is only one congested edge for each path and for each path this congested edge conicides for both flows, that
+\begin{align}
+	\begin{split}
+		\lVert \Psi(h) - \Psi(h^{\prime}) \rVert &= \sup_{p \in \mathcal{P}} \sup_{\theta \in [0, T]} \lvert \Psi_p(h)(\theta) - 
+		\Psi_p(h^{\prime})(\theta) \rvert = \sup_{e: p \approx e} \sup_{\theta \in [0,T]} \lvert \psi_e(f)(\theta + \bar{\theta}_p) 
+		- \psi_e(g)(\theta + \bar{\theta}_p) =\\
+		&= \sup_{e \in E} \sup_{\theta \in [0, T]} \lvert \psi_e(f)(\theta) - \psi_e(g)(\theta) \rvert = \lVert \psi(f) - \psi(g) \rVert,
+	\end{split}
+\end{align}
+where $f$ is the corresponding Vickrey flow to the path flow $h$ and $g$ is the corresponding Vickrey flow to the path flow $h^{\prime}$. \\
+\emph{TODO}: there is still something strange about the chain of equalities above. Have a closer look at is again! \\
+Now if $e \in E$ is an edge that is congested at some point in time under both edge flows $f$ and $g$, then we get:
+\[ \lVert f_e^+ - g_e^+ \rVert = \sup_{\theta \in [0, T]} \lvert \sum_{p \in \mathcal{P}: e \in p} \int_0^{\theta - \bar{\theta}_p}
+h_p(\zeta) - h_p^{\prime}(\zeta) d\zeta \leq \lvert \mathcal{P} \rvert \cdot \lVert h - h^{\prime} \rVert. \]
+Now we know that edge flow on congested edges is a Lipschitz continous function of the path flow and since costs are constant on non-congested edges, we get that also the path delay is a Lipschitz continous function of path flow, since we also know that the edge costs are Lipschitz continous functions of edge flows and the path delay is a composition of edge cost functions.
+
+
+
+
+
+\chapter{General networks}
+In this chapter I want to look at general networks, i.e. also networks that do not fall under the two special cases of chapter 5. \emph{TODO: write a better/longer/more explaining connection between chapter 5 and chapter 6 here at the beginning of chapter 6 and then also to the first section of this chapter}
+\section{Non-monotonicity in the general case}
+In this section we will see an example, where the monotonicity of the variational inequality fails, i.e. we will see two dynamic flows $h, h^{\prime} \in \Lambda(u)$ such that 
+\[ \langle \Psi(h) - \Psi(h^{\prime}), h - h^{\prime} \rangle < 0. \]
+For that we consider the following network:\\
+\begin{figure}[H]
+	\begin{tikzpicture}
+		\node[minimum size = 8mm] (A) at (0,0) [circle,draw]{$s$};
+		\node[minimum size = 8mm] (B) at (4,0) [circle,draw]{$v$};
+		\node[minimum size = 8mm] (C) at (8,0) [circle,draw]{$t$};
+		
+		\draw[->,thick] (A.east) .. controls (1.3,1) and (2.6, 1)  .. node[midway, sloped, above] 
+		{$\tau_{e_1} = 1, \nu_{e_1} = 1$} (B.west);
+		\draw[->,thick] (A.east) .. controls (1.3,-1) and (2.6, -1)  .. node[midway, sloped, below] 
+		{$\tau_{e_3} = 0, \nu_{e_3} = 3$} (B.west);
+		\draw[->,thick] (B.east) to node[midway, above] {$\tau_{e_2} = 0, \nu_{e_2} = 2$} (C.west);
+	\end{tikzpicture}
+\end{figure}
+The time horizon $T$ is set to be $2$ and we denote by $p_1$ the path traversing $e_1$ and then $e_3$ and by $p_2$ the path traversing $e_3$ and then $e_2$. \\
+The network inflow rate function $u: \mathbb{R} \to \mathbb{R}_{\geq 0}$ is defined as $u(\theta) = \begin{cases} 2.5,& \theta \in [0, 1) \\ 1,& \theta \in [1, 1.75) \\ 3,& \theta \in [1.75, 2] \end{cases}$. The two path-based flows $h, h^{\prime} \in \Lambda(u)$ are defined as  
+\[ h_{p_1}(\theta) = \begin{cases} 1.5,& \theta \in [0, 0.5) \\ 0.5,& \theta \in [0.5, 1) \\ 0,& \theta \in [1, 2] \end{cases} \quad \text{and} \quad h_{p_2}(\theta) = \begin{cases} 1,& \theta \in [0, 0.5) \\ 2,& \theta \in [0.5, 1) \\ 1,& \theta \in [1, 1.75) \\ 3,& \theta \in [1.75, 2) \end{cases} \]
+for $h$ and for $h^{\prime}$ we have 
+\[h_{p_1}^{\prime}(\theta) = \begin{cases} 1,& \theta \in [0, 1) \\ 0,& \theta \in [1, 2) \end{cases} \quad \text{and} \quad h_{p_2}^{\prime}(\theta) = \begin{cases} 1.5,& \theta \in [0, 1) \\ 1,& \theta \in [1, 1.75) \\ 3,& \theta \in [1.75, 2) \end{cases} \]
+With this two flows defined we can calculate the queue length function for every edge under both flows and the path delay operators for both paths and both flows, which will be done below.
+We have 
+\[Q_{e_1}^{h^{\prime}}(\theta) = Q_{e_3}^h(\theta) = Q_{e_3}^{h^{\prime}}(\theta) = 0 \quad \text{for all $\theta \in [0, 2]$}\]
+and
+\[Q_{e_1}^h(\theta) = \begin{cases} \frac{1}{2}\theta,& \theta \in [0, 0.5) \\ \frac{1}{2} - \frac{1}{2}\theta,& \theta \in [0.5, 1]\\ 0,& \theta \in (1, 2] \end{cases} \]
+and 
+\[Q_{e_2}^{h^{\prime}}(\theta) = Q_{e_2}^h(\theta) = \begin{cases} 0,& \theta \in [0, 1.75) \\ -\frac{7}{2} + 2\theta,& \theta \in [1.75, 2) \\ \frac{9}{2} - 2\theta,& \theta \in [2, 2.25) \\ 0,& \theta > 2.25 \end{cases}  \]
+for the queue length function on the edges. \\
+For the path delay operators we get 
+\[ \Psi_{p_2}(h^{\prime})(\theta) = \Psi_{p_2}(h)(\theta) = A_{e_2}^h(A_{e_1}^h(\theta)) - \theta = A_{e_2}^h(\theta) - \theta =
+\frac{Q_{e_2}^h(\theta)}{2} = \begin{cases} 0,& \theta \in [0, 1.75) \\ -\frac{7}{4} + \theta,& \theta \in [1.75, 2) \\ \frac{9}{4} - \theta,& \theta \in [2, 2.25) \\ 0,& \theta > 2.25 \end{cases}  \]
+and 
+\[\Psi_{p_1}(h^{\prime})(\theta) = A_{e_2}^{h^{\prime}}(A_{e_1}^{h^{\prime}}(\theta)) = A_{e_2}^{h^{\prime}}(\theta + 1) - \theta = 1 + \frac{Q_{e_2}^{h^{\prime}}(\theta + 1)}{2} = \begin{cases} 1,& \theta \in [0, 0.75) \\ \frac{1}{4} + \theta,& \theta \in [0.75, 1) \\ \frac{9}{4} - \theta,& \theta \in [1, 1.25) \\ 1,& \theta > 1.75 \end{cases} \]
+and 
+\[\Psi_{p_1}(h)(\theta) =A_{e_2}^h(\theta + 1 + Q_{e_1}^h(\theta)) - \theta = 
+1 + Q_{e_1}^h(\theta) + \frac{Q_{e_2}^h(\theta + 1 + Q_{e_1}^h(\theta))}{2} = \begin{cases} 1 + \frac{1}{2}\theta,& \theta \in [0, 0.5) \\ \frac{5}{4},& \theta \in [0.5, 1) \\ \frac{9}{4} - \theta,& \theta \in [1, 1.25) \\ 1,& \theta  > 1.25 \end{cases}. \]
+From all of the above we can now compute
+\begin{align}
+	\begin{split}
+		\langle \Psi(h) - \Psi(h^{\prime}), h - h^{\prime} \rangle &= \sum_{p \in \{p_1, p_2\}} \int_0^2 (\Psi_p(h)(\zeta) - 
+		\Psi_p(h^{\prime})(\zeta))(h_p(\zeta) - h_p^{\prime}(\zeta)) d\zeta =\\
+		&= \int_0^1 (\Psi_{p_1}(h)(\zeta) - \Psi_{p_1}(h^{\prime})(\zeta))(h_{p_1}(\zeta) - h_{p_1}^{\prime}(\zeta)) d\zeta =\\
+		&= \int_0^{\frac{1}{2}} \Bigl(\Bigl(1 + \frac{1}{2}\zeta\Bigr) - 1\Bigr)\Bigl(\frac{3}{2} - 1\Bigr) d\zeta + 
+		\int_{0.5}^{0.75} \Bigl(\frac{5}{4} - 1\Bigr)\Bigl(\frac{1}{2} - 1\Bigr) d\zeta + \\
+		&\int_{0.75}^{1} \Bigl(\frac{5}{4} - \Bigl(\frac{1}{4} + \zeta\Bigr)\Bigr)\Bigl(\frac{1}{2} - 1\Bigr) d\zeta =  
+		\int_0^{0.5} \frac{1}{4}\zeta d\zeta + \int_{0.5}^{0.75} -\frac{1}{8} d\zeta + \\
+		&\int_{0.75}^{1} -\frac{1}{2} + \frac{1}{2}\zeta d\zeta = \Bigl[\frac{1}{8}\zeta^2\Bigr]_{\zeta = 0}^{0.5} + 
+		\Bigl[-\frac{1}{8}\zeta\Bigr]_{\zeta = 0.5}^{0.75} + 
+		\Bigl[-\frac{1}{2}\zeta + \frac{1}{4}\zeta^2\Bigr]_{\zeta = 0.75}^{1} =\\
+		&= \frac{1}{32} + \Bigl(-\frac{3}{32} + \frac{1}{16}\Bigr) + 
+		\Bigl(-\frac{1}{2} + \frac{1}{4} + \frac{3}{8} - \frac{9}{64}\Bigr) =
+		 -\frac{1}{64} < 0,
+	\end{split}
+\end{align}
+where the summand for path $p_2$ is $0$, since $\Psi_{p_2}(h) - \Psi_{p_2}(h^{\prime}) = 0$, and for path $p_1$ the integral over $[1, 2]$ is also $0$, since for almost all $\theta \in [1, 2]$ we have $\Psi_{p_1}(h)(\theta) - \Psi_{p_1}(h^{\prime})(\theta) = 0$ and also $h_{p_1}(\theta) = h_{p_1}^{\prime}(\theta) = 0$.
+
+\section{Behaviour of learning dynamics under non-monotonicity}
+In this section we will consider again (?) the regularized fictitious play that we introduced in chapter 4 section ?. Specifically we will consider the rugularized fictitious play in networks, where we do not have monotonicity. The overall goal is to see that monotonicity is not a necessary condition for the convergence of the regularized fictitiours play dynamics to a (regularized) dynamic equilibrium.\\
+One first example for that is the network and the flow that we had a close look in the last section. As one can see (maybe more details here) in that constellation there is a unique (up to changes on a measure zero set) dynamic equilibrium, namely always sending the whole flow over the second path. In our experiment we used the following parameter: \emph{insert parameter} and the following initialization rule: \emph{insert rule} and the dynamics reached the above mentioned equilibrium in an astonishing 1 step for those parameter. Experiments shows that this stays the same for all possible values of epsilon ( $<0.2$). Even for epsilon equal to zero we have the same behaviour.
+
+\section{More about general networks}
+Here we want to dive a little bit more into the topic of general networks, where the term general networks again means that we consider networks and especially also flows in those networks that do not fullfill one of the properties stated in chapter 5. We already saw in section $6.1$ that in general networks the variational inequality $\langle \Psi(h) - \Psi(h^{\prime}), h - h^{\prime} \rangle$ for some path based flows $h, h^{\prime} \in \Lambda(u)$ for some network and some network inflow $u$ does in general not have to be monotone. We also saw in section $6.2$ how for example regularized fictitious play behaves in cases, where the above mentioned variational inequality is not monotone. We will now in the following illustrate by an example that the networks and flows that fall under the premises of section $5.1$ and $5.2$ are obviously not the only ones, where we get monotonicity. For that we consider again the following network:
+\begin{figure}[H]
+	\begin{tikzpicture}
+		\node[minimum size = 8mm] (A) at (0,0) [circle,draw]{$s$};
+		\node[minimum size = 8mm] (B) at (4,0) [circle,draw]{$v$};
+		\node[minimum size = 8mm] (C) at (8,0) [circle,draw]{$t$};
+		
+		\draw[->,thick] (A.east) .. controls (1.3,1) and (2.6, 1)  .. node[midway, sloped, above] 
+		{$\tau_{e_1} = 1, \nu_{e_1} = 1$} (B.west);
+		\draw[->,thick] (A.east) .. controls (1.3,-1) and (2.6, -1)  .. node[midway, sloped, below] 
+		{$\tau_{e_3} = 0, \nu_{e_3} = 3$} (B.west);
+		\draw[->,thick] (B.east) to node[midway, above] {$\tau_{e_2} = 0, \nu_{e_2} = 2$} (C.west);
+	\end{tikzpicture}
+\end{figure}
+Again we set the time horizon to $T = 2$ and denote by $p_1$ the path $(e_1, e_2)$ and by $p_2$ the path $(e_3, e_2)$. Now the network inflow rate is set to $u = 2.5 \cdot \mathcal{X}_{[0, 2]}$.The two path-based flows $h, h^{\prime} \in \Lambda(u)$ are defined as  
+\[ h_{p_1}(\theta) = \begin{cases} 1.5,& \theta \in [0, 0.5) \\ 0.5,& \theta \in [0.5, 1) \\ 0,& \theta \in [1, 2] \end{cases} \quad \text{and} \quad h_{p_2}(\theta) = \begin{cases} 1,& \theta \in [0, 0.5) \\ 2,& \theta \in [0.5, 1) \\ 2.5,& \theta \in [1, 2) \end{cases} \]
+for $h$ and for $h^{\prime}$ we have 
+\[h_{p_1}^{\prime}(\theta) = \begin{cases} 1,& \theta \in [0, 1) \\ 0,& \theta \in [1, 2) \end{cases} \quad \text{and} \quad h_{p_2}^{\prime}(\theta) = \begin{cases} 1.5,& \theta \in [0, 1) \\ 2.5,& \theta \in [1, 2)  \end{cases} \]
+With this two flows defined we can calculate the queue length function for every edge under both flows and the path delay operators for both paths and both flows, which will be done below.
+We have 
+\[Q_{e_1}^{h^{\prime}}(\theta) = Q_{e_3}^h(\theta) = Q_{e_3}^{h^{\prime}}(\theta) = 0 \quad \text{for all $\theta \in [0, 2]$}\]
+and
+\[Q_{e_1}^h(\theta) = \begin{cases} \frac{1}{2}\theta,& \theta \in [0, 0.5) \\ \frac{1}{2} - \frac{1}{2}\theta,& \theta \in [0.5, 1]\\ 0,& \theta \in (1, 2] \end{cases} \]
+and 
+\[Q_{e_2}^{h^{\prime}}(\theta) = Q_{e_2}^h(\theta) = \begin{cases} 0,& \theta \in [0, 1) \\ -\frac{3}{2} + \frac{3}{2}\theta,& \theta \in [1, 2) \\ \frac{11}{2} - 2\theta,& \theta \in [2, 2.75) \\ 0,& \theta > 2.75 \end{cases}  \]
+for the queue length function on the edges. \\
+For the path delay operators we get 
+\[ \Psi_{p_2}(h^{\prime})(\theta) = \Psi_{p_2}(h)(\theta) = A_{e_2}^h(A_{e_1}^h(\theta)) - \theta = A_{e_2}^h(\theta) - \theta =
+\frac{Q_{e_2}^h(\theta)}{2} = \begin{cases} 0,& \theta \in [0, 1) \\ -\frac{3}{4} + \frac{3}{4}\theta,& \theta \in [1, 2) \\ \frac{11}{4} - \theta,& \theta \in [2, 2.75) \\ 0,& \theta > 2.75 \end{cases}  \]
+and 
+\[\Psi_{p_1}(h^{\prime})(\theta) = A_{e_2}^{h^{\prime}}(A_{e_1}^{h^{\prime}}(\theta)) = A_{e_2}^{h^{\prime}}(\theta + 1) - \theta = 1 + \frac{Q_{e_2}^{h^{\prime}}(\theta + 1)}{2} = \begin{cases} 1 + \frac{3}{4}\theta,& \theta \in [0, 1) \\ \frac{11}{4} - \theta,& \theta \in [1, 1.75) \\  1,& \theta > 1.75 \end{cases} \]
+and 
+\[\Psi_{p_1}(h)(\theta) =A_{e_2}^h(\theta + 1 + Q_{e_1}^h(\theta)) - \theta = 
+1 + Q_{e_1}^h(\theta) + \frac{Q_{e_2}^h(\theta + 1 + Q_{e_1}^h(\theta))}{2} = \begin{cases} 1 + \frac{13}{8}\theta,& \theta \in [0, 0.5) \\ \frac{15}{8} - \frac{1}{8}\theta,& \theta \in [0.5, 1) \\ \frac{11}{4} - \theta,& \theta \in [1, 1.75) \\ 1,& \theta  > 1.75 \end{cases}. \]
+Now we can again compute:
+\begin{align}
+	\begin{split}
+		\langle \Psi(h) - \Psi(h^{\prime}), h - h^{\prime} \rangle &= \sum_{p \in \{p_1, p_2\}} \int_0^2 (\Psi_p(h)(\zeta) - 
+		\Psi_p(h^{\prime})(\zeta))(h_p(\zeta) - h_p^{\prime}(\zeta)) d\zeta =\\
+		&= \int_0^1 (\Psi_{p_1}(h)(\zeta) - \Psi_{p_1}(h^{\prime})(\zeta))(h_{p_1}(\zeta) - h_{p_1}^{\prime}(\zeta)) d\zeta =\\
+		&= \int_0^{0.5} \Bigl(\Bigl(1 + \frac{13}{8}\zeta\Bigr) - \Bigl(1 + \frac{3}{4}\zeta\Bigr)\Bigr)\Bigl(\frac{3}{2} - 						1\Bigr) d\zeta + \\
+		&\int_{0.5}^{1} \Bigl(\Bigl(\frac{15}{8} - \frac{1}{8}\zeta\Bigr)  - \Bigl(1 + \frac{3}{4}\zeta\Bigr)\Bigr)								\Bigl(\frac{1}{2} - 1\Bigr) d\zeta =  \\
+		&= \int_0^{0.5} \frac{7}{16}\zeta d\zeta + \int_{0.5}^{1} -\frac{7}{16} + \frac{7}{16}\zeta d\zeta = \\
+		&= \Bigl[\frac{7}{32}\zeta^2\Bigr]_{\zeta = 0}^{0.5} + \Bigl[-\frac{7}{16}\zeta 
+		+ \frac{7}{32}\zeta^2\Bigr]_{\zeta = 0.5}^{1} =\\
+		&= \frac{7}{128} + \Bigl(-\frac{7}{16} + \frac{7}{32} + 
+		 \frac{7}{32} - \frac{7}{128}\Bigr) = 0.
+	\end{split}
+\end{align}
+
+ 
+
+
+
+
+
+
+\chapter{Conclusion}
+In this 
+
+
+
+
+
+\chapter{Apendix}
+The appendix will have three parts: one part for images, probably most of them for showing networks or convergence results for specific examples, one part for the code I wrote (maybe we exclude that or do not put all of the code here that will probably be a little bit too much) and one part of course for the used literature ( mostly in the first two or three chapters)
+
+\bibliographystyle{plain}
+\bibliography{Literature}
+
+
+\end{document}
