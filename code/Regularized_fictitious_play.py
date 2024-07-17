@@ -208,7 +208,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             for j in range(len(steps)):
                 gap_steps[i].append(steps[j])
             for k in range(len(delays_new[i].times)):
-                if delays_new[i].times[k] not in gap_steps[i]:
+                if delays_new[i].times[k] not in gap_steps[i] and delays_new[i].times[k] <= steps[-1]:
                     gap_steps[i].append(delays_new[i].times[k])
             gap_steps[i].sort()
 
