@@ -407,7 +407,7 @@ class PiecewiseLinear:
 
     def is_monotone(self):
         return all(
-            self.values[i] <= self.values[i + 1] for i in range(len(self.values) - 1)
+            self.values[i] <= self.values[i + 1] + eps for i in range(len(self.values) - 1)
         )
 
     def image(self) -> Tuple[float, float]:
