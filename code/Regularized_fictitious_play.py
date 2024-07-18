@@ -291,7 +291,7 @@ epsil = 0.05
 numSteps = 10
 lamb = 0.1
 
-for i in range(20):
+for i in range(60):
     epsilon = epsil*i
     print("Epsilon: " + str(epsilon))
     reg_fictitious_play(graph, capacities, travel_times,
