@@ -271,7 +271,7 @@ v = Node(1, graph)
 t = Node(2, graph)
 e_1 = Edge(s,v,0,graph)
 e_2 = Edge(s,v,1,graph)
-e_3 = Edge(s,v,2,graph)
+e_3 = Edge(s,t,2,graph)
 e_4 = Edge(v,t,3,graph)
 
 graph.nodes = {0:s, 1:v, 2:t}

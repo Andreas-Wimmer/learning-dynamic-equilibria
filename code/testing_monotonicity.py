@@ -85,7 +85,7 @@ v = Node(1, test_graph)
 t = Node(2, test_graph)
 edge_1 = Edge(s, v, 0, test_graph)
 edge_2 = Edge(s, v, 1, test_graph)
-edge_3 = Edge(s, v, 2, test_graph)
+edge_3 = Edge(s, t, 2, test_graph)
 edge_4 = Edge(v, t, 3, test_graph)
 
 test_graph.nodes = {0:s, 1:v, 2:t}
