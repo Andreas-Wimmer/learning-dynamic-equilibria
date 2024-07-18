@@ -286,10 +286,13 @@ p_2 = [e_2, e_3]
 paths = [p_1, p_2]
 net_inflow = RightConstant([0, 1, 1.75, 2], [2.5, 1, 3, 0], (0, 2))
 horizon = 2
-delta = 0.05
-epsilon = 0.2
+delta = 0.25
+epsil = 0.05
 numSteps = 10
 lamb = 0.1
 
-reg_fictitious_play(graph, capacities, travel_times,
+for i in range(20):
+    epsilon = epsil*i
+    print("Epsilon: " + str(epsilon))
+    reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
