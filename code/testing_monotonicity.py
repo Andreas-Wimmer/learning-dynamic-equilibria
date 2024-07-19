@@ -106,4 +106,4 @@ inflow_4 = RightConstant([0,1,1.75,2],[2,0,3,0],(0,2))
 inflow_f = [inflow_1,inflow_2]
 inflow_g = [inflow_3,inflow_4]
 
-monotonicity_check(test_graph, capacitites, travel_times, net_inflow, 2, [path_1, path_2, path_3], inflow_f, inflow_g)
+monotonicity_check(test_graph, capacitites, travel_times, net_inflow, 2, [path_1, path_2], inflow_f, inflow_g)
