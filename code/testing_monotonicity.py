@@ -9,6 +9,7 @@ from network_loader import NetworkLoader, Path
 from piecewise_linear import PiecewiseLinear, identity
 from right_constant import RightConstant
 from machine_precision import eps
+import gap_function
 
 def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_times: List[float],
                        network_inflow: RightConstant, T: float, paths = List[Path], 
@@ -74,6 +75,7 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
             integrals[i] = integrals[i] + value
 
     scalar_product = sum(integrals)
+    term = gap_function(inflows_1,delays_1,inflows_2,T)
     if abs(scalar_product) < eps:
         scalar_product = 0
     print(str(scalar_product))
