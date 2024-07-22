@@ -75,7 +75,7 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
             integrals[i] = integrals[i] + value
 
     scalar_product = sum(integrals)
-    term = gap_function(inflows_1,delays_1,inflows_2,T)
+    term = gap_function.gap_function(inflows_1,delays_1,inflows_2,T)
     if abs(scalar_product) < eps:
         scalar_product = 0
     print(str(scalar_product))
