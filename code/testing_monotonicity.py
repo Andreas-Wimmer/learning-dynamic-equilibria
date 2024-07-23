@@ -9,6 +9,7 @@ from network_loader import NetworkLoader, Path
 from piecewise_linear import PiecewiseLinear, identity
 from right_constant import RightConstant
 from machine_precision import eps
+import gap_function
 
 def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_times: List[float],
                        network_inflow: RightConstant, T: float, paths = List[Path], 
@@ -74,6 +75,7 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
             integrals[i] = integrals[i] + value
 
     scalar_product = sum(integrals)
+    term = gap_function.gap_function(inflows_1,delays_1,inflows_2,T)
     if abs(scalar_product) < eps:
         scalar_product = 0
     print(str(scalar_product))
@@ -90,20 +92,20 @@ edge_3 = Edge(v, t, 2, test_graph)
 test_graph.nodes = {0:s, 1:v, 2:t}
 test_graph.edges = [edge_1, edge_2, edge_3]
 
-capacitites = [1, 3, 2]
-travel_times = [1, 1, 0]
-net_inflow = RightConstant([0, 1, 1.75, 2],[2.5, 1, 3, 0],(0, 2))
+capacities = [1,3,2]
+travel_times = [1,1,0]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0, 2))
 
 path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
 
+
 inflow_1 = RightConstant([0,1,1.75,2],[(5/6),(1/3),1,0],(0,2))
 inflow_2 = RightConstant([0,1,1.75,2],[(5/3),(2/3),2,0],(0,2))
-inflow_3 = RightConstant([0,1.5],[1, 0],(0,2))
-inflow_4 = RightConstant([0,1,1.5,1.75,2],[1.5,0,1,3,0],(0,2))
-
+inflow_3 = RightConstant([0,2],[0,0],(0,2))
+inflow_4 = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
 
 inflow_f = [inflow_1,inflow_2]
 inflow_g = [inflow_3,inflow_4]
 
-monotonicity_check(test_graph, capacitites, travel_times, net_inflow, 2, [path_1, path_2], inflow_f, inflow_g)
+monotonicity_check(test_graph, capacities, travel_times, net_inflow, 2, [path_1, path_2], inflow_f, inflow_g)

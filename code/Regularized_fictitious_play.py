@@ -47,17 +47,17 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             caps.append(network.capacity[index])
         min_cap[i] = min(caps)
 
-    sum_min_caps = sum(min_cap)
-    portions = []
-    for i in range(len(network.paths)):
-        portions.append(min_cap[i]/sum_min_caps)
+    min_path = paths[min_cap.index(min(min_cap))]
 
     breaks_net_inflow = net_inflow.times
     values = []
     for i in range(len(network.paths)):
         values.append([])
         for j in range(len(breaks_net_inflow)):
-            values[i].append(portions[i]*net_inflow.eval(breaks_net_inflow[j]))
+            if network.paths[i] == min_path:
+                values[i].append(net_inflow.eval(breaks_net_inflow[j]))
+            else: 
+                values[i].append(0)
 
     inflows = []
     inflow_dict = []
@@ -271,30 +271,26 @@ v = Node(1, graph)
 t = Node(2, graph)
 e_1 = Edge(s,v,0,graph)
 e_2 = Edge(s,v,1,graph)
-e_3 = Edge(s,t,2,graph)
-e_4 = Edge(v,t,3,graph)
+e_3 = Edge(v,t,2,graph)
 
 graph.nodes = {0:s, 1:v, 2:t}
-graph.edges = [e_1,e_2,e_3,e_4]
+graph.edges = [e_1,e_2,e_3]
 graph.reversed = False
 
-capacities = [1,3,3,2]
-travel_times = [1,0,1,0]
+capacities = [1,3,2]
+travel_times = [1,1,0]
 
-p_1 = [e_1, e_4]
-p_2 = [e_2, e_4]
-p_3 = [e_3]
+p_1 = [e_1, e_3]
+p_2 = [e_2, e_3]
 
-paths = [p_1, p_2, p_3]
-net_inflow = RightConstant([0,2], [3,0], (0, 2))
+paths = [p_1, p_2]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0], (0, 2))
 horizon = 2
-delta = 0.1
-epsil = 0.05
+delta = 0.25
+epsilon = 0
 numSteps = 10
 lamb = 0.1
 
-for i in range(60):
-    epsilon = epsil*i
-    print("Epsilon: " + str(epsilon))
-    reg_fictitious_play(graph, capacities, travel_times,
+
+reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
