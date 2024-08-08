@@ -213,7 +213,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     val_1 = delays_avg[i].eval(gap_breaks[j+1])
                     val_2 = delays_avg[i].eval(gap_breaks[j])
                     #val_3 = 2*epsilon*(-h[len(gap_breaks)*i + j] + inflow_avg[i].eval(gap_breaks[j]))
-                    val_4 = h[len(steps)*i + j] - inflow_avg[i].eval(gap_breaks[j])
+                    val_4 = h[len(gap_breaks)*i + j] - inflow_avg[i].eval(gap_breaks[j])
                     sum_1 = sum_1 + ((val_1 + val_2)/2)*val_4
             return sum_1
 
