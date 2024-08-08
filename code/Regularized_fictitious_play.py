@@ -239,7 +239,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         start = []
         for i in range(len(network.paths)):
             for j in range(len(gap_breaks)):
-                start.append(inflows[i].eval(gap_breaks[j]))
+                start.append(inflow_avg[i].eval(gap_breaks[j]))
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         
         if round(sol_gap.fun, 5) == 0:
