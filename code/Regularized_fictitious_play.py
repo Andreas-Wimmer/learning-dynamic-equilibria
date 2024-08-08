@@ -186,7 +186,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         loader_avg = NetworkLoader(network, inflow_dict_avg)
         result_avg = loader_avg.build_flow()
         flow_avg = next(result_avg)
-    
+        delays_avg = loader_avg.path_delay(horizon)
+        
         #5. Calculate the difference of the new flow and the last flow for checking convergence
         diff_inflows = []
         for i in range(len(network.paths)):
