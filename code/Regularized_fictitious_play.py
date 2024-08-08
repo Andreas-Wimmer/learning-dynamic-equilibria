@@ -275,7 +275,7 @@ paths = [p_1, p_2]
 net_inflow = RightConstant([0,2],[2,0], (0, 2))
 horizon = 2
 delta = 0.25
-epsilon = 0.01
+epsilon = 0.1
 numSteps = 500
 lamb = 0.00001
 
