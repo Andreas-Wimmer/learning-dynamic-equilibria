@@ -256,7 +256,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
 graph = DirectedGraph
 s = Node(0, graph)
-t = Node(2, graph)
+t = Node(1, graph)
 e_1 = Edge(s,t,0,graph)
 e_2 = Edge(s,t,1,graph)
 
