@@ -180,7 +180,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         #5. Calculate the difference of the new flow and the last flow for checking convergence
         diff_inflows = []
         for i in range(len(network.paths)):
-            curr_diff = inflows[i] - old_inflows[i]
+            curr_diff = inflow_avg[i] - old_avg[i]
             diff_inflows.append(curr_diff.abs_val())
     
         diff = 0
