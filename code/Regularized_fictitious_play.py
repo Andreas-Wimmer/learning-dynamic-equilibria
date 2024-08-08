@@ -129,7 +129,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         start = []
         for i in range(len(network.paths)):
             for j in range(len(breaks)):
-                start.append(inflows[i].eval(steps[j]))
+                start.append(inflows[i].eval(breaks[j]))
         
         sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = constraint_1)
     
