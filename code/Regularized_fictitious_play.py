@@ -47,7 +47,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             caps.append(network.capacity[index])
         min_cap[i] = min(caps)
 
-    min_path = paths.index(min(min_cap))
+    min_path = paths[min_cap.index(min(min_cap))]
 
     breaks_net_inflow = net_inflow.times
     values = []
