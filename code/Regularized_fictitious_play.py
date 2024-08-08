@@ -264,8 +264,8 @@ graph.nodes = {0:s, 1:t}
 graph.edges = [e_1,e_2]
 graph.reversed = False
 
-capacities = [1,1]
-travel_times = [1,1]
+capacities = [2,1]
+travel_times = [2,1]
 
 p_1 = [e_1]
 p_2 = [e_2]
