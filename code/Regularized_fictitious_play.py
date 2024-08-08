@@ -200,8 +200,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         
         for i in range(len(network.paths)):
             for j in range(len(delays_new[i].times)):
-                if delays_new[i].times[j] not in gap_breaks and delays_new[i].times[j] <= horizon:
-                    gap_breaks.append(delays_new[i].times[j])
+                if delays_avg[i].times[j] not in gap_breaks and delays_avg[i].times[j] <= horizon:
+                    gap_breaks.append(delays_avg[i].times[j])
         
         gap_breaks.sort()
 
@@ -209,10 +209,10 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             sum_1 = 0
             for i in range(len(network.paths)):
                 for j in range(len(gap_breaks) - 1):
-                    val_1 = delays_new[i].eval(gap_breaks[j+1])
-                    val_2 = delays_new[i].eval(gap_breaks[j])
-                    val_3 = 2*epsilon*(h[len(gap_breaks)*i + j] - inflows[i].eval(gap_breaks[j]))
-                    val_4 = h[len(steps)*i + j] - inflows[i].eval(gap_breaks[j])
+                    val_1 = delays_avg[i].eval(gap_breaks[j+1])
+                    val_2 = delays_avg[i].eval(gap_breaks[j])
+                    val_3 = 2*epsilon*(h[len(gap_breaks)*i + j] - inflow_avg[i].eval(gap_breaks[j]))
+                    val_4 = h[len(steps)*i + j] - inflow_avg[i].eval(gap_breaks[j])
                     sum_1 = sum_1 + (((val_1 + val_2)/2) + val_3)*val_4
             return sum_1
 
