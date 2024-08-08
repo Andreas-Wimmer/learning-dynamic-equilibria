@@ -276,7 +276,7 @@ horizon = 2
 delta = 0.25
 epsilon = 0
 numSteps = 50
-lamb = 0.1
+lamb = 0.01
 
 
 reg_fictitious_play(graph, capacities, travel_times,
