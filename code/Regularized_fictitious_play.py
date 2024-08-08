@@ -99,14 +99,12 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             sums = 0
             for i in range(len(network.paths)):
                 for j in range(len(breaks) - 1):
-                    if breaks[i][j + 1] <= steps[-1]:
-                        value_1 = delays_avg[i].eval(breaks[j])
-                        value_2 = delays_avg[i].eval(breaks[j+1])
-                        value_3 = ((value_1 + value_2)/2)*h[(len(breaks) - 1)*i + j]
-                        value_4 = epsilon*(h[(len(breaks) - 1)*i + j] - inflow_avg[i].eval(breaks[j]))^2
-                        sums = sums + value_3 + value_4
-                    else: 
-                        continue
+                    value_1 = delays_avg[i].eval(breaks[j])
+                    value_2 = delays_avg[i].eval(breaks[j+1])
+                    value_3 = ((value_1 + value_2)/2)*h[(len(breaks) - 1)*i + j]
+                    value_4 = epsilon*(h[(len(breaks) - 1)*i + j] - inflow_avg[i].eval(breaks[j]))^2
+                    sums = sums + value_3 + value_4
+                    
             return sums 
         
         A = []
