@@ -199,7 +199,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 gap_breaks.append(breaks_net_inflow[k])
         
         for i in range(len(network.paths)):
-            for j in range(len(delays_new[i].times)):
+            for j in range(len(delays_avg[i].times)):
                 if delays_avg[i].times[j] not in gap_breaks and delays_avg[i].times[j] <= horizon:
                     gap_breaks.append(delays_avg[i].times[j])
         
