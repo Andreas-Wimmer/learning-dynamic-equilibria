@@ -266,7 +266,7 @@ graph.edges = [e_1,e_2]
 graph.reversed = False
 
 capacities = [2,1]
-travel_times = [2,1]
+travel_times = [1,2]
 
 p_1 = [e_1]
 p_2 = [e_2]
