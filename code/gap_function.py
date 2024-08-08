@@ -8,7 +8,8 @@ from network_loader import Path
 
 #inflows is the path inflow vector of the flow, where we want to compute the gap function, path_delays is the vector of its path
 #delay operator and epsilon is the regularization weight
-def gap_function(inflows: List[RightConstant], path_delays: List[PiecewiseLinear], inflows_other: List[RightConstant], horizon: float, espilon: float = 0):
+def gap_function(inflows: List[RightConstant], path_delays: List[PiecewiseLinear], inflows_other: List[RightConstant], 
+                 horizon: float, espilon: float = 0):
     diff_inflows = []
     for i in range(len(inflows)):
         diff_inflows.append(inflows[i] - inflows_other[i])
