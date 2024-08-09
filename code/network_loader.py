@@ -95,7 +95,7 @@ class NetworkLoader:
                 delay_op = arr_funcs[index].compose(delay_op)
             
             for i in range(len(delay_op.times)):
-                assert delay_op.values[i] - eps >= minimal_delay[self.network.paths.index(path)]
+                assert delay_op.values[i] + eps >= minimal_delay[self.network.paths.index(path)]
 
             if delay_op.times[-1] >= T:
                 delay_op = delay_op - identity.restrict((0,delay_op.times[-1]))
