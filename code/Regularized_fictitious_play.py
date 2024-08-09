@@ -236,9 +236,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         varindex = gap_steps.index(gap_breaks[j])
                     else:
                         varindex = elem_lrank(gap_steps, gap_breaks[j])
-                    val_3 = 2*epsilon*(-h[len(gap_steps)*i + varindex] + inflow_avg[i].eval(gap_breaks[j]))
+                    #val_3 = 2*epsilon*(-h[len(gap_steps)*i + varindex] + inflow_avg[i].eval(gap_breaks[j]))
                     val_4 = h[len(gap_steps)*i + varindex] - inflow_avg[i].eval(gap_breaks[j])
-                    sum_1 = sum_1 + ((val_1 + val_2)/2 + val_3)*val_4
+                    sum_1 = sum_1 + ((val_1 + val_2)/2)*val_4
             return sum_1
 
         A = []
