@@ -96,8 +96,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         breaks.sort()
 
         time_steps = []
-        for i in range(len(breaks) - 1):
-            if breaks[i + 1] - breaks[i] >= delta/5:
+        time_steps.append(0)
+        for i in range(len(breaks)):
+            if breaks[i] - time_steps[-1] >= delta/5:
                 time_steps.append(breaks[i])
         
         time_steps.sort()
@@ -218,8 +219,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         gap_breaks.sort()
 
         gap_steps = []
-        for i in range(len(gap_breaks) - 1):
-            if gap_breaks[i + 1] - gap_breaks[i] >= delta/5:
+        gap_steps.append(0)
+        for i in range(len(gap_breaks)):
+            if gap_breaks[i] - gap_steps[-1] >= delta/5:
                 gap_steps.append(gap_breaks[i])
 
         gap_steps.sort() 
