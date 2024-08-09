@@ -299,7 +299,7 @@ graph.nodes = {0:s,1:v,2:w,3:x,4:y,5:t}
 graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
 graph.reversed = False
 
-capacities = [1,1,1,1,1,1,1,2,2]
+capacities = [2,1,2,2,1,1,1,3,3]
 travel_times = [1,1,1,2,2,1,1,1]
 
 p_1 = [e_1,e_3,e_7]
@@ -312,7 +312,7 @@ net_inflow = RightConstant([0,4],[8,0], (0, 4))
 horizon = 4
 delta = 1
 epsilon = 0
-numSteps = 100
+numSteps = 200
 lamb = 0.00001
 
 
