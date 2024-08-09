@@ -90,7 +90,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
         for i in range(len(network.paths)):
             for j in range(len(delays_avg[i].times)):
-                if delays_avg[i].times[j] not in breaks and delays_avg[i].times[j] <= horizon:
+                if delays_avg[i].times[j] not in breaks and delays_avg[i].times[j] <= horizon and elem_lrank(breaks, delays_avg[i].times[j]) - delays_avg[i].times[j] <= -0.01:
                     breaks.append(delays_avg[i].times[j])
         
         breaks.sort()
@@ -213,7 +213,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         
         for i in range(len(network.paths)):
             for j in range(len(delays_avg[i].times)):
-                if delays_avg[i].times[j] not in gap_breaks and delays_avg[i].times[j] <= horizon:
+                if delays_avg[i].times[j] not in gap_breaks and delays_avg[i].times[j] <= horizon and elem_lrank(gap_breaks, delays_avg[i].times[j]) - delays_avg[i].times[j] <= -0.01:
                     gap_breaks.append(delays_avg[i].times[j])
         
         gap_breaks.sort()
