@@ -264,13 +264,13 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(network.paths)):
             for j in range(len(gap_steps)):
                 start.append(inflow_avg[i].eval(gap_steps[j]))
-        sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
+        #sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         
-        if round(sol_gap.fun, 5) == 0:
-            equilibrium_reached = True
-            print("Regularized equilibrium reached")
+        #if round(sol_gap.fun, 5) == 0:
+        #    equilibrium_reached = True
+        #    print("Regularized equilibrium reached")
 
-        print("Gap at " + str(sol_gap.fun))
+        #print("Gap at " + str(sol_gap.fun))
 
     if equilibrium_reached:
         print("The learning dynamics reached a regularized equilibrium")
