@@ -113,7 +113,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     else:
                         varindex = elem_lrank(time_steps, breaks[j])
                     value_3 = ((value_1 + value_2)/2)*h[len(time_steps)*i + varindex]
-                    value_4 = epsilon*pow((h[len(time_steps)*i + j] - inflow_avg[i].eval(breaks[j])),2)
+                    value_4 = epsilon*pow((h[len(time_steps)*i + varindex] - inflow_avg[i].eval(breaks[j])),2)
                     sums = sums + value_3 + value_4
 
             return sums 
