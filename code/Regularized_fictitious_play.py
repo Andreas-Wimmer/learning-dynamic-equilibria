@@ -259,23 +259,27 @@ graph = DirectedGraph
 s = Node(0, graph)
 v = Node(1, graph)
 w = Node(2, graph)
-t = Node(3, graph)
+x = Node(3, graph)
+t = Node(4, graph)
 e_1 = Edge(s,v,0,graph)
 e_2 = Edge(s,w,1,graph)
-e_3 = Edge(v,t,2,graph)
-e_4 = Edge(w,t,3,graph)
+e_3 = Edge(s,x,2,graph)
+e_4 = Edge(v,t,3,graph)
+e_5 = Edge(w,t,4,graph)
+e_6 = Edge(x,t,5,graph)
 
-graph.nodes = {0:s,1:v,2:w,3:t}
-graph.edges = [e_1,e_2,e_3,e_4]
+graph.nodes = {0:s,1:v,2:w,3:x,4:t}
+graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6]
 graph.reversed = False
 
-capacities = [5,2,1,1]
-travel_times = [1,2,1,1]
+capacities = [3,2,1,1,1,1]
+travel_times = [1,1,1,1,1,1]
 
-p_1 = [e_1,e_3]
-p_2 = [e_2,e_4]
+p_1 = [e_1,e_4]
+p_2 = [e_2,e_5]
+p_3 = [e_3,e_6]
 
-paths = [p_1, p_2]
+paths = [p_1, p_2,p_3]
 net_inflow = RightConstant([0,3],[10,0], (0, 3))
 horizon = 3
 delta = 0.25
