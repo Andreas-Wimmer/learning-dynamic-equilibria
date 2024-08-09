@@ -212,9 +212,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 for j in range(len(gap_breaks) - 1):
                     val_1 = delays_avg[i].eval(gap_breaks[j+1])
                     val_2 = delays_avg[i].eval(gap_breaks[j])
-                    #val_3 = 2*epsilon*(-h[len(gap_breaks)*i + j] + inflow_avg[i].eval(gap_breaks[j]))
+                    val_3 = 2*epsilon*(-h[len(gap_breaks)*i + j] + inflow_avg[i].eval(gap_breaks[j]))
                     val_4 = h[len(gap_breaks)*i + j] - inflow_avg[i].eval(gap_breaks[j])
-                    sum_1 = sum_1 + ((val_1 + val_2)/2)*val_4
+                    sum_1 = sum_1 + ((val_1 + val_2)/2 + val_3)*val_4
             return sum_1
 
         A = []
@@ -278,8 +278,8 @@ p_2 = [e_2,e_4]
 paths = [p_1, p_2]
 net_inflow = RightConstant([0,3],[10,0], (0, 3))
 horizon = 3
-delta = 0.75
-epsilon = 0.2
+delta = 0.25
+epsilon = 0.5
 numSteps = 300
 lamb = 0.00001
 
