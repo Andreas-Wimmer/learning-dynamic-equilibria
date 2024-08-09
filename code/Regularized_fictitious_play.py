@@ -269,7 +269,7 @@ graph.nodes = {0:s,1:v,2:w,3:t}
 graph.edges = [e_1,e_2,e_3,e_4]
 graph.reversed = False
 
-capacities = [2,2,1,1]
+capacities = [5,2,1,1]
 travel_times = [1,2,2,1]
 
 p_1 = [e_1,e_3]
