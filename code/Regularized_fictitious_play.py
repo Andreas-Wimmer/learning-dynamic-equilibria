@@ -292,8 +292,8 @@ e_3 = Edge(v,x,2,graph)
 e_4 = Edge(v,y,3,graph)
 e_5 = Edge(w,x,4,graph)
 e_6 = Edge(w,y,5,graph)
-e_7 = Edge(v,t,6,graph)
-e_8 = Edge(w,t,7,graph)
+e_7 = Edge(x,t,6,graph)
+e_8 = Edge(y,t,7,graph)
 
 graph.nodes = {0:s,1:v,2:w,3:x,4:y,5:t}
 graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
