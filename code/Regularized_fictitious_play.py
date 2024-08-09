@@ -284,7 +284,7 @@ net_inflow = RightConstant([0,1,2,3],[10,7,4,0], (0, 3))
 horizon = 3
 delta = 0.25
 epsilon = 0.5
-numSteps = 300
+numSteps = 150
 lamb = 0.00001
 
 
