@@ -278,8 +278,8 @@ p_2 = [e_2,e_4]
 paths = [p_1, p_2]
 net_inflow = RightConstant([0,3],[4,0], (0, 3))
 horizon = 3
-delta = 0.25
-epsilon = 0
+delta = 0.5
+epsilon = 0.2
 numSteps = 300
 lamb = 0.00001
 
