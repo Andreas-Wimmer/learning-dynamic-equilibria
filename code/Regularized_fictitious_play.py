@@ -298,7 +298,7 @@ p_1 = [e_1,e_3]
 p_2 = [e_2,e_3]
 
 paths = [p_1, p_2]
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0], (0, 2))
+net_inflow = RightConstant([0,1,1.75,2],[4,1,3,0], (0, 2))
 horizon = 2
 delta = 0.25
 epsilon = 0
