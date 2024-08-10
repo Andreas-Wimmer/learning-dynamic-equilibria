@@ -302,8 +302,8 @@ net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0], (0, 2))
 horizon = 2
 delta = 0.25
 epsilon = 0
-numSteps = 150
-lamb = 0.00001
+numSteps = 500
+lamb = 0.00000001
 
 
 reg_fictitious_play(graph, capacities, travel_times,
