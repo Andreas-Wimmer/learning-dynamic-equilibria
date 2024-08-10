@@ -280,39 +280,29 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("The learning dynamics neither reached a regularized equilibrium nor converged wtih the given accuracy in the given number of steps")
 
 graph = DirectedGraph
-s = Node(0,graph)
-v = Node(1,graph)
-w = Node(2,graph)
-x = Node(3,graph)
-y = Node(4,graph)
-t = Node(5,graph)
+s = Node(0, graph)
+v = Node(1, graph)
+t = Node(2,graph)
 e_1 = Edge(s,v,0,graph)
-e_2 = Edge(s,w,1,graph)
-e_3 = Edge(v,x,2,graph)
-e_4 = Edge(v,y,3,graph)
-e_5 = Edge(w,x,4,graph)
-e_6 = Edge(w,y,5,graph)
-e_7 = Edge(x,t,6,graph)
-e_8 = Edge(y,t,7,graph)
+e_2 = Edge(s,v,1,graph)
+e_3 = Edge(v,t,2,graph)
 
-graph.nodes = {0:s,1:v,2:w,3:x,4:y,5:t}
-graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
+graph.nodes = {0:s,1:v,2:t}
+graph.edges = [e_1,e_2,e_3]
 graph.reversed = False
 
-capacities = [2,1,2,2,1,1,3,3]
-travel_times = [1,1,1,2,2,1,1,1]
+capacities = [1,3,2]
+travel_times = [1,0,0]
 
-p_1 = [e_1,e_3,e_7]
-p_2 = [e_1,e_4,e_8]
-p_3 = [e_2,e_5,e_7]
-p_4 = [e_2,e_6,e_8]
+p_1 = [e_1,e_3]
+p_2 = [e_2,e_3]
 
-paths = [p_1, p_2,p_3,p_4]
-net_inflow = RightConstant([0,4],[8,0], (0, 4))
-horizon = 4
-delta = 0.5
-epsilon = 0.5
-numSteps = 200
+paths = [p_1, p_2]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0], (0, 2))
+horizon = 2
+delta = 0.25
+epsilon = 0
+numSteps = 50
 lamb = 0.00001
 
 
