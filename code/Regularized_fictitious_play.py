@@ -32,12 +32,6 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network.commodities = [network_inflow]
     network.paths = paths
 
-    if numSteps == None:
-        numSteps = math.inf
-
-    if lamb == None:
-        lamb = 0
-
     min_cap = []
     for i in range(len(network.paths)):
         min_cap.append(0)
@@ -52,24 +46,23 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     for i in range(len(network.paths)):
         portions.append(min_cap[i]/sum_min_caps)
 
-    breaks_net_inflow = net_inflow.times
     values = []
     for i in range(len(network.paths)):
         values.append([])
-        for j in range(len(breaks_net_inflow)):
-            values[i].append(portions[i]*net_inflow.eval(breaks_net_inflow[j]))
+        for j in range(len(net_inflow.times)):
+            values[i].append(portions[i]*net_inflow.eval(net_inflow.times[j]))
 
     inflows = []
     inflow_dict = []
     for i in range(len(network.paths)):
-        inflows.append(RightConstant(breaks_net_inflow, values[i], (0, horizon)))
+        inflows.append(RightConstant(net_inflow.times, values[i], (0, horizon)))
         inflow_dict.append((network.paths[i], inflows[i]))
 
     loader_beg = NetworkLoader(network, inflow_dict)
     result_beg = loader_beg.build_flow()
     flow_beg = next(result_beg)
     delays_beg = loader_beg.path_delay(horizon)
-    delays_avg = delays_beg
+    delays_avg = delays_beg.copy()
     inflow_avg = inflows.copy()
     
     counter_steps = 1
