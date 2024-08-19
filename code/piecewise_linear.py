@@ -643,6 +643,14 @@ class PiecewiseLinear:
         translated = PiecewiseLinear(times, values, first_slope, last_slope, new_domain)
         return translated
     
+    #multiplies a piecewise linear function with a scalar
+    def scalar_mul(self, scalar: float) -> PiecewiseLinear:
+        first_slope = scalar*self.first_slope
+        last_slope = scalar*self.last_slope
+        values = [scalar] * self.values
+        multiplied = PiecewiseLinear(self.times, values, first_slope, last_slope, self.domain)
+
+    
     
     
 identity = PiecewiseLinear([0.0], [0.0], 1.0, 1.0)
