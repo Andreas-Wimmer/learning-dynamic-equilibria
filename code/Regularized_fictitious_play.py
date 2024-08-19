@@ -87,12 +87,25 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 for j in range(len(steps) - 1):
                     sum_delays = 0
                     count_delays = 0
-                    for k in range(delays_avg[i].times):
+                    for k in range(len(delays_avg[i].times)):
+                        length = 0
                         if delays_avg[i].times[k] >= steps[j] and delays_avg[i].times[k] <= steps[j+1]:
-                            sum_delays = sum_delays + delays_avg[i].values[k]
+                            if k == 0:
+                                start = steps[j]
+                            elif delays_avg[i].times[k - 1] < steps[j]:
+                                start = steps[j]
+                            else:
+                                start = delays_avg[i].times[k - 1]
+                            end = delays_avg[i].times[k]
+                            length = end - start 
+                            average = ((delays_avg[i].eval(end) + delays_avg[i].eval(start))/2)
+                            sum_delays = sum_delays + (length/(steps[j + 1] - steps[j]))*average
                             count_delays = count_delays + 1
+                    if count_delays == 0:
+                        sum_delays = ((delays_avg[i].eval(steps[j]) + delays_avg[i].eval(steps[j + 1]))/2)
+                        count_delays = 1
                     value_1 = (sum_delays/count_delays)*h[len(steps)*i + j]
-                    value_2 = epsilon*(h[len(steps)*i + j] - inflow_avg[i].eval(steps[j]))^2
+                    value_2 = epsilon*(h[len(steps)*i + j] - inflow_avg[i].eval(steps[j]))**2
                     sums  = sums + value_1 + value_2
             return sums 
         
@@ -178,8 +191,20 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     count_delay = 0
                     for k in range(len(delays_avg[i].times)):
                         if delays_avg[i].times[k] >= gap_steps[j] and delays_avg[i].times[k] <= gap_steps[j+1]:
-                            sum_delay = sum_delay + delays_avg[i].values[k]
+                            if k == 0:
+                                start = gap_steps[j]
+                            elif delays_avg[i].times[k - 1] < gap_steps[j]:
+                                start = gap_steps[j]
+                            else:
+                                start = delays_avg[i].times[k - 1]
+                            end = delays_avg[i].times[k]
+                            length = end - start 
+                            average = ((delays_avg[i].eval(end) + delays_avg[i].eval(end))/2)
+                            sum_delay = sum_delay + (length/(gap_steps[j + 1] - gap_steps[j])/2)*average
                             count_delay = count_delay + 1
+                    if count_delay == 0:
+                        sum_delay = ((delays_avg[i].eval(gap_steps[j + 1]) + delays_avg[i].eval(gap_steps[j]))/2)
+                        count_delay = 1
                     value_1 = (sum_delay/count_delay)
                     value_2 = 2*epsilon*(inflow_avg[i].eval(gap_steps[j]) - h[len(gap_steps)*i + j])
                     value_3 = h[len(gap_steps)*i + j] - inflow_avg[i].eval(gap_steps[j])
