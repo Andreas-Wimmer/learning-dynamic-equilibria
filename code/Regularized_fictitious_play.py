@@ -140,20 +140,13 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         #4. Update the population average and run the edge-loading procedure again
         old_avg = inflow_avg.copy()
 
-        values_avg = []
-        for i in range(len(network.paths)):
-            values_avg.append([])
-            for j in range(len(breaks)):
-                new_value_1 = (1/counter_steps)*inflows[i].eval(breaks[j])
-                new_value_2 = ((counter_steps - 1)/counter_steps)*old_avg[i].eval(breaks[j])
-                values_avg[i].append(new_value_1 + new_value_2)
-
         inflow_avg = []
-        for i in range(len(network.paths)):
-            inflow_avg.append(RightConstant(breaks, values_avg[i], (0, horizon)))
-    
         inflow_dict_avg = []
         for i in range(len(network.paths)):
+            func_1 = inflows[i].scalar_mul((1/counter_steps))
+            func_2 = old_avg[i].scalar_mul(((counter_steps - 1)/counter_steps))
+            new_avg = func_1.plus(func_2)
+            inflow_avg.append(new_avg)
             inflow_dict_avg.append((network.paths[i], inflow_avg[i]))
 
         loader_avg = NetworkLoader(network, inflow_dict_avg)
