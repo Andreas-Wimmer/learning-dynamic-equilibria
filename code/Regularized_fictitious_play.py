@@ -75,33 +75,18 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     counter_steps = 1
     accuracy_reached = False
     equilibrium_reached = False
+    stop = 0
+    steps = []
+    while stop*delta <= horizon - delta:
+        steps.append(stop.delta)
+        stop = stop + 1
+    steps.append(horizon)
+
+    for i in range(len(net_inflow.times)):
+        if net_inflow.times[i] not in steps:
+            steps.append(net_inflow.times[i])
+    steps.sort()
     while counter_steps < numSteps and not accuracy_reached and not equilibrium_reached:
-        step = 0
-        steps = []
-        while step*delta <= horizon - delta:
-            steps.append(step*delta)
-            step = step + 1
-        steps.append(horizon)
-
-        breaks = steps.copy()
-        for k in range(len(breaks_net_inflow)):
-            if breaks_net_inflow[k] not in breaks:
-                breaks.append(breaks_net_inflow)
-
-        for i in range(len(network.paths)):
-            for j in range(len(delays_avg[i].times)):
-                if delays_avg[i].times[j] not in breaks and delays_avg[i].times[j] <= horizon and elem_lrank(breaks, delays_avg[i].times[j]) - delays_avg[i].times[j] <= -0.01:
-                    breaks.append(delays_avg[i].times[j])
-        
-        breaks.sort()
-
-        time_steps = []
-        time_steps.append(0)
-        for i in range(len(breaks)):
-            if breaks[i] - time_steps[-1] >= delta/5:
-                time_steps.append(breaks[i])
-        
-        time_steps.sort()
         #2. Best-response problem: 
         def obj(h):
             sums = 0
