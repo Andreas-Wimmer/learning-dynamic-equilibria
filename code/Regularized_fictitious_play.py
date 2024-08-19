@@ -113,8 +113,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         
         bounds = []
         start = []
-        for j in range(len(network.paths)):
-            for k in range(len(steps)):
+        for i in range(len(network.paths)):
+            for j in range(len(steps)):
                 bounds.append((0, float("inf")))
                 start.append(inflow_avg[i].eval(steps[j]))
 
