@@ -110,39 +110,32 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(steps)):
             net_bound.append(net_inflow.eval(steps[i]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
+        
         bounds = []
+        start = []
         for j in range(len(network.paths)):
             for k in range(len(steps)):
                 bounds.append((0, float("inf")))
-
-        start = []
-        for i in range(len(network.paths)):
-            for j in range(len(steps)):
                 start.append(inflow_avg[i].eval(steps[j]))
-        
+
         sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = constraint_1)
     
         #3. Update the path inflows and run the edge-loading procedure
-        old_inflows = inflows.copy()
-
         inflows = []
         values = []
-        for i in range(len(network.paths)):
-            values.append([])
-            for j in range(len(time_steps)):
-                values[i].append(sol.x[len(time_steps)*i + j])
-
-        for i in range(len(network.paths)):
-            inflows.append(RightConstant(time_steps, values[i], (0, horizon)))
-
         inflow_dict = []
         for i in range(len(network.paths)):
+            values.append([])
+            for j in range(len(steps)):
+                values[i].append(sol.x[len(steps)*i + j])
+
+        for i in range(len(network.paths)):
+            inflows.append(RightConstant(steps, values[i], (0, horizon)))
             inflow_dict.append((network.paths[i], inflows[i]))
 
         loader_new = NetworkLoader(network, inflow_dict)
         result_new = loader_new.build_flow()
         flow_new = next(result_new)
-        delays_new = loader_new.path_delay(horizon)
         counter_steps = counter_steps + 1
         #4. Update the population average and run the edge-loading procedure again
         old_avg = inflow_avg.copy()
