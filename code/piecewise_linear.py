@@ -146,7 +146,7 @@ class PiecewiseLinear:
         new_values = [self.values[0]]
         for i in range(0, len(self.times) - 1):
             # Add i+1, if it's necessary.
-            if abs(self.gradient(i) - self.gradient(i + 1)) >= 1000 * eps:
+            if abs(self.gradient(i) - self.gradient(i + 1)) >= 1000000 * eps:
                 new_times.append(self.times[i + 1])
                 new_values.append(self.values[i + 1])
         return PiecewiseLinear(
