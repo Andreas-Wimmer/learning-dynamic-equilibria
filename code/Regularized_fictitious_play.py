@@ -168,40 +168,22 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
         print("Norm difference to the last flow: " + str(diff))
         #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
-        gap_breaks = []
-        gap_breaks = steps.copy()
-        for k in range(len(breaks_net_inflow)):
-            if breaks_net_inflow[k] not in gap_breaks:
-                gap_breaks.append(breaks_net_inflow[k])
-        
-        for i in range(len(network.paths)):
-            for j in range(len(delays_avg[i].times)):
-                if delays_avg[i].times[j] not in gap_breaks and delays_avg[i].times[j] <= horizon and elem_lrank(gap_breaks, delays_avg[i].times[j]) - delays_avg[i].times[j] <= -0.01:
-                    gap_breaks.append(delays_avg[i].times[j])
-        
-        gap_breaks.sort()
-
-        gap_steps = []
-        gap_steps.append(0)
-        for i in range(len(gap_breaks)):
-            if gap_breaks[i] - gap_steps[-1] >= delta/5:
-                gap_steps.append(gap_breaks[i])
-
-        gap_steps.sort() 
+        gap_steps = steps.copy()
 
         def obj_gap(h):
             sum_1 = 0
             for i in range(len(network.paths)):
-                for j in range(len(gap_breaks) - 1):
-                    val_1 = delays_avg[i].eval(gap_breaks[j+1])
-                    val_2 = delays_avg[i].eval(gap_breaks[j])
-                    if gap_breaks[j] in gap_steps:
-                        varindex = gap_steps.index(gap_breaks[j])
-                    else:
-                        varindex = elem_lrank(gap_steps, gap_breaks[j])
-                    val_3 = 2*epsilon*(-h[len(gap_steps)*i + varindex] + inflow_avg[i].eval(gap_breaks[j]))
-                    val_4 = h[len(gap_steps)*i + varindex] - inflow_avg[i].eval(gap_breaks[j])
-                    sum_1 = sum_1 + ((val_1 + val_2)/2 + val_3)*val_4
+                for j in range(len(gap_steps) - 1):
+                    sum_delay = 0
+                    count_delay = 0
+                    for k in range(len(delays_avg[i].times)):
+                        if delays_avg[i].times[k] >= gap_steps[j] and delays_avg[i].times[k] <= gap_steps[j+1]:
+                            sum_delay = sum_delay + delays_avg[i].values[k]
+                            count_delay = count_delay + 1
+                    value_1 = (sum_delay/count_delay)
+                    value_2 = 2*epsilon*(inflow_avg[i].eval(gap_steps[j]) - h[len(gap_steps)*i + j])
+                    value_3 = h[len(gap_steps)*i + j] - inflow_avg[i].eval(gap_steps[j])
+                    sum_1 = sum_1 + (value_1 + value_2)*value_3
             return sum_1
 
         A = []
@@ -218,29 +200,23 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(gap_steps)):
             net_bound.append(net_inflow.eval(gap_steps[i]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
+        
         bounds = []
+        start = []
         for j in range(len(network.paths)):
             for k in range(len(gap_steps)):
                 bounds.append((0, float("inf")))
-
-        start = []
-        for i in range(len(network.paths)):
-            for j in range(len(gap_steps)):
                 start.append(inflow_avg[i].eval(gap_steps[j]))
+
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         
-        if round(sol_gap.fun, 5) == 0:
+        if round(sol_gap.fun, 4) == 0:
             equilibrium_reached = True
-            print("Regularized equilibrium reached")
+            print("The empirical frequency has reached a regularized equilbrium")
 
-        print("Gap at " + str(sol_gap.fun))
+        print("Value of the gap problem: " + str(sol_gap.fun))
 
-    if equilibrium_reached:
-        print("The learning dynamics reached a regularized equilibrium")
-    elif accuracy_reached:
-        print("The learning dynamics converged")
-    else:
-        print("The learning dynamics neither reached a regularized equilibrium nor converged wtih the given accuracy in the given number of steps")
+
 
 graph = DirectedGraph
 s = Node(0, graph)
