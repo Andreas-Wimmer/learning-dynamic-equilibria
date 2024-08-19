@@ -193,6 +193,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                 end = gap_steps[j + 1]
                             else:
                                 end = delays_avg[i].times[k + 1]
+                            start = delays_avg[i].times[k]
                             length = end - start 
                             average = ((delays_avg[i].eval(end) + delays_avg[i].eval(end))/2)
                             sum_delay = sum_delay + (length/(gap_steps[j + 1] - gap_steps[j])/2)*average
