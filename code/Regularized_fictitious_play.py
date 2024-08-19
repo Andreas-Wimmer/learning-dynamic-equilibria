@@ -71,7 +71,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     stop = 0
     steps = []
     while stop*delta <= horizon - delta:
-        steps.append(stop.delta)
+        steps.append(stop*delta)
         stop = stop + 1
     steps.append(horizon)
 
