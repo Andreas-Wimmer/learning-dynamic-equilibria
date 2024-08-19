@@ -87,16 +87,14 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 for j in range(len(steps) - 1):
                     sum_delays = 0
                     count_delays = 0
-                    for k in range(len(delays_avg[i].times)):
+                    for k in range(len(delays_avg[i].times) - 1):
                         length = 0
                         if delays_avg[i].times[k] >= steps[j] and delays_avg[i].times[k] <= steps[j+1]:
-                            if k == 0:
-                                start = steps[j]
-                            elif delays_avg[i].times[k - 1] < steps[j]:
-                                start = steps[j]
+                            if delays_avg[i].times[k + 1] > steps[j + 1]:
+                                end = steps[j + 1]
                             else:
-                                start = delays_avg[i].times[k - 1]
-                            end = delays_avg[i].times[k]
+                                end = delays_avg[i].times[k + 1]
+                            start = delays_avg[i].times[k]
                             length = end - start 
                             average = ((delays_avg[i].eval(end) + delays_avg[i].eval(start))/2)
                             sum_delays = sum_delays + (length/(steps[j + 1] - steps[j]))*average
@@ -189,15 +187,12 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 for j in range(len(gap_steps) - 1):
                     sum_delay = 0
                     count_delay = 0
-                    for k in range(len(delays_avg[i].times)):
+                    for k in range(len(delays_avg[i].times) - 1):
                         if delays_avg[i].times[k] >= gap_steps[j] and delays_avg[i].times[k] <= gap_steps[j+1]:
-                            if k == 0:
-                                start = gap_steps[j]
-                            elif delays_avg[i].times[k - 1] < gap_steps[j]:
-                                start = gap_steps[j]
+                            if delays_avg[i].times[k + 1] > gap_steps[j + 1]:
+                                end = gap_steps[j + 1]
                             else:
-                                start = delays_avg[i].times[k - 1]
-                            end = delays_avg[i].times[k]
+                                end = delays_avg[i].times[k + 1]
                             length = end - start 
                             average = ((delays_avg[i].eval(end) + delays_avg[i].eval(end))/2)
                             sum_delay = sum_delay + (length/(gap_steps[j + 1] - gap_steps[j])/2)*average
