@@ -100,7 +100,7 @@ class NetworkLoader:
             if delay_op.times[-1] >= T:
                 delay_op = delay_op - identity.restrict((0,delay_op.times[-1]))
                 delay_op.last_slope = 0.0
-                path_delays.append(delay_op.restrict((0,delay_op.times[-1])))
+                path_delays.append(delay_op.restrict((0,delay_op.times[-1])).simplify)
             else:
                 delay_op = delay_op - identity.restrict((0,T))
                 delay_op.last_slope = 0.0
