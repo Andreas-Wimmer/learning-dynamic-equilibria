@@ -216,7 +216,14 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
         print("Value of the gap problem: " + str(sol_gap.fun))
 
-
+    if equilibrium_reached and accuracy_reached:
+        print("The sequence of empirical frequencies converged in the given precision to a regularized equilibrium with epsilon = " + str(epsilon))
+    elif equilibrium_reached:
+        print("The sequence of empirical frequencies reached a regularized equilibrium with epsilon = " + str(epsilon) + " but not in the given accuracy")
+    elif accuracy_reached:
+        print("The sequence of empirical frequencies converged in the given precision, but not to a regularized equilibrium")
+    else:
+        print("The sequence of empirical frequencies neither converged nor reached a regularized equilibrium")
 
 graph = DirectedGraph
 s = Node(0, graph)
