@@ -84,42 +84,41 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         def obj(h):
             sums = 0
             for i in range(len(network.paths)):
-                for j in range(len(breaks) - 1):
-                    value_1 = delays_avg[i].eval(breaks[j])
-                    value_2 = delays_avg[i].eval(breaks[j+1])
-                    if breaks[j] in time_steps:
-                        varindex = time_steps.index(breaks[j])
-                    else:
-                        varindex = elem_lrank(time_steps, breaks[j])
-                    value_3 = ((value_1 + value_2)/2)*h[len(time_steps)*i + varindex]
-                    value_4 = epsilon*pow((h[len(time_steps)*i + varindex] - inflow_avg[i].eval(breaks[j])),2)
-                    sums = sums + value_3 + value_4
-
+                for j in range(len(steps) - 1):
+                    sum_delays = 0
+                    count_delays = 0
+                    for k in range(delays_avg[i].times):
+                        if delays_avg[i].times[k] >= steps[j] and delays_avg[i].times[k] <= steps[j+1]:
+                            sum_delays = sum_delays + delays_avg[i].values[k]
+                            count_delays = count_delays + 1
+                    value_1 = (sum_delays/count_delays)*h[len(steps)*i + j]
+                    value_2 = epsilon*(h[len(steps)*i + j] - inflow_avg[i].eval(steps[j]))^2
+                    sums  = sums + value_1 + value_2
             return sums 
         
         A = []
-        for j in range(len(time_steps)):
+        for j in range(len(steps)):
             A.append([])
             for k in range(len(network.paths)):
-                for g in range(len(time_steps)):
+                for g in range(len(steps)):
                     if j == g:
                         A[j].append(1)
                     else:
                         A[j].append(0)
 
         net_bound = []
-        for i in range(len(time_steps)):
-            net_bound.append(net_inflow.eval(time_steps[i]))
+        for i in range(len(steps)):
+            net_bound.append(net_inflow.eval(steps[i]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
         bounds = []
         for j in range(len(network.paths)):
-            for k in range(len(time_steps)):
+            for k in range(len(steps)):
                 bounds.append((0, float("inf")))
 
         start = []
         for i in range(len(network.paths)):
-            for j in range(len(time_steps)):
-                start.append(inflows[i].eval(time_steps[j]))
+            for j in range(len(steps)):
+                start.append(inflow_avg[i].eval(steps[j]))
         
         sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = constraint_1)
     
