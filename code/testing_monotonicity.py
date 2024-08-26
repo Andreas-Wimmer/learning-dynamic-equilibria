@@ -69,10 +69,11 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
 
     for i in range(len(paths)):
         for j in range(len(steps[i]) - 1):
-            start = steps[i][j]
-            end = steps[i][j+1] - 2*eps
-            value = diff_inflows[i].multiply(diff_delays[i], start, end).integrate(start, end, True)
-            integrals[i] = integrals[i] + value
+            if steps[i][j+1] - steps[i][j] >= 10*eps:
+                start = steps[i][j]
+                end = steps[i][j+1] - 2*eps
+                value = diff_inflows[i].multiply(diff_delays[i], start, end).integrate(start, end, True)
+                integrals[i] = integrals[i] + value
 
     scalar_product = sum(integrals)
     #term = gap_function.gap_function(inflows_1,delays_1,inflows_2,T)
@@ -85,34 +86,40 @@ test_graph = DirectedGraph()
 s = Node(0,test_graph)
 v = Node(1,test_graph)
 w = Node(2,test_graph)
-t = Node(3,test_graph)
+x = Node(3,test_graph)
+t = Node(4,test_graph)
 edge_1 = Edge(s,v,0,test_graph)
-edge_2 = Edge(s,w,1,test_graph)
+edge_2 = Edge(s,x,1,test_graph)
 edge_3 = Edge(v,w,2,test_graph)
-edge_4 = Edge(v,t,3,test_graph)
-edge_5 = Edge(w,t,4,test_graph)
+edge_4 = Edge(x,v,3,test_graph)
+edge_5 = Edge(w,x,4,test_graph)
+edge_6 = Edge(w,t,5,test_graph)
+edge_7 = Edge(x,t,6,test_graph)
 
 
-test_graph.nodes = {0:s,1:v,2:w,3:t}
-test_graph.edges = [edge_1,edge_2,edge_3,edge_4,edge_5]
+test_graph.nodes = {0:s,1:v,2:w,3:x,4:t}
+test_graph.edges = [edge_1,edge_2,edge_3,edge_4,edge_5,edge_6,edge_7]
 
-capacities = [2,2,1,1,1]
-travel_times = [1,1,1,1,1]
-net_inflow = RightConstant([0,1,2,3],[4,1,3,0],(0,3))
+capacities = [2,3,1,1,1,2,1]
+travel_times = [0,1,1,0,1,0,0]
+net_inflow = RightConstant([0,1,2,3,4],[6,2,2,4,0],(0,4))
 
-path_1 = [edge_1,edge_4]
-path_2 = [edge_2,edge_5]
-path_3 = [edge_1,edge_3,edge_5]
+path_1 = [edge_1,edge_3,edge_6]
+path_2 = [edge_2,edge_4,edge_3,edge_6]
+path_3 = [edge_1,edge_3,edge_5,edge_7]
+path_4 = [edge_2,edge_7]
 
 
-inflow_1 = RightConstant([0,0.5,1,2,3],[1.5,0.5,0,0,0],(0,3))
-inflow_2 = RightConstant([0,0.5,1,2,3],[1,3,1,3,0],(0,3))
-inflow_3 = RightConstant([0,0.5,1,2,3],[1.5,0.5,0,0,0],(0,3))
-inflow_4 = RightConstant([0,1,2,3],[1,0,0,0],(0,3))
-inflow_5 = RightConstant([0,1,2,3],[2,1,3,0],(0,3))
-inflow_6 = RightConstant([0,1,2,3],[1,0,0,0],(0,3))
+inflow_1 = RightConstant([0,1,2,3,4],[1.5,0.5,1,1,0],(0,4))
+inflow_2 = RightConstant([0,1,2,3,4],[1.5,0.5,1,1,0],(0,4))
+inflow_3 = RightConstant([0,1,2,3,4],[1.5,0.5,0,1,0],(0,4))
+inflow_4 = RightConstant([0,1,2,3,4],[1.5,0.5,0,1,0],(0,4))
+inflow_5 = RightConstant([0,1,2,3,4],[2,1,0.5,2,0],(0,4))
+inflow_6 = RightConstant([0,1,2,3,4],[1,0,0.5,0,0],(0,4))
+inflow_7 = RightConstant([0,1,2,3,4],[2,1,0.5,2,0],(0,4))
+inflow_8 = RightConstant([0,1,2,3,4],[1,0,0.5,0,0],(0,4))
 
-inflow_f = [inflow_1,inflow_2,inflow_3]
-inflow_g = [inflow_4,inflow_5,inflow_6]
+inflow_f = [inflow_1,inflow_2,inflow_3,inflow_4]
+inflow_g = [inflow_5,inflow_6,inflow_7,inflow_8]
 
-monotonicity_check(test_graph, capacities, travel_times, net_inflow, 3, [path_1,path_2,path_3], inflow_f, inflow_g)
+monotonicity_check(test_graph, capacities, travel_times, net_inflow, 4, [path_1,path_2,path_3,path_4], inflow_f, inflow_g)
