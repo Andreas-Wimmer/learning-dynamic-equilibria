@@ -46,7 +46,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
 
     for i in range(len(net_inflow.times)):
         if net_inflow.times[i] not in steps:
-            steps.append(net_inflow[i])
+            steps.append(net_inflow.times[i])
     steps.sort()
 
     values_1 = []
@@ -255,4 +255,4 @@ path_1 = [e_1,e_3]
 path_2 = [e_2,e_3]
 paths = [path_1, path_2]
 
-non_monotonicity_game(graph,capacities,travel_times,net_inflow,paths,0.25,2,0.2)
+non_monotonicity_game(graph,capacities,travel_times,net_inflow,paths,0.1,2,50)
