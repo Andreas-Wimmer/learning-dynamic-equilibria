@@ -15,7 +15,7 @@ from testing_monotonicity import monotonicity_check
 
 
 def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[float], net_inflow: RightConstant,
-                          paths: List[Path], delta: float, horizon: float):
+                          paths: List[Path], delta: float, horizon: float, epsilon: float):
     #Steps that need to be taken:
     #1. Initialize the network
     network = Network()
@@ -109,7 +109,8 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
                         sum_delays = ((delays_max[i].eval(steps[j]) + delays_max[i].eval(steps[j + 1]))/2)
                         count_delays = 1
                     value_1 = (sum_delays/count_delays)*(inflows_max[i].eval(steps[j]) - h[len(steps)*i +j])
-                    sums  = sums + value_1
+                    value_2 = epsilon*(h[len(steps)*i + j] - inflows_min[i].eval(steps[j]))**2
+                    sums  = sums + value_1 + value_2
             return sums 
         
         A = []
@@ -177,7 +178,8 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
                         sum_delays = ((delays_min[i].eval(steps[j]) + delays_min[i].eval(steps[j + 1]))/2)
                         count_delays = 1
                     value_1 = (sum_delays/count_delays)*(h[len(steps)*i + j] - inflows_min[i].eval(steps[j]))
-                    sums  = sums + value_1
+                    value_2 = epsilon*(h[len(steps)*i + j] - inflows_max[i].eval(steps[j]))**2
+                    sums  = sums + value_1 + value_2
             return -sums 
         
         A = []
@@ -253,4 +255,4 @@ path_1 = [e_1,e_3]
 path_2 = [e_2,e_3]
 paths = [path_1, path_2]
 
-non_monotonicity_game(graph,capacities,travel_times,net_inflow,paths,0.25,2)
+non_monotonicity_game(graph,capacities,travel_times,net_inflow,paths,0.25,2,0.2)
