@@ -132,7 +132,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
         for i in range(len(network.paths)):
             for j in range(len(steps)):
                 bounds.append((0, float("inf")))
-                start.append(inflows_max[i].eval(steps[j]))
+                start.append(0)
 
         sol_min = scipy.optimize.minimize(obj_min, start, bounds = bounds, constraints = constraint_1)
         
@@ -178,7 +178,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
                         count_delays = 1
                     value_1 = (sum_delays/count_delays)*(h[len(steps)*i + j] - inflows_min[i].eval(steps[j]))
                     sums  = sums + value_1
-            return sums 
+            return -sums 
         
         A = []
         for j in range(len(steps)):
@@ -200,7 +200,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
         for i in range(len(network.paths)):
             for j in range(len(steps)):
                 bounds.append((0, float("inf")))
-                start.append(inflows_min[i].eval(steps[j]))
+                start.append(0)
 
         sol_max = scipy.optimize.minimize(obj_max, start, bounds = bounds, constraints = constraint_1)
 
