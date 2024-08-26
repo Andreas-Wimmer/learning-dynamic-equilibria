@@ -23,7 +23,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
     network.capacity = cap
     network.travel_time = travel
     s = graph.nodes[0]
-    t = graph.nodes[-1]
+    t = graph.nodes[len(graph.nodes) - 1]
     network_inflow = Commodity({s: net_inflow}, t, 1)
     network.commodities = [network_inflow]
     network.paths = paths
@@ -132,7 +132,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
         for i in range(len(network.paths)):
             for j in range(len(steps)):
                 bounds.append((0, float("inf")))
-                start.append(inflows_min[i].eval(steps[j]))
+                start.append(inflows_max[i].eval(steps[j]))
 
         sol_min = scipy.optimize.minimize(obj_min, start, bounds = bounds, constraints = constraint_1)
         
@@ -200,7 +200,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
         for i in range(len(network.paths)):
             for j in range(len(steps)):
                 bounds.append((0, float("inf")))
-                start.append(inflows_max[i].eval(steps[j]))
+                start.append(inflows_min[i].eval(steps[j]))
 
         sol_max = scipy.optimize.minimize(obj_max, start, bounds = bounds, constraints = constraint_1)
 
@@ -223,7 +223,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
         delays_max = loader_max.path_delay(horizon)
 
         #7. Evaluation of the variational inequality
-        monotonicity_gap = monotonicity_check(graph, cap, travel, net_inflow, horizon, paths, inflow_dict_max, inflow_dict_min)
+        monotonicity_gap = monotonicity_check(graph, cap, travel, net_inflow, horizon, paths, inflows_max, inflows_min)
         print(str(monotonicity_gap))
 
         if monotonicity_gap < -1000*eps:
