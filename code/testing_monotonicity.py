@@ -97,7 +97,7 @@ test_graph.nodes = {0:s,1:v,2:w,3:t}
 test_graph.edges = [edge_1,edge_2,edge_3,edge_4,edge_5]
 
 capacities = [2,2,1,1,1]
-travel_times = [1,0,0,0,1]
+travel_times = [1,1,1,1,1]
 net_inflow = RightConstant([0,1,2,3],[4,1,3,0],(0,3))
 
 path_1 = [edge_1,edge_4]
