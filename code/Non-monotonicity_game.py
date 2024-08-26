@@ -110,7 +110,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
                         count_delays = 1
                     value_1 = (sum_delays/count_delays)*(inflows_max[i].eval(steps[j]) - h[len(steps)*i +j])
                     value_2 = epsilon*(h[len(steps)*i + j] - inflows_min[i].eval(steps[j]))**2
-                    sums  = sums + value_1 + value_2
+                    sums  = sums + value_1 - value_2
             return sums 
         
         A = []
@@ -179,7 +179,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
                         count_delays = 1
                     value_1 = (sum_delays/count_delays)*(h[len(steps)*i + j] - inflows_min[i].eval(steps[j]))
                     value_2 = epsilon*(h[len(steps)*i + j] - inflows_max[i].eval(steps[j]))**2
-                    sums  = sums + value_1 + value_2
+                    sums  = sums + value_1 - value_2
             return -sums 
         
         A = []
