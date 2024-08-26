@@ -223,7 +223,7 @@ def non_monotonicity_game(graph: DirectedGraph, cap: List[float], travel: List[f
         delays_max = loader_max.path_delay(horizon)
 
         #7. Evaluation of the variational inequality
-        monotonicity_gap = monotonicity_check(graph, cap, travel, net_inflow, horizon, paths, inflows_max, inflows_min)
+        monotonicity_gap = monotonicity_check(graph, cap, travel, net_inflow, horizon, paths, inflows_min, inflows_max)
         print(str(monotonicity_gap))
 
         if monotonicity_gap < -1000*eps:
