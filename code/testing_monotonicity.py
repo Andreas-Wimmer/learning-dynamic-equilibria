@@ -99,8 +99,8 @@ test_graph.nodes = {0:s,1:v,2:w,3:x,4:t}
 test_graph.edges = [edge_1,edge_2,edge_3,edge_4,edge_5,edge_6,edge_7]
 
 capacities = [2,3,1,1,1,2,1]
-travel_times = [0,1,1,0,1,0,0]
-net_inflow = RightConstant([0,1,2,3,4],[6,2,2,4,0],(0,4))
+travel_times = [1,1,1,1,1,1,1]
+net_inflow = RightConstant([0,1,2,3,4,5],[4,2,2,3,1,0],(0,5))
 
 path_1 = [edge_1,edge_3,edge_6]
 path_2 = [edge_2,edge_4,edge_3,edge_6]
@@ -108,14 +108,14 @@ path_3 = [edge_1,edge_3,edge_5,edge_7]
 path_4 = [edge_2,edge_7]
 
 
-inflow_1 = RightConstant([0,1,2,3,4],[1.5,0.5,1,1,0],(0,4))
-inflow_2 = RightConstant([0,1,2,3,4],[1.5,0.5,1,1,0],(0,4))
-inflow_3 = RightConstant([0,1,2,3,4],[1.5,0.5,0,1,0],(0,4))
-inflow_4 = RightConstant([0,1,2,3,4],[1.5,0.5,0,1,0],(0,4))
-inflow_5 = RightConstant([0,1,2,3,4],[2,1,0.5,2,0],(0,4))
-inflow_6 = RightConstant([0,1,2,3,4],[1,0,0.5,0,0],(0,4))
-inflow_7 = RightConstant([0,1,2,3,4],[2,1,0.5,2,0],(0,4))
-inflow_8 = RightConstant([0,1,2,3,4],[1,0,0.5,0,0],(0,4))
+inflow_1 = RightConstant([0,0.5,1,2,3,4,5],[3,1,1,1,1,1,0],(0,5))
+inflow_2 = RightConstant([0,0.5,1,2,3,4,5],[0,0,0,0,1,0,0],(0,5))
+inflow_3 = RightConstant([0,0.5,1,2,3,4,5],[1,3,0,0,0,0,0],(0,5))
+inflow_4 = RightConstant([0,0.5,1,2,3,4,5],[0,0,1,1,1,0,0],(0,5))
+inflow_5 = RightConstant([0,1,2,3,4,5],[2,0,1,1,0,0],(0,5))
+inflow_6 = RightConstant([0,1,2,3,4,5],[0,0,1,0,1,0],(0,5))
+inflow_7 = RightConstant([0,1,2,3,4,5],[2,1,0,1,0,0],(0,5))
+inflow_8 = RightConstant([0,1,2,3,4,5],[0,1,0,1,0,0],(0,5))
 
 inflow_f = [inflow_1,inflow_2,inflow_3,inflow_4]
 inflow_g = [inflow_5,inflow_6,inflow_7,inflow_8]
