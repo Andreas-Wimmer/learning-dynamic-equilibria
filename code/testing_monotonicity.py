@@ -14,20 +14,20 @@ import gap_function
 def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_times: List[float],
                        network_inflow: RightConstant, T: float, paths = List[Path], 
                         inflows_1 = List[RightConstant], inflows_2 = List[RightConstant]) -> float:
-    net_inflow = Commodity({s: network_inflow}, len(graph.edges) - 1, 1)
     network = Network()
     network.graph = graph
     network.capacity = capacities
     network.travel_time = travel_times
+    s = graph.nodes[0]
+    t = graph.nodes[len(graph.nodes) - 1]
+    net_inflow = Commodity({s: network_inflow},t,1)
     network.commodities = [net_inflow]
     network.paths = paths 
 
     inflow_dict_1 = []
-    for i in range(len(paths)):
-        inflow_dict_1.append((paths[i], inflows_1[i]))
-
     inflow_dict_2 = []
     for i in range(len(paths)):
+        inflow_dict_1.append((paths[i], inflows_1[i]))
         inflow_dict_2.append((paths[i], inflows_2[i]))
 
     loader_1 = NetworkLoader(network, inflow_dict_1)
@@ -43,11 +43,9 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
     delays_2 = loader_2.path_delay(T)
 
     diff_delays = []
-    for i in range(len(paths)):
-        diff_delays.append(delays_1[i] - delays_2[i])
-
     diff_inflows = []
     for i in range(len(paths)):
+        diff_delays.append(delays_1[i] - delays_2[i])
         diff_inflows.append(inflows_1[i] - inflows_2[i])
     
     steps = []
