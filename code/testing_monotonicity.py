@@ -82,45 +82,48 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
 
 graph = DirectedGraph()
 s = Node(0,graph)
-v = Node(1,graph)
-x = Node(2,graph)
-y = Node(3,graph)
-t = Node(4,graph)
-e1 = Edge(s,v,0,graph)
-e2 = Edge(s,x,1,graph)
-e3 = Edge(v,y,2,graph)
-e4 = Edge(x,y,3,graph)
-e5 = Edge(v,t,4,graph)
-e6 = Edge(y,t,5,graph)
-e7 = Edge(x,t,6,graph)
+u = Node(1,graph)
+w = Node(2,graph)
+x = Node(3,graph)
+y = Node(4,graph)
+z = Node(5,graph)
+t = Node(6,graph)
+e1 = Edge(s,u,0,graph)
+e2 = Edge(u,x,1,graph)
+e3 = Edge(u,w,2,graph)
+e4 = Edge(x,w,3,graph)
+e5 = Edge(w,z,4,graph)
+e6 = Edge(w,y,5,graph)
+e7 = Edge(z,t,6,graph)
+e8 = Edge(y,t,7,graph)
 
-graph.nodes = {0:s,1:v,2:x,3:y,4:t}
-graph.edges = [e1,e2,e3,e4,e5,e6,e7]
+graph.nodes = {0:s,1:u,2:w,3:x,4:y,5:z,6:t}
+graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8]
 
-capacities = [1,3,1,3,2,2,2]
-travel_times = [1,1,1,1,1,1,1]
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
+capacities = [4,1,3,1,2,1,2,1]
+travel_times = [1,1,2,1,1,1,1,1]
+net_inflow = RightConstant([0,1,1.75,4],[2.5,1,3,0],(0,4))
 
-p1 = [e1,e3,e6]
-p2 = [e2,e4,e6]
-p3 = [e1,e5]
-p4 = [e2,e7]
+p1 = [e1,e2,e4,e5,e7]
+p2 = [e1,e2,e4,e6,e8]
+p3 = [e1,e3,e5,e7]
+p4 = [e1,e2,e6,e8]
 
-i1 = RightConstant([0,0.5,1,2],[1.5,0.5,0,0],(0,2))
-i2 = RightConstant([0,0.5,1,1.75,2],[1,2,1,3,0],(0,2))
-i3 = RightConstant([0,2],[0,0],(0,2))
-i4 = RightConstant([0,2],[0,0],(0,2))
+i1 = RightConstant([0,0.5,1,4],[1.5,0.5,0,0],(0,4))
+i2 = RightConstant([0,4],[0,0],(0,4))
+i3 = RightConstant([0,0.5,1,1.75,4],[1,2,1,3,0],(0,4))
+i4 = RightConstant([0,4],[0,0],(0,4))
 #i5 = RightConstant([0,1,1.5,2],[0,1,0,0],(0,2))
 #i6 = RightConstant([0,1,1.5,2],[0,1,0,0],(0,2))
 
-i7 = RightConstant([0,1,2],[1,0,0],(0,2))
-i8 = RightConstant([0,1,1.75,2],[1.5,1,3,0],(0,2))
-i9 = RightConstant([0,2],[0,0],(0,2))
-i10 = RightConstant([0,2],[0,0],(0,2))
+i7 = RightConstant([0,1,4],[1,0,0],(0,4))
+i8 = RightConstant([0,4],[0,0],(0,4))
+i9 = RightConstant([0,1,1.75,4],[1.5,1,3,0],(0,4))
+i10 = RightConstant([0,4],[0,0],(0,4))
 #i11 = RightConstant([0,1,1.5,2],[0,1,0,0],(0,2))
 #i12 = RightConstant([0,1,1.5,2],[0,1,0,0],(0,2))
 
 in_f = [i1,i2,i3,i4]
 in_g = [i7,i8,i9,i10]
 
-monotonicity_check(graph, capacities, travel_times, net_inflow,2,[p1,p2,p3,p4], in_f, in_g)
+monotonicity_check(graph, capacities, travel_times, net_inflow,4,[p1,p2,p3,p4], in_f, in_g)
