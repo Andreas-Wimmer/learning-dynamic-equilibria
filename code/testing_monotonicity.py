@@ -113,7 +113,7 @@ graph.edges = [e1,e2,e3]
 
 capacities = [1,3,2]
 travel_times = [1,0,0]
-net_inflow = RightConstant([0,1,1.5,2],[1.25,1,3,0],(0,2))
+net_inflow = RightConstant([0,1,1.5,2],[1.1,1,3,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]
@@ -134,8 +134,8 @@ p2 = [e2,e3]
 #p17 = [e3,e10,e15]
 
 
-i1 = RightConstant([0,0.5,1,2],[1.25,0.75,0,0],(0,2))
-i2 = RightConstant([0,0.5,1,1.5,2],[0,0.5,1,3,0],(0,2))
+i1 = RightConstant([0,0.5,1,2],[1.1,0.9,0,0],(0,2))
+i2 = RightConstant([0,0.5,1,1.5,2],[0,0.2,1,3,0],(0,2))
 #i3 = RightConstant([0,0.5,1,5],[0.75,0.25,0,0],(0,5))
 #i4 = RightConstant([0,5],[0,0],(0,5))
 #i5 = RightConstant([0,0.5,1,1.75,5],[1.5,1.5,3,1,0],(0,5))
@@ -153,7 +153,7 @@ i2 = RightConstant([0,0.5,1,1.5,2],[0,0.5,1,3,0],(0,2))
 #i17 = RightConstant([0,1,1.75,4],[1,2,1,0],(0,4))
 
 i18 = RightConstant([0,1,2],[1,0,0],(0,2))
-i19 = RightConstant([0,1,1.5,2],[0.25,1,3,0],(0,2))
+i19 = RightConstant([0,1,1.5,2],[0.1,1,3,0],(0,2))
 #i20 = RightConstant([0,1,5],[0.5,0,0],(0,5))
 #i21 = RightConstant([0,5],[0,0],(0,5))
 #i22 = RightConstant([0,1,1.75,5],[1.5,3,1,0],(0,5))
