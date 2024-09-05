@@ -237,6 +237,12 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
         print("Value of the gap problem: " + str(sol_gap.fun))
 
+    diff_delays_avg = []
+    for i in range(len(network.paths)):
+        for j in range(len(network.paths)):
+            if i != j:
+                diff_delays_avg.append(delays_avg[i] - delays_avg[j])
+
     if equilibrium_reached and accuracy_reached:
         print("The sequence of empirical frequencies converged in the given precision to a regularized equilibrium with epsilon = " + str(epsilon))
     elif equilibrium_reached:
@@ -246,34 +252,32 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     else:
         print("The sequence of empirical frequencies neither converged nor reached a regularized equilibrium")
 
-graph = DirectedGraph
-s = Node(0, graph)
-v = Node(1, graph)
-t = Node(2,graph)
-e_1 = Edge(s,v,0,graph)
-e_2 = Edge(s,v,1,graph)
-e_3 = Edge(v,t,2,graph)
-e_4 = Edge(s,t,3,graph)
+test_graph = DirectedGraph()
+s = Node(0, test_graph)
+v = Node(1, test_graph)
+t = Node(2, test_graph)
+edge_1 = Edge(s, v, 0, test_graph)
+edge_2 = Edge(s, v, 1, test_graph)
+edge_3 = Edge(v, t, 2, test_graph)
 
-graph.nodes = {0:s,1:v,2:t}
-graph.edges = [e_1,e_2,e_3,e_4]
-graph.reversed = False
+test_graph.nodes = {0:s, 1:v, 2:t}
+test_graph.edges = [edge_1, edge_2, edge_3]
+test_graph.reversed = False
 
-capacities = [1,3,2,3]
-travel_times = [1,1,0,1]
+capacities = [1,3,2]
+travel_times = [1,1,0]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,4,0],(0, 2))
 
-p_1 = [e_1,e_3]
-p_2 = [e_2,e_3]
-p_3 = [e_4]
+path_1 = [edge_1, edge_3]
+path_2 = [edge_2, edge_3]
 
-paths = [p_1, p_2, p_3]
-net_inflow = RightConstant([0,2],[3,0], (0, 2))
+paths = [path_1,path_2]
 horizon = 2
-delta = 0.5
+delta = 0.25
 epsilon = 0
-numSteps = 1000
+numSteps = 500
 lamb = 0.00000001
 
 
-reg_fictitious_play(graph, capacities, travel_times,
+reg_fictitious_play(test_graph, capacities, travel_times,
                     net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
