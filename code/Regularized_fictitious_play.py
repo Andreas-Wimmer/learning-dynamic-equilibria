@@ -99,6 +99,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             average = ((delays_avg[i].eval(end) + delays_avg[i].eval(start))/2)
                             sum_delays = sum_delays + (length/(steps[j + 1] - steps[j]))*average
                             count_delays = count_delays + 1
+                        count_delays = 0
                     if count_delays == 0:
                         sum_delays = ((delays_avg[i].eval(steps[j]) + delays_avg[i].eval(steps[j + 1]))/2)
                         count_delays = 1
@@ -198,6 +199,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             average = ((delays_avg[i].eval(end) + delays_avg[i].eval(end))/2)
                             sum_delay = sum_delay + (length/(gap_steps[j + 1] - gap_steps[j])/2)*average
                             count_delay = count_delay + 1
+                    count_delay = 0
                     if count_delay == 0:
                         sum_delay = ((delays_avg[i].eval(gap_steps[j + 1]) + delays_avg[i].eval(gap_steps[j]))/2)
                         count_delay = 1
@@ -275,7 +277,7 @@ paths = [path_1,path_2]
 horizon = 2
 delta = 0.25
 epsilon = 0
-numSteps = 500
+numSteps = 1000
 lamb = 0.00000001
 
 
