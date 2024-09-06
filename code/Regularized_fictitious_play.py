@@ -261,36 +261,47 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     else:
         print("The sequence of empirical frequencies neither converged nor reached a regularized equilibrium")
 
-test_graph = DirectedGraph()
-s = Node(0,test_graph)
-v = Node(1,test_graph)
-w = Node(2,test_graph)
-t = Node(3,test_graph)
-edge_1 = Edge(s,v,0,test_graph)
-edge_2 = Edge(s,w,1,test_graph)
-edge_3 = Edge(v,w,2,test_graph)
-edge_4 = Edge(v,t,3,test_graph)
-edge_5 = Edge(w,t,4,test_graph)
+graph = DirectedGraph()
+s = Node(0,graph)
+v = Node(1,graph)
+w = Node(2,graph)
+x = Node(3,graph)
+y = Node(4,graph)
+z = Node(5,graph)
+u = Node(6,graph)
+t = Node(7,graph)
+e_1 = Edge(s,v,0,graph)
+e_2 = Edge(s,w,1,graph)
+e_3 = Edge(s,x,2,graph)
+e_4 = Edge(s,y,3,graph)
+e_5 = Edge(v,z,4,graph)
+e_6 = Edge(w,z,5,graph)
+e_7 = Edge(x,u,6,graph)
+e_8 = Edge(y,u,7,graph)
+e_9 = Edge(z,t,8,graph)
+e_10 = Edge(u,t,9,graph)
 
-test_graph.nodes = {0:s,1:v,2:w,3:t}
-test_graph.edges = [edge_1,edge_2,edge_3,edge_4,edge_5]
-test_graph.reversed = False
 
-capacities = [2,2,1,1,1]
-travel_times = [1,0,0,0,1]
-net_inflow = RightConstant([0,1,2,3],[6,6,6,0],(0,3))
+graph.nodes = {0:s,1:v,2:w,3:x,4:y,5:z,6:u,7:t}
+graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8,e_9,e_10]
+graph.reversed = False
 
-path_1 = [edge_1,edge_4]
-path_2 = [edge_2,edge_5]
-path_3 = [edge_1,edge_3,edge_5]
+capacities = [1,3,1,3,1,3,1,3,2,2]
+travel_times = [1,1,1,1,1,1,1,1,1,1]
+net_inflow = RightConstant([0,1,1.75,2],[5,2,6,0],(0,2))
 
-paths = [path_1,path_2,path_3]
-horizon = 3
+path_1 = [e_1,e_5,e_9]
+path_2 = [e_2,e_6,e_9]
+path_3 = [e_3,e_7,e_10]
+path_4 = [e_4,e_8,e_10]
+
+paths = [path_1,path_2,path_3,path_4]
+horizon = 2
 delta = 0.5
 epsilon = 0
 numSteps = 500
 lamb = 0.00000001
 
 
-reg_fictitious_play(test_graph, capacities, travel_times,
+reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
