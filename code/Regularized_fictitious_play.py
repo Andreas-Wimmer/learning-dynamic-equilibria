@@ -99,9 +99,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         weight = ((steps[j + 1] - steps_in[-1])/(steps[j + 1] - steps[j]))
                         value = ((delays_avg[i].eval(steps_in[-1]) + delays_avg[i].eval(steps[j + 1]))/2)
                         sum_delays = sum_delays + weight*value
-                        for h in range(len(steps_in) - 1):
-                            weight = ((steps_in[h + 1] - steps_in[h])/(steps[j + 1] - steps[j]))
-                            value = ((delays_avg[i].eval(steps_in[h]) + delays_avg[i].eval(steps_in[h + 1]))/2)
+                        for l in range(len(steps_in) - 1):
+                            weight = ((steps_in[l + 1] - steps_in[l])/(steps[j + 1] - steps[j]))
+                            value = ((delays_avg[i].eval(steps_in[l]) + delays_avg[i].eval(steps_in[l + 1]))/2)
                             sum_delays = sum_delays + weight*value
                     if count_delays == 0:
                         sum_delays = ((delays_avg[i].eval(steps[j]) + delays_avg[i].eval(steps[j + 1]))/2)
@@ -203,9 +203,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         weight = ((gap_steps[j + 1] - steps_in[-1])/(gap_steps[j + 1] - gap_steps[j]))
                         value = ((delays_avg[i].eval(steps_in[-1]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
                         sum_delays = sum_delays + weight*value
-                        for h in range(len(steps_in) - 1):
-                            weight = ((steps_in[h + 1] - steps_in[h])/(gap_steps[j + 1] - gap_steps[j]))
-                            value = ((delays_avg[i].eval(steps_in[h]) + delays_avg[i].eval(steps_in[h + 1]))/2)
+                        for l in range(len(steps_in) - 1):
+                            weight = ((steps_in[l + 1] - steps_in[l])/(gap_steps[j + 1] - gap_steps[j]))
+                            value = ((delays_avg[i].eval(steps_in[l]) + delays_avg[i].eval(steps_in[l + 1]))/2)
                             sum_delays = sum_delays + weight*value
                     if count_delays == 0:
                         sum_delays = ((delays_avg[i].eval(gap_steps[j]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
@@ -275,7 +275,7 @@ test_graph.reversed = False
 
 capacities = [1,3,2]
 travel_times = [1,1,0]
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,4,0],(0, 2))
+net_inflow = RightConstant([0,1,1.75,2],[3.5,1,4,0],(0, 2))
 
 path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
