@@ -30,7 +30,7 @@ def averaging(horizon: float, times: List[List[float]], values: List[List[float]
                     sum_delays = sum_delays + weight*value
                 if steps_in[-1] != steps[j+1]:
                     weight = ((steps[j + 1] - steps_in[-1])/(steps[j + 1] - steps[j]))
-                    value = ((delays_avg[i].eval(steps_in[0]) + delays_avg[i].eval(steps[j]))/2)
+                    value = ((delays_avg[i].eval(steps_in[-1]) + delays_avg[i].eval(steps[j + 1]))/2)
                     sum_delays = sum_delays + weight*value
                 for h in range(len(steps_in) - 1):
                     weight = ((steps_in[h + 1] - steps_in[h])/(steps[j + 1] - steps[j]))
