@@ -275,7 +275,7 @@ test_graph.reversed = False
 
 capacities = [1,3,2]
 travel_times = [1,0,0]
-net_inflow = RightConstant([0,1,1.75,2],[4,4,4,0],(0, 2))
+net_inflow = RightConstant([0,1,1.75,2],[5,5,5,0],(0, 2))
 
 path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
@@ -284,7 +284,7 @@ paths = [path_1,path_2]
 horizon = 2
 delta = 0.25
 epsilon = 0
-numSteps = 500
+numSteps = 1000
 lamb = 0.00000001
 
 
