@@ -262,29 +262,33 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("The sequence of empirical frequencies neither converged nor reached a regularized equilibrium")
 
 test_graph = DirectedGraph()
-s = Node(0, test_graph)
-v = Node(1, test_graph)
-t = Node(2, test_graph)
-edge_1 = Edge(s, v, 0, test_graph)
-edge_2 = Edge(s, v, 1, test_graph)
-edge_3 = Edge(v, t, 2, test_graph)
+s = Node(0,test_graph)
+v = Node(1,test_graph)
+w = Node(2,test_graph)
+t = Node(3,test_graph)
+edge_1 = Edge(s,v,0,test_graph)
+edge_2 = Edge(s,w,1,test_graph)
+edge_3 = Edge(v,w,2,test_graph)
+edge_4 = Edge(v,t,3,test_graph)
+edge_5 = Edge(w,t,4,test_graph)
 
-test_graph.nodes = {0:s, 1:v, 2:t}
-test_graph.edges = [edge_1, edge_2, edge_3]
+test_graph.nodes = {0:s,1:v,2:w,3:t}
+test_graph.edges = [edge_1,edge_2,edge_3,edge_4,edge_5]
 test_graph.reversed = False
 
-capacities = [1,3,2]
-travel_times = [1,0,0]
-net_inflow = RightConstant([0,1,1.75,2],[6,6,6,0],(0, 2))
+capacities = [2,2,1,1,1]
+travel_times = [1,0,0,0,1]
+net_inflow = RightConstant([0,1,2,3],[4,1,3,0],(0,3))
 
-path_1 = [edge_1, edge_3]
-path_2 = [edge_2, edge_3]
+path_1 = [edge_1,edge_4]
+path_2 = [edge_2,edge_5]
+path_3 = [edge_1,edge_3,edge_5]
 
-paths = [path_1,path_2]
-horizon = 2
-delta = 0.25
+paths = [path_1,path_2,path_3]
+horizon = 3
+delta = 0.5
 epsilon = 0
-numSteps = 1000
+numSteps = 500
 lamb = 0.00000001
 
 
