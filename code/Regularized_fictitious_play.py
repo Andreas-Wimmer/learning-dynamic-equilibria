@@ -276,7 +276,7 @@ graph.reversed = False
 
 capacities = [1,1.25,2]
 travel_times = [1,1,1]
-net_inflow = RightConstant([0,1,1.75,2],[2,1,2,0],(0,2))
+net_inflow = RightConstant([0,1,1.75,2],[2,2,2,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]
