@@ -240,9 +240,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         
-        #if round(sol_gap.fun, 4) == 0:
-        #    equilibrium_reached = True
-        #    print("The empirical frequency has reached a regularized equilbrium")
+        if round(sol_gap.fun, 4) == 0:
+            equilibrium_reached = True
+            print("The empirical frequency has reached a regularized equilbrium")
 
         print("Value of the gap problem: " + str(sol_gap.fun))
 
@@ -275,7 +275,7 @@ test_graph.reversed = False
 
 capacities = [1,3,2]
 travel_times = [1,1,0]
-net_inflow = RightConstant([0,1,1.75,2],[3.5,1,4,0],(0, 2))
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,4,0],(0, 2))
 
 path_1 = [edge_1, edge_3]
 path_2 = [edge_2, edge_3]
