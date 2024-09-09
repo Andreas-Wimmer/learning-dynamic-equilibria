@@ -302,7 +302,7 @@ paths = [p1,p2,p3,p4,p5,p6,p7,p8,p9]
 horizon = 5
 delta = 1
 epsilon = 0.1
-numSteps = 1000
+numSteps = 500
 lamb = 0.0001
 
 
