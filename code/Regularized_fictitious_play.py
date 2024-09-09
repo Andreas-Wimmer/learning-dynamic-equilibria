@@ -294,7 +294,7 @@ graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15]
 
 capacities = [1,3,1,3,2,1,3,1,3,2,1,2,2,2,2]
 travel_times = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-net_inflow = RightConstant([0,4],[6,0],(0,4))
+net_inflow = RightConstant([0,4],[8,0],(0,4))
 
 p1 = [e1,e5,e12]
 p2 = [e1,e6,e13]
