@@ -283,7 +283,7 @@ graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8,e9]
 
 capacities = [2,1,3,1,1,2,1,3,2]
 travel_times = [1,1,1,1,1,1,1,1,1]
-net_inflow = RightConstant([0,1,1.75,3],[4,4,4,0],(0,3))
+net_inflow = RightConstant([0,1,1.75,3],[6,6,6,0],(0,3))
 
 p1 = [e1,e6,e9]
 p2 = [e1,e4,e7,e9]
@@ -294,10 +294,10 @@ p6 = [e3,e8,e9]
 
 paths = [p1,p2,p3,p4,p5,p6]
 horizon = 3
-delta = 0.5
-epsilon = 0
+delta = 1
+epsilon = 0.2
 numSteps = 1000
-lamb = 0.00000001
+lamb = 0.000001
 
 
 reg_fictitious_play(graph, capacities, travel_times,
