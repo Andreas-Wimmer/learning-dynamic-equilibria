@@ -247,6 +247,61 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
         print("Value of the gap problem: " + str(sol_gap.fun))
 
+        #7. We introduce another measure for closeness to a dynamic equilibrium, namely the storage function based on the very definition of
+        #dynamic equilibrium (will have to be changed for regularized FP)
+        theta = []
+        for i in range(len(network.paths)):
+            theta.append([])
+            for j in range(len(network.paths)):
+                theta[i].append([])
+                for k in range(len(inflow_avg[i].times)):
+                    theta[i][j].append(inflow_avg[i].times[k])
+                for l in range(len(delays_avg[i].times)):
+                    if delays_avg[i].times[l] not in theta[i][j]:
+                        theta[i][j].append(delays_avg[i].times[l])
+                for m in range(len(delays_avg[j].times)):
+                    if delays_avg[j].times[m] not in theta[i][j]:
+                        theta[i][j].append(delays_avg[j].times[m])
+                theta[i][j].sort()
+
+        storage = 0
+        for i in range(len(network.paths)):
+            for j in range(len(network.paths)):
+                for k in range(len(theta[i][j]) - 1):
+                    start = theta[i][j][k]
+                    end = theta[i][j][k+1] - 2*eps
+                    value = 0
+                    if start - end >= 10*eps:
+                        value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start)
+                        value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end)
+                        if value1 > 0 and value2 > 0:
+                            diff_un = delays_avg[i] - delays_avg[j]
+                            diff = diff_un.restrict((start,end))
+                            value = inflow_avg[i].multiply(diff,start,end).integrate(start,end)
+                        elif value1 <= 0 and value2 <= 0:
+                            value = 0
+                        elif value1 > 0 and value2 <= 0:
+                            diff_un = delays_avg[j] - delays_avg[i]
+                            diff = diff_un.restrict((start,end))
+                            point = diff.min_t_above(0)
+                            new_diff_un = diff_un.scalar_mul(-1)
+                            new_diff = new_diff_un.restrict((start,end))
+                            value = inflow_avg[i].multiply(new_diff,start,point).integrate(start,point)
+                        else:
+                            diff_un = delays_avg[i] - delays_avg[j]
+                            diff = diff_un.restrict((start,end))
+                            point = diff.min_t_above(0)
+                            value = inflow_avg[i].multiply(diff,point,end).integrate(point,end)
+                    storage = storage + value
+
+            print("Value of storage function :" + str(storage))
+
+            if round(storage,4) == 0:
+                equilibrium_reached = True
+                print("the dynamics reached a dynamic equilibrium")
+                    
+
+
     diff_delays_avg = []
     for i in range(len(network.paths)):
         for j in range(len(network.paths)):
@@ -275,8 +330,8 @@ graph.nodes = {0:s,1:v,2:t}
 graph.edges = [e1,e2,e3]
 
 capacities = [1,2,2]
-travel_times = [1,1,0]
-net_inflow = RightConstant([0,0.25,0.5,0.75,1,1.25,1.5,1.75,2],[12,11,10,9,8,7,6,5,0],(0,2))
+travel_times = [1,0,0]
+net_inflow = RightConstant([0,2],[2,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]
