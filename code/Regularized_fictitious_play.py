@@ -278,28 +278,34 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             if value1 > 0 and value2 > 0:
                                 diff_un = delays_avg[i] - delays_avg[j]
                                 diff = diff_un.restrict((start,end + 2*eps))
-                                diff.times.append(end + 2*eps)
-                                diff.values.append(value2)
+                                if end + 2*eps not in diff.times and value2 not in diff.values:
+                                    diff.times.append(end + 2*eps)
+                                    diff.values.append(value2)
                                 value = inflow_avg[i].multiply(diff,start,end).integrate(start,end)
                             elif value1 <= 0 and value2 <= 0:
                                 value = 0
                             elif value1 > 0 and value2 <= 0:
-                                diff_un = delays_avg[j] - delays_avg[i]
+                                diff_un = delays_avg[i] - delays_avg[j]
                                 diff = diff_un.restrict((start,end + 2*eps))
-                                diff.ensure_monotone(False)
-                                point = diff.min_t_above(0)
-                                new_diff_un = diff_un.scalar_mul(-1)
-                                new_diff = new_diff_un.restrict((start,end + 2*eps))
-                                new_diff.times.append(point)
-                                new_diff.values.append(0)
-                                value = inflow_avg[i].multiply(new_diff,start,point).integrate(start,point)
+                                gradient = (value2 - value1)/(end - start)
+                                point = start + value1/gradient
+                                if point not in diff.times:
+                                    diff.times.append(point)
+                                    diff.times.sort()
+                                    diff.values.insert(diff.times.index(point),0)
+                                value = inflow_avg[i].multiply(diff,start,point).integrate(start,point)
                             else:
                                 diff_un = delays_avg[i] - delays_avg[j]
                                 diff = diff_un.restrict((start,end + 2*eps))
-                                diff.times.append(end + 2*eps)
-                                diff.values.append(value2)
-                                diff.ensure_monotone(False)
-                                point = diff.max_t_below(0)
+                                gradient = (value2 - value1)/(end - start)
+                                point = start + value1/gradient
+                                if point not in diff.times:
+                                    diff.times.append(point)
+                                    diff.times.sort()
+                                    diff.values.insert(diff.times.index(point),0)
+                                if end + 2*eps not in diff.times:
+                                    diff.times.append(end + 2*eps)
+                                    diff.values.append(value2)
                                 value = inflow_avg[i].multiply(diff,point,end).integrate(point,end)
                         storage = storage + value
 
