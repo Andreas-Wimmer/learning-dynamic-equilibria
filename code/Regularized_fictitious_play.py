@@ -274,13 +274,15 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         if end - start >= 10*eps and end <= horizon and start <= horizon:
                             value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start)
                             value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end)
+                            value1 = round(value1,10)
+                            value2 = round(value2,10)
                             if value1 > 0 and value2 > 0:
                                 diff_un = delays_avg[i] - delays_avg[j]
                                 diff = diff_un.restrict((start,end + 2*eps))
                                 if end + 2*eps not in diff.times:
                                     diff.times.append(end + 2*eps)
                                     diff.values.append(value2)
-                                value = inflow_avg[i].multiply(diff,start,end).integrate(start,end)
+                                value = inflow_avg[i].multiply(diff,start,end).integrate(start,end,True)
                             elif value1 <= 0 and value2 <= 0:
                                 value = 0
                             elif value1 > 0 and value2 <= 0:
@@ -292,12 +294,12 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                     diff.times.append(point)
                                     diff.times.sort()
                                     diff.values.insert(diff.times.index(point),0)
-                                value = inflow_avg[i].multiply(diff,start,point).integrate(start,point)
+                                value = inflow_avg[i].multiply(diff,start,point).integrate(start,point,True)
                             else:
                                 diff_un = delays_avg[i] - delays_avg[j]
                                 diff = diff_un.restrict((start,end + 2*eps))
                                 gradient = (value2 - value1)/(end - start)
-                                point = start + value1/gradient
+                                point = start - value1/gradient
                                 if point not in diff.times:
                                     diff.times.append(point)
                                     diff.times.sort()
@@ -305,10 +307,12 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                 if end + 2*eps not in diff.times:
                                     diff.times.append(end + 2*eps)
                                     diff.values.append(value2)
-                                value = inflow_avg[i].multiply(diff,point,end).integrate(point,end)
+                                value = inflow_avg[i].multiply(diff,point,end).integrate(point,end,True)
                         storage = storage + value
-
+        
+        print("")
         print("Storage :" + str(storage))
+        print("")
 
         if round(storage,4) == 0:
             equilibrium_reached = True
@@ -347,8 +351,8 @@ test_graph.edges = [edge_1,edge_2,edge_3,edge_4,edge_5]
 test_graph.reversed = False
 
 capacities = [2,2,1,1,1]
-travel_times = [1,0,0,0,1]
-net_inflow = RightConstant([0,1,2,3],[4,1,3,0],(0,3))
+travel_times = [1,1,0,0,1]
+net_inflow = RightConstant([0,1,2,3],[5,1,5,0],(0,3))
 
 path_1 = [edge_1,edge_4]
 path_2 = [edge_2,edge_5]
@@ -356,7 +360,7 @@ path_3 = [edge_1,edge_3,edge_5]
 
 paths = [path_1,path_2,path_3]
 horizon = 3
-delta = 0.5
+delta = 0.25
 epsilon = 0
 numSteps = 500
 lamb = 0.00000001
