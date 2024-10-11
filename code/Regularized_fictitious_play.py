@@ -182,7 +182,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         if round(diff, 12) <= lamb:
             accuracy_reached = True
 
-        print("Norm difference to the last flow: " + str(diff))
+        print("Norm difference: " + str(diff))
         #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
         gap_steps = steps.copy()
 
@@ -240,12 +240,11 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 start.append(inflow_avg[i].eval(gap_steps[j]))
 
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
+        print("Gap: " + str(sol_gap.fun))
         
         if round(sol_gap.fun, 4) == 0:
             equilibrium_reached = True
             print("The empirical frequency has reached a regularized equilbrium")
-
-        print("Value of the gap problem: " + str(sol_gap.fun))
 
         #7. We introduce another measure for closeness to a dynamic equilibrium, namely the storage function based on the very definition of
         #dynamic equilibrium (will have to be changed for regularized FP)
@@ -272,7 +271,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         start = theta[i][j][k]
                         end = theta[i][j][k+1] - 2*eps
                         value = 0
-                        if end - start >= 10*eps:
+                        if end - start >= 10*eps and end <= horizon and start <= horizon:
                             value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start)
                             value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end)
                             if value1 > 0 and value2 > 0:
@@ -288,7 +287,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                 diff_un = delays_avg[i] - delays_avg[j]
                                 diff = diff_un.restrict((start,end + 2*eps))
                                 gradient = (value2 - value1)/(end - start)
-                                point = start + value1/gradient
+                                point = start - value1/gradient
                                 if point not in diff.times:
                                     diff.times.append(point)
                                     diff.times.sort()
@@ -309,11 +308,11 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                 value = inflow_avg[i].multiply(diff,point,end).integrate(point,end)
                         storage = storage + value
 
-            print("Value of storage function :" + str(storage))
+        print("Storage :" + str(storage))
 
-            if round(storage,4) == 0:
-                equilibrium_reached = True
-                print("the dynamics reached a dynamic equilibrium")
+        if round(storage,4) == 0:
+            equilibrium_reached = True
+            print("the dynamics reached a dynamic equilibrium")
                     
 
 
