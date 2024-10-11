@@ -277,7 +277,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             if value1 > 0 and value2 > 0:
                                 diff_un = delays_avg[i] - delays_avg[j]
                                 diff = diff_un.restrict((start,end + 2*eps))
-                                if end + 2*eps not in diff.times and value2 not in diff.values:
+                                if end + 2*eps not in diff.times:
                                     diff.times.append(end + 2*eps)
                                     diff.values.append(value2)
                                 value = inflow_avg[i].multiply(diff,start,end).integrate(start,end)
@@ -343,9 +343,9 @@ e3 = Edge(v,t,2,graph)
 graph.nodes = {0:s,1:v,2:t}
 graph.edges = [e1,e2,e3]
 
-capacities = [1,2,2]
+capacities = [1,3,2]
 travel_times = [1,1,0]
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
+net_inflow = RightConstant([0,1,1.75,2],[4,1,4,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]
