@@ -343,9 +343,9 @@ e3 = Edge(v,t,2,graph)
 graph.nodes = {0:s,1:v,2:t}
 graph.edges = [e1,e2,e3]
 
-capacities = [1,3,2]
+capacities = [1,2,2]
 travel_times = [1,1,0]
-net_inflow = RightConstant([0,1,1.75,2],[4,1,4,0],(0,2))
+net_inflow = RightConstant([0,1,1.75,2],[4,4,4,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]
