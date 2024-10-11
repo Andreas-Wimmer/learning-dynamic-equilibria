@@ -267,32 +267,41 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         storage = 0
         for i in range(len(network.paths)):
             for j in range(len(network.paths)):
-                for k in range(len(theta[i][j]) - 1):
-                    start = theta[i][j][k]
-                    end = theta[i][j][k+1] - 2*eps
-                    value = 0
-                    if start - end >= 10*eps:
-                        value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start)
-                        value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end)
-                        if value1 > 0 and value2 > 0:
-                            diff_un = delays_avg[i] - delays_avg[j]
-                            diff = diff_un.restrict((start,end))
-                            value = inflow_avg[i].multiply(diff,start,end).integrate(start,end)
-                        elif value1 <= 0 and value2 <= 0:
-                            value = 0
-                        elif value1 > 0 and value2 <= 0:
-                            diff_un = delays_avg[j] - delays_avg[i]
-                            diff = diff_un.restrict((start,end))
-                            point = diff.min_t_above(0)
-                            new_diff_un = diff_un.scalar_mul(-1)
-                            new_diff = new_diff_un.restrict((start,end))
-                            value = inflow_avg[i].multiply(new_diff,start,point).integrate(start,point)
-                        else:
-                            diff_un = delays_avg[i] - delays_avg[j]
-                            diff = diff_un.restrict((start,end))
-                            point = diff.min_t_above(0)
-                            value = inflow_avg[i].multiply(diff,point,end).integrate(point,end)
-                    storage = storage + value
+                if j != i:
+                    for k in range(len(theta[i][j]) - 1):
+                        start = theta[i][j][k]
+                        end = theta[i][j][k+1] - 2*eps
+                        value = 0
+                        if end - start >= 10*eps:
+                            value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start)
+                            value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end)
+                            if value1 > 0 and value2 > 0:
+                                diff_un = delays_avg[i] - delays_avg[j]
+                                diff = diff_un.restrict((start,end + 2*eps))
+                                diff.times.append(end + 2*eps)
+                                diff.values.append(value2)
+                                value = inflow_avg[i].multiply(diff,start,end).integrate(start,end)
+                            elif value1 <= 0 and value2 <= 0:
+                                value = 0
+                            elif value1 > 0 and value2 <= 0:
+                                diff_un = delays_avg[j] - delays_avg[i]
+                                diff = diff_un.restrict((start,end + 2*eps))
+                                diff.ensure_monotone(False)
+                                point = diff.min_t_above(0)
+                                new_diff_un = diff_un.scalar_mul(-1)
+                                new_diff = new_diff_un.restrict((start,end + 2*eps))
+                                new_diff.times.append(point)
+                                new_diff.values.append(0)
+                                value = inflow_avg[i].multiply(new_diff,start,point).integrate(start,point)
+                            else:
+                                diff_un = delays_avg[i] - delays_avg[j]
+                                diff = diff_un.restrict((start,end + 2*eps))
+                                diff.times.append(end + 2*eps)
+                                diff.values.append(value2)
+                                diff.ensure_monotone(False)
+                                point = diff.max_t_below(0)
+                                value = inflow_avg[i].multiply(diff,point,end).integrate(point,end)
+                        storage = storage + value
 
             print("Value of storage function :" + str(storage))
 
@@ -330,8 +339,8 @@ graph.nodes = {0:s,1:v,2:t}
 graph.edges = [e1,e2,e3]
 
 capacities = [1,2,2]
-travel_times = [1,0,0]
-net_inflow = RightConstant([0,2],[2,0],(0,2))
+travel_times = [1,1,0]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]

@@ -406,10 +406,15 @@ class PiecewiseLinear:
         return PiecewiseLinear(times, values, first_slope, last_slope, new_domain)
 
     def is_monotone(self):
-        return all(
-            self.values[i] <= self.values[i + 1] + eps for i in range(len(self.values) - 1)
-        )
-
+        monotone_inc = True
+        montone_dec = True
+        for i in range(len(self.values) - 1):
+            if self.values[i] > self.values[i + 1]:
+                monotone_inc = False
+            if self.values[i] < self.values[i + 1]:
+                monotone_dec = False
+        return (monotone_inc or monotone_dec)
+    
     def image(self) -> Tuple[float, float]:
         assert self.is_monotone(), "Only implemented for monotone functions"
         return self(self.domain[0]), self(self.domain[1])
@@ -647,8 +652,9 @@ class PiecewiseLinear:
     def scalar_mul(self, scalar: float) -> PiecewiseLinear:
         first_slope = scalar*self.first_slope
         last_slope = scalar*self.last_slope
-        values = [scalar] * self.values
+        values = [v for v in self.values]
         multiplied = PiecewiseLinear(self.times, values, first_slope, last_slope, self.domain)
+        return multiplied
 
     
     
