@@ -376,5 +376,5 @@ epsilon = 0
 numSteps = 500
 lamb = 0.00000001
 
-reg_fictitious_playgraph, capacities, travel_times,
+reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
