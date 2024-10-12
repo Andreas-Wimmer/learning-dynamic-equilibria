@@ -409,9 +409,9 @@ class PiecewiseLinear:
         monotone_inc = True
         montone_dec = True
         for i in range(len(self.values) - 1):
-            if round(self.values[i] - self.values[i + 1],10) >= 0:
+            if self.values[i] >= self.values[i + 1]:
                 monotone_inc = False
-            if round(self.values[i] - self.values[i + 1],10) <= 0 :
+            if self.values[i] <= self.values[i + 1]:
                 monotone_dec = False
         return (monotone_inc or monotone_dec)
     
