@@ -352,7 +352,7 @@ test_graph.reversed = False
 
 capacities = [2,2,1,1,1]
 travel_times = [1,1,0,0,1]
-net_inflow = RightConstant([0,1,2,3],[5,1,5,0],(0,3))
+net_inflow = RightConstant([0,1,2,3],[5,5,5,0],(0,3))
 
 path_1 = [edge_1,edge_4]
 path_2 = [edge_2,edge_5]
@@ -362,7 +362,7 @@ paths = [path_1,path_2,path_3]
 horizon = 3
 delta = 0.25
 epsilon = 0
-numSteps = 500
+numSteps = 1000
 lamb = 0.00000001
 
 reg_fictitious_play(test_graph, capacities, travel_times,
