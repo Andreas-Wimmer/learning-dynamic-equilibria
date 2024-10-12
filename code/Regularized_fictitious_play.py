@@ -370,7 +370,7 @@ p6 = [e3,e8,e9]
 paths = [p1,p2,p3,p4,p5,p6]
 horizon = 3
 delta = 0.5
-epsilon = 0
+epsilon = 0.1
 numSteps = 1000
 lamb = 0.00000001
 
