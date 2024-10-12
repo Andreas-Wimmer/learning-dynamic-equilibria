@@ -338,42 +338,40 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 graph = DirectedGraph()
 s = Node(0,graph)
 v = Node(1,graph)
-w = Node(2,graph)
-x = Node(3,graph)
-y = Node(4,graph)
-z = Node(5,graph)
-u = Node(6,graph)
-t = Node(7,graph)
-e_1 = Edge(s,v,0,graph)
-e_2 = Edge(s,w,1,graph)
-e_3 = Edge(s,x,2,graph)
-e_4 = Edge(s,y,3,graph)
-e_5 = Edge(v,z,4,graph)
-e_6 = Edge(w,z,5,graph)
-e_7 = Edge(x,u,6,graph)
-e_8 = Edge(y,u,7,graph)
-e_9 = Edge(z,t,8,graph)
-e_10 = Edge(u,t,9,graph)
+x = Node(2,graph)
+y = Node(3,graph)
+z = Node(4,graph)
+t = Node(5,graph)
+e1 = Edge(s,v,0,graph)
+e2 = Edge(s,x,1,graph)
+e3 = Edge(s,y,2,graph)
+e4 = Edge(v,x,3,graph)
+e5 = Edge(x,y,4,graph)
+e6 = Edge(v,z,5,graph)
+e7 = Edge(x,z,6,graph)
+e8 = Edge(y,z,7,graph)
+e9 = Edge(z,t,8,graph)
 
 
-graph.nodes = {0:s,1:v,2:w,3:x,4:y,5:z,6:u,7:t}
-graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8,e_9,e_10]
-graph.reversed = False
+graph.nodes = {0:s,1:v,2:x,3:y,4:z,5:t}
+graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8,e9]
 
-capacities = [1,3,1,3,1,3,1,3,2,2]
-travel_times = [1,1,1,1,1,1,1,1,1,1]
-net_inflow = RightConstant([0,1,1.75,2],[10,6,8,0],(0,2))
+capacities = [2,1,3,1,1,2,1,3,2]
+travel_times = [1,1,1,1,1,1,1,1,1]
+net_inflow = RightConstant([0,1,1.75,3],[2.5,1,3,0],(0,3))
 
-path_1 = [e_1,e_5,e_9]
-path_2 = [e_2,e_6,e_9]
-path_3 = [e_3,e_7,e_10]
-path_4 = [e_4,e_8,e_10]
+p1 = [e1,e6,e9]
+p2 = [e1,e4,e7,e9]
+p3 = [e1,e4,e5,e8,e9]
+p4 = [e2,e7,e9]
+p5 = [e2,e5,e8,e9]
+p6 = [e3,e8,e9]
 
-paths = [path_1,path_2,path_3,path_4]
-horizon = 2
+paths = [p1,p2,p3,p4,p5,p6]
+horizon = 3
 delta = 0.5
 epsilon = 0
-numSteps = 500
+numSteps = 1000
 lamb = 0.00000001
 
 reg_fictitious_play(graph, capacities, travel_times,
