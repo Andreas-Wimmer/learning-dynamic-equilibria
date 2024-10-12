@@ -407,11 +407,11 @@ class PiecewiseLinear:
 
     def is_monotone(self):
         monotone_inc = True
-        montone_dec = True
+        monotone_dec = True
         for i in range(len(self.values) - 1):
-            if self.values[i] >= self.values[i + 1]:
+            if self.values[i] > self.values[i + 1]:
                 monotone_inc = False
-            if self.values[i] <= self.values[i + 1]:
+            if self.values[i] < self.values[i + 1]:
                 monotone_dec = False
         return (monotone_inc or monotone_dec)
     
