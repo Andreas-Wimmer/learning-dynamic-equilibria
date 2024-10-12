@@ -360,7 +360,7 @@ path_3 = [edge_1,edge_3,edge_5]
 
 paths = [path_1,path_2,path_3]
 horizon = 3
-delta = 0.2
+delta = 0.25
 epsilon = 0
 numSteps = 1000
 lamb = 0.00000001
