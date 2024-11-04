@@ -31,6 +31,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network_inflow = Commodity({s, net_inflow}, t, 1)
     network.commodities = [network_inflow]
     network.paths = paths
+    gap_values = []
+    storage_values = []
 
     breaks_net_inflow = net_inflow.times
     values = []
@@ -227,6 +229,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         print("Gap: " + str(sol_gap.fun))
+        gap_values.append(sol_gap.fun)
         
         if round(sol_gap.fun, 4) == 0:
             equilibrium_reached = True
@@ -270,16 +273,16 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             diff_inf_1 = diff_inf.mult_scalar(2*epsilon)
                             diff_un = delays_avg[i] - delays_avg[j]
                             new_times = []
-                            for i in range(len(diff_un.times)):
-                                new_times.append(diff_un.times[i])
-                            for j in range(len(diff_inf_1.times)):
-                                if diff_inf_1.times[j] not in new_times:
-                                    new_times.append(diff_inf_1.times[j])
+                            for o in range(len(diff_un.times)):
+                                new_times.append(diff_un.times[o])
+                            for p in range(len(diff_inf_1.times)):
+                                if diff_inf_1.times[p] not in new_times:
+                                    new_times.append(diff_inf_1.times[p])
         
                             new_times.sort()
                             new_values = []
-                            for i in range(len(new_times)):
-                                new_values.append(diff_un.eval(new_times[i]) + diff_inf_1.eval(new_times[i]))
+                            for q in range(len(new_times)):
+                                new_values.append(diff_un.eval(new_times[q]) + diff_inf_1.eval(new_times[q]))
 
                             diff_un_1 = PiecewiseLinear(new_times,new_values,diff_un.first_slope,diff_un.last_slope,diff_un.domain)
                             diff = diff_un_1.restrict((start, end + 2*eps))
@@ -314,6 +317,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("")
         print("Storage :" + str(storage))
         print("")
+        storage_values.append(storage)
 
         if round(storage,4) == 0:
             equilibrium_reached = True
@@ -344,7 +348,7 @@ e1 = Edge(s,v,0,graph)
 e2 = Edge(s,v,1,graph)
 e3 = Edge(v,t,2,graph)
 
-graph.nodes = {0:s,1:v,3:t}
+graph.nodes = {0:s,1:v,2:t}
 graph.edges = [e1,e2,e3]
 
 capacities = [1,3,2]
