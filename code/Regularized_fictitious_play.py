@@ -269,7 +269,19 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             diff_inf = inflow_avg[i] - inflow_avg[j]
                             diff_inf_1 = diff_inf.mult_scalar(2*epsilon)
                             diff_un = delays_avg[i] - delays_avg[j]
-                            diff_un_1 = diff_un.add_const(diff_inf_1)
+                            new_times = []
+                            for i in range(len(diff_un.times)):
+                                new_times.append(diff_un.times[i])
+                            for j in range(len(diff_inf_1.times)):
+                                if diff_inf_1.times[j] not in new_times:
+                                    new_times.append(diff_inf_1.times[j])
+        
+                            new_times.sort()
+                            new_values = []
+                            for i in range(len(new_times)):
+                                new_values.append(diff_un.eval(new_times[i]) + diff_inf_1.eval(new_times[i]))
+
+                            diff_un_1 = PiecewiseLinear(new_times,new_values,diff_un.first_slope,diff_un.last_slope,diff_un.domain)
                             diff = diff_un_1.restrict((start, end + 2*eps))
                             if value1 > 0 and value2 > 0:
                                 if end + 2*eps not in diff.times:
