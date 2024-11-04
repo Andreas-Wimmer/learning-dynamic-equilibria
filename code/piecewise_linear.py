@@ -5,6 +5,7 @@ from typing import List, Tuple, TypeVar
 
 from machine_precision import eps
 from arrays import elem_lrank, elem_rank, merge_sorted
+from right_constant import RightConstant
 
 
 
@@ -655,6 +656,23 @@ class PiecewiseLinear:
         values = [v for v in self.values]
         multiplied = PiecewiseLinear(self.times, values, first_slope, last_slope, self.domain)
         return multiplied
+    
+    #adds a rigth constant function
+    def add_const(self, other: RightConstant) -> PiecewiseLinear:
+        assert self.domain[0] == other.domain[0] and other.domain[1] <= self.domain[1]
+        new_times = []
+        for i in range(len(self.times)):
+            new_times.append(self.times[i])
+        for j in range(len(other.times)):
+            if other.times[j] not in new_times:
+                new_times.append(other.times[j])
+        
+        new_times.sort()
+        new_values = []
+        for i in range(len(new_times)):
+            new_values.append(self.eval(new_times[i]) + other.eval(new_times[i]))
+
+        add_func = PiecewiseLinear(new_times,new_values,self.first_slope,self.last_slope,self.domain)
 
     
     

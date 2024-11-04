@@ -108,7 +108,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         sum_delays = ((delays_avg[i].eval(steps[j]) + delays_avg[i].eval(steps[j + 1]))/2)
                         count_delays = 1
                     value_1 = sum_delays*h[len(steps)*i + j]
-                    value_2 = epsilon*(h[len(steps)*i + j] - inflow_avg[i].eval(steps[j]))**2
+                    value_2 = epsilon*(h[len(steps)*i + j])**2
                     sums  = sums + value_1 + value_2
             return sums 
         
@@ -212,7 +212,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         sum_delays = ((delays_avg[i].eval(gap_steps[j]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
                         count_delays = 1
                     value_1 = sum_delays
-                    value_2 = 2*epsilon*(inflow_avg[i].eval(gap_steps[j]) - h[len(gap_steps)*i + j])
+                    value_2 = 2*epsilon*(inflow_avg[i].eval(gap_steps[j]))
                     value_3 = h[len(gap_steps)*i + j] - inflow_avg[i].eval(gap_steps[j])
                     sum_1 = sum_1 + (value_1 + value_2)*value_3
             return sum_1
@@ -261,6 +261,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 for m in range(len(delays_avg[j].times)):
                     if delays_avg[j].times[m] not in theta[i][j]:
                         theta[i][j].append(delays_avg[j].times[m])
+                for n in range(len(inflow_avg[j].times)):
+                    if inflow_avg[j].times[n] not in theta[i][j]:
+                        theta[i][j].append(inflow_avg[j].times[n])
                 theta[i][j].sort()
 
         storage = 0
@@ -272,13 +275,17 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         end = theta[i][j][k+1] - 2*eps
                         value = 0
                         if end - start >= 10*eps and end <= horizon and start <= horizon:
-                            value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start)
-                            value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end)
+                            value3 = 2*epsilon*(inflow_avg[i].eval(start) - inflow_avg[j].eval(start))
+                            value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start) + value3
+                            value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end) + value3
                             value1 = round(value1,10)
                             value2 = round(value2,10)
+                            diff_inf = inflow_avg[i] - inflow_avg[j]
+                            diff_inf_1 = diff_inf.mult_scalar(2*epsilon)
+                            diff_un = delays_avg[i] - delays_avg[j]
+                            diff_un_1 = diff_un.add_const(diff_inf_1)
+                            diff = diff_un_1.restrict((start, end + 2*eps))
                             if value1 > 0 and value2 > 0:
-                                diff_un = delays_avg[i] - delays_avg[j]
-                                diff = diff_un.restrict((start,end + 2*eps))
                                 if end + 2*eps not in diff.times:
                                     diff.times.append(end + 2*eps)
                                     diff.values.append(value2)
@@ -286,8 +293,6 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             elif value1 <= 0 and value2 <= 0:
                                 value = 0
                             elif value1 > 0 and value2 <= 0:
-                                diff_un = delays_avg[i] - delays_avg[j]
-                                diff = diff_un.restrict((start,end + 2*eps))
                                 gradient = (value2 - value1)/(end - start)
                                 point = start - value1/gradient
                                 if point not in diff.times:
@@ -296,8 +301,6 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                     diff.values.insert(diff.times.index(point),0)
                                 value = inflow_avg[i].multiply(diff,start,point).integrate(start,point,True)
                             else:
-                                diff_un = delays_avg[i] - delays_avg[j]
-                                diff = diff_un.restrict((start,end + 2*eps))
                                 gradient = (value2 - value1)/(end - start)
                                 point = start - value1/gradient
                                 if point not in diff.times:
@@ -338,40 +341,26 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 graph = DirectedGraph()
 s = Node(0,graph)
 v = Node(1,graph)
-x = Node(2,graph)
-y = Node(3,graph)
-z = Node(4,graph)
 t = Node(5,graph)
 e1 = Edge(s,v,0,graph)
-e2 = Edge(s,x,1,graph)
-e3 = Edge(s,y,2,graph)
-e4 = Edge(v,x,3,graph)
-e5 = Edge(x,y,4,graph)
-e6 = Edge(v,z,5,graph)
-e7 = Edge(x,z,6,graph)
-e8 = Edge(y,z,7,graph)
-e9 = Edge(z,t,8,graph)
+e2 = Edge(s,v,1,graph)
+e3 = Edge(v,t,2,graph)
 
+graph.nodes = {0:s,1:v,3:t}
+graph.edges = [e1,e2,e3]
 
-graph.nodes = {0:s,1:v,2:x,3:y,4:z,5:t}
-graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8,e9]
+capacities = [1,3,2]
+travel_times = [1,0,0]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
 
-capacities = [2,1,3,1,1,2,1,3,2]
-travel_times = [2,1,1,1,0,1,1,1,1]
-net_inflow = RightConstant([0,1,2,3],[8,6,8,0],(0,3))
+p1 = [e1,e3]
+p2 = [e2,e3]
 
-p1 = [e1,e6,e9]
-p2 = [e1,e4,e7,e9]
-p3 = [e1,e4,e5,e8,e9]
-p4 = [e2,e7,e9]
-p5 = [e2,e5,e8,e9]
-p6 = [e3,e8,e9]
-
-paths = [p1,p2,p3,p4,p5,p6]
-horizon = 3
-delta = 0.5
+paths = [p1,p2]
+horizon = 2
+delta = 0.25
 epsilon = 0.1
-numSteps = 1000
+numSteps = 500
 lamb = 0.00000001
 
 reg_fictitious_play(graph, capacities, travel_times,
