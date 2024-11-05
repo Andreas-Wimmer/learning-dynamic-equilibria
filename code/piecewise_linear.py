@@ -52,7 +52,7 @@ class PiecewiseLinear:
             for i in range(len(self.times))
         )
         assert all(
-            self.times[i] <= self.times[i + 1] - eps for i in range(len(self.times) - 1)
+            self.times[i] <= self.times[i + 1] for i in range(len(self.times) - 1)
         )
         
 
