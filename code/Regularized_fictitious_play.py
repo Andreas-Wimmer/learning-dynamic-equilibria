@@ -282,7 +282,10 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                             new_times.sort()
                             new_values = []
                             for q in range(len(new_times)):
-                                new_values.append(diff_un.eval(new_times[q]) + diff_inf_1.eval(new_times[q]))
+                                if new_times[q] <=  diff_inf_1.domain[1]:
+                                    new_values.append(diff_un.eval(new_times[q]) + diff_inf_1.eval(new_times[q]))
+                                else: 
+                                    new_values.append(diff_un.eval(new_times[q]))
 
                             diff_un_1 = PiecewiseLinear(new_times,new_values,diff_un.first_slope,diff_un.last_slope,diff_un.domain)
                             diff = diff_un_1.restrict((start, end + 2*eps))
