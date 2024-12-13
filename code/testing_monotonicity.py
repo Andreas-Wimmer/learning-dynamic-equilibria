@@ -82,67 +82,53 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
 
 graph = DirectedGraph()
 s = Node(0,graph)
-#u = Node(1,graph)
-v = Node(1,graph)
-#w = Node(3,graph)
-#x = Node(4,graph)
-#y = Node(5,graph)
-#z = Node(6,graph)
-#r = Node(7,graph)
-#q = Node(8,graph)
-t = Node(2,graph)
-
-e1 = Edge(s,v,0,graph)
+u = Node(1,graph)
+v = Node(2,graph)
+w = Node(3,graph)
+x = Node(4,graph)
+y = Node(5,graph)
+t = Node(6,graph)
+e1 = Edge(s,u,0,graph)
 e2 = Edge(s,v,1,graph)
-e3 = Edge(v,t,2,graph)
-#e4 = Edge(u,v,3,graph)
-#e5 = Edge(w,v,4,graph)
-#e6 = Edge(v,x,5,graph)
-#e7 = Edge(v,t,6,graph)
-#e8 = Edge(v,y,7,graph)
-#e9 = Edge(x,t,8,graph)
-#e10 = Edge(y,t,9,graph)
-#e11 = Edge(x,t,10,graph)
-#e12 = Edge(y,t,11,graph)
-#e13 = Edge(z,t,12,graph)
-#e14 = Edge(z,t,13,graph)
-#e15 = Edge(q,t,14,graph)
+e3 = Edge(s,w,2,graph)
+e4 = Edge(u,v,3,graph)
+e5 = Edge(w,v,4,graph)
+e6 = Edge(v,x,5,graph)
+e7 = Edge(v,t,6,graph)
+e8 = Edge(v,y,7,graph)
+e9 = Edge(x,t,8,graph)
+e10 = Edge(y,t,9,graph)
 
-graph.nodes = {0:s,1:v,2:t}
-graph.edges = [e1,e2,e3]
+graph.nodes = {0:s,1:u,2:v,3:w,4:x,5:y,6:t}
+graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10]
 
-capacities = [1,3,2]
-travel_times = [1,0,0]
-net_inflow = RightConstant([0,1,1.5,2],[4,4,4,0],(0,2))
+capacities = [1,2,3,1,3,1,2,1,1,1]
+travel_times = [1,2,1,1,1,1,2,1,1,1]
+net_inflow = RightConstant([0,5],[5,0],(0,5))
 
-p1 = [e1,e3]
-p2 = [e2,e3]
-#p3 = [e1,e4,e8,e10]
-#p4 = [e2,e6,e9]
-#p5 = [e2,e7]
-#p6 = [e2,e8,e10]
-#p7 = [e3,e5,e6,e9]
-#p8 = [e3,e5,e7]
-#p9 = [e3,e5,e8,e10]
-#p10 = [e2,e6,e9,e11,e14]
-#p11 = [e2,e6,e9,e12]
-#p12 = [e2,e6,e9,e13,e15]
-#p13 = [e2,e6,e10,e15]
-#p14 = [e3,e9,e11,e14]
-#p15 = [e3,e9,e12]
-#p16 = [e3,e9,e13,e15]
-#p17 = [e3,e10,e15]
+p1 = [e1,e4,e6,e9]
+p2 = [e1,e4,e7]
+p3 = [e1,e4,e8,e10]
+p4 = [e2,e6,e9]
+p5 = [e2,e7]
+p6 = [e2,e8,e10]
+p7 = [e3,e5,e6,e9]
+p8 = [e3,e5,e7]
+p9 = [e3,e5,e8,e10]
+
+paths = [p1,p2,p3,p4,p5,p6,p7,p8,p9]
+horizon = 5
 
 
-i1 = RightConstant([0,0.5,1,1.5,2],[1.75,0.25,1,0,0],(0,2))
-i2 = RightConstant([0,0.5,1,1.5,2],[2.25,3.75,3,4,0],(0,2))
-#i3 = RightConstant([0,0.5,1,5],[0.75,0.25,0,0],(0,5))
-#i4 = RightConstant([0,5],[0,0],(0,5))
-#i5 = RightConstant([0,0.5,1,1.75,5],[1.5,1.5,3,1,0],(0,5))
-#i6 = RightConstant([0,5],[0,0],(0,5))
-#i7 = RightConstant([0,0.5,1,1.75,5],[0.5,1,0.5,1.5,0],(0,5))
-#i8 = RightConstant([0,5],[0,0],(0,5))
-#i9 = RightConstant([0,0.5,1,1.75,5],[0.5,1,0.5,1.5,0],(0,5))
+i1 = RightConstant([0,1,2,5],[1,0,0,0],(0,5))
+i2 = RightConstant([0,5],[0,0],(0,5))
+i3 = RightConstant([0,1,2,5],[1,0,0,0],(0,5))
+i4 = RightConstant([0,5],[0,0],(0,5))
+i5 = RightConstant([0,1,2,4,5],[2,3,4,2,0],(0,5))
+i6 = RightConstant([0,5],[0,0],(0,5))
+i7 = RightConstant([0,1,2,4,5],[0.5,1,0.5,1.5,0],(0,5))
+i8 = RightConstant([0,5],[0,0],(0,5))
+i9 = RightConstant([0,1,2,4,5],[0.5,1,0.5,1.5,0],(0,5))
 #i10 = RightConstant([0,4],[0,0],(0,4))
 #i11 = RightConstant([0,4],[0,0],(0,4))
 #i12 = RightConstant([0,4],[0,0],(0,4))
@@ -152,15 +138,15 @@ i2 = RightConstant([0,0.5,1,1.5,2],[2.25,3.75,3,4,0],(0,2))
 #i16 = RightConstant([0,4],[0,0],(0,4))
 #i17 = RightConstant([0,1,1.75,4],[1,2,1,0],(0,4))
 
-i18 = RightConstant([0,1,1.5,2],[1,0.5,0,0],(0,2))
-i19 = RightConstant([0,1,1.5,2],[3,3.5,4,0],(0,2))
-#i20 = RightConstant([0,1,5],[0.5,0,0],(0,5))
-#i21 = RightConstant([0,5],[0,0],(0,5))
-#i22 = RightConstant([0,1,1.75,5],[1.5,3,1,0],(0,5))
-#i23 = RightConstant([0,5],[0,0],(0,5))
-#i24 = RightConstant([0,1,1.75,5],[0.75,0.5,1.5,0],(0,5))
-#i25 = RightConstant([0,5],[0,0],(0,5))
-#i26 = RightConstant([0,1,1.75,5],[0.75,0.5,1.5,0],(0,5))
+i18 = RightConstant([0,2,5],[0.5,0,0],(0,5))
+i19 = RightConstant([0,5],[0,0],(0,5))
+i20 = RightConstant([0,2,5],[0.5,0,0],(0,5))
+i21 = RightConstant([0,5],[0,0],(0,5))
+i22 = RightConstant([0,2,4,5],[2.5,4,2,0],(0,5))
+i23 = RightConstant([0,5],[0,0],(0,5))
+i24 = RightConstant([0,2,4,5],[0.75,0.5,1.5,0],(0,5))
+i25 = RightConstant([0,5],[0,0],(0,5))
+i26 = RightConstant([0,2,4,5],[0.75,0.5,1.5,0],(0,5))
 #i27 = RightConstant([0,4],[0,0],(0,4))
 #i28 = RightConstant([0,4],[0,0],(0,4))
 #i29 = RightConstant([0,4],[0,0],(0,4))
@@ -170,8 +156,7 @@ i19 = RightConstant([0,1,1.5,2],[3,3.5,4,0],(0,2))
 #i33 = RightConstant([0,4],[0,0],(0,4))
 #i34 = RightConstant([0,1,1.75,4],[1,2,1,0],(0,4))
 
-in_f = [i1,i2]
-in_g = [i18,i19]
+in_f = [i1,i2,i3,i4,i5,i6,i7,i8,i9]
+in_g = [i18,i19,i20,i21,i22,i23,i24,i25,i26]
 
-paths = [p1,p2]
-monotonicity_check(graph, capacities, travel_times, net_inflow,2,paths, in_f, in_g)
+monotonicity_check(graph, capacities, travel_times, net_inflow, horizon, paths, in_f, in_g)
