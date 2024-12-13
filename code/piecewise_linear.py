@@ -569,7 +569,7 @@ class PiecewiseLinear:
     def integrate(self, start: float, end: float, contains_negative_values: bool = False):
         assert self.domain[0] <= start < end <= self.domain[1]
         if not contains_negative_values:
-            assert min(self.values) >= 0
+            assert round(min(self.values),6) >= 0
         # For two time steps, we integrate by adding (max + min) / 2 * delta_t
 
         value = 0.0

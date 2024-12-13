@@ -260,15 +260,15 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             for j in range(len(network.paths)):
                 if j != i:
                     for k in range(len(theta[i][j]) - 1):
-                        start = theta[i][j][k]
-                        end = theta[i][j][k+1] - 2*eps
+                        start = theta[i][j][k] + eps
+                        end = theta[i][j][k+1]
                         value = 0
-                        if end - start >= 10*eps and end <= horizon and start <= horizon:
-                            value3 = 2*epsilon*(inflow_avg[i].eval(start) - inflow_avg[j].eval(start))
-                            value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start) + value3
-                            value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end) + value3
-                            value1 = round(value1,10)
-                            value2 = round(value2,10)
+                        if end - start >= 100*eps and end <= horizon and start <= horizon:
+                            #value3 = 2*epsilon*(inflow_avg[i].eval(start) - inflow_avg[j].eval(start))
+                            #value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start) + value3
+                            #value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end) + value3
+                            #value1 = round(value1,10)
+                            #value2 = round(value2,10)
                             diff_inf = inflow_avg[i] - inflow_avg[j]
                             diff_inf_1 = diff_inf.mult_scalar(2*epsilon)
                             diff_un = delays_avg[i] - delays_avg[j]
@@ -288,12 +288,17 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                     new_values.append(diff_un.eval(new_times[q]))
 
                             diff_un_1 = PiecewiseLinear(new_times,new_values,diff_un.first_slope,diff_un.last_slope,diff_un.domain)
-                            diff = diff_un_1.restrict((start, end + 2*eps))
+                            diff = diff_un_1.restrict((start, end))
+                            value1 = diff.eval(start)
+                            value2 = diff.eval(end)
                             if value1 > 0 and value2 > 0:
-                                if end + 2*eps not in diff.times:
-                                    diff.times.append(end + 2*eps)
+                                if end not in diff.times:
+                                    diff.times.append(end)
                                     diff.values.append(value2)
-                                value = inflow_avg[i].multiply(diff,start,end).integrate(start,end,True)
+                                if start not in diff.times:
+                                    diff.times.insert(0,start)
+                                    diff.values.insert(0,value1)
+                                value = inflow_avg[i].multiply(diff,start,end).integrate(start,end,False)
                             elif value1 <= 0 and value2 <= 0:
                                 value = 0
                             elif value1 > 0 and value2 <= 0:
@@ -303,7 +308,10 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                     diff.times.append(point)
                                     diff.times.sort()
                                     diff.values.insert(diff.times.index(point),0)
-                                value = inflow_avg[i].multiply(diff,start,point).integrate(start,point,True)
+                                if start not in diff.times:
+                                    diff.times.insert(0,start)
+                                    diff.values.insert(0,value1)
+                                value = inflow_avg[i].multiply(diff,start,point).integrate(start,point,False)
                             else:
                                 gradient = (value2 - value1)/(end - start)
                                 point = start - value1/gradient
@@ -311,10 +319,10 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                     diff.times.append(point)
                                     diff.times.sort()
                                     diff.values.insert(diff.times.index(point),0)
-                                if end + 2*eps not in diff.times:
-                                    diff.times.append(end + 2*eps)
+                                if end not in diff.times:
+                                    diff.times.append(end)
                                     diff.values.append(value2)
-                                value = inflow_avg[i].multiply(diff,point,end).integrate(point,end,True)
+                                value = inflow_avg[i].multiply(diff,point,end).integrate(point,end,False)
                         storage = storage + value
         
         print("")
@@ -345,44 +353,30 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
 graph = DirectedGraph()
 s = Node(0,graph)
-u = Node(1,graph)
-v = Node(2,graph)
-w = Node(3,graph)
-x = Node(4,graph)
-y = Node(5,graph)
-t = Node(6,graph)
-e1 = Edge(s,u,0,graph)
-e2 = Edge(s,v,1,graph)
-e3 = Edge(s,w,2,graph)
-e4 = Edge(u,v,3,graph)
-e5 = Edge(w,v,4,graph)
-e6 = Edge(v,x,5,graph)
-e7 = Edge(v,t,6,graph)
-e8 = Edge(v,y,7,graph)
-e9 = Edge(x,t,8,graph)
-e10 = Edge(y,t,9,graph)
+t = Node(1,graph)
+e1 = Edge(s,t,0,graph)
+e2 = Edge(s,t,1,graph)
+e3 = Edge(s,t,2,graph)
+e4 = Edge(s,t,3,graph)
+e5 = Edge(s,t,4,graph)
 
-graph.nodes = {0:s,1:u,2:v,3:w,4:x,5:y,6:t}
-graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10]
+graph.nodes = {0:s,1:t}
+graph.edges = [e1,e2,e3,e4,e5]
 
-capacities = [1,2,3,1,3,1,2,1,1,1]
-travel_times = [1,2,1,1,1,1,2,1,1,1]
-net_inflow = RightConstant([0,5],[5,0],(0,5))
+capacities = [1,2,1,1,3]
+travel_times = [2,1,1,1,2]
+net_inflow = RightConstant([0,2],[6,0],(0,2))
 
-p1 = [e1,e4,e6,e9]
-p2 = [e1,e4,e7]
-p3 = [e1,e4,e8,e10]
-p4 = [e2,e6,e9]
-p5 = [e2,e7]
-p6 = [e2,e8,e10]
-p7 = [e3,e5,e6,e9]
-p8 = [e3,e5,e7]
-p9 = [e3,e5,e8,e10]
+p1 = [e1]
+p2 = [e2]
+p3 = [e3]
+p4 = [e4]
+p5 = [e5]
 
-paths = [p1,p2,p3,p4,p5,p6,p7,p8,p9]
-horizon = 5
-delta = 1
-epsilon = 0.1
+paths = [p1,p2,p3,p4,p5]
+horizon = 2
+delta = 0.25
+epsilon = 0.05
 numSteps = 100
 lamb = 0.0001
 
