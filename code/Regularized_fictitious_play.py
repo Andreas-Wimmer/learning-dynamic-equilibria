@@ -289,8 +289,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
                             diff_un_1 = PiecewiseLinear(new_times,new_values,diff_un.first_slope,diff_un.last_slope,diff_un.domain)
                             diff = diff_un_1.restrict((start, end))
-                            value1 = diff.eval(start)
-                            value2 = diff.eval(end)
+                            value1 = round(diff.eval(start),12)
+                            value2 = round(diff.eval(end),12)
                             if value1 > 0 and value2 > 0:
                                 if end not in diff.times:
                                     diff.times.append(end)
