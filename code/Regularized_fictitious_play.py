@@ -228,8 +228,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 start.append(inflow_avg[i].eval(gap_steps[j]))
 
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
-        print("Gap: " + str(sol_gap.fun))
-        gap_values.append(sol_gap.fun)
+        print("Gap: " + str((-1)*sol_gap.fun))
+        gap_values.append((-1)*sol_gap.fun)
         
         if round(sol_gap.fun, 4) == 0:
             equilibrium_reached = True
@@ -261,7 +261,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 if j != i:
                     for k in range(len(theta[i][j]) - 1):
                         start = theta[i][j][k] + eps
-                        end = theta[i][j][k+1]
+                        end = theta[i][j][k+1] - eps
                         value = 0
                         if end - start >= 100*eps and end <= horizon and start <= horizon:
                             diff_inf = inflow_avg[i] - inflow_avg[j]
