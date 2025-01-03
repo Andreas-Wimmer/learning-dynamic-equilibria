@@ -181,7 +181,7 @@ class RightConstant:
     #but only on an interval, where both functions do not have a jump (to avoid discontinuities)
     def multiply(self, other: PiecewiseLinear, start: float, end: float) -> PiecewiseLinear:
         assert (self.domain[0] <= start and self.domain[1] >= end)
-        assert (other.domain[0] <= start and other.domain[1] >= end)
+        assert (other.domain[0] <= start and other.domain[1] >= end) or (round(other.domain[0] - start, 12) >= 0 and round(other.domain[1] - end,12) >= 0)
         if start < self.times[-1]:
             self_index_s = 0
             while self.times[self_index_s] <= start:

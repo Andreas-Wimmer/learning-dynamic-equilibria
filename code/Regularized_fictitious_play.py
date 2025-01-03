@@ -264,11 +264,6 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         end = theta[i][j][k+1]
                         value = 0
                         if end - start >= 100*eps and end <= horizon and start <= horizon:
-                            #value3 = 2*epsilon*(inflow_avg[i].eval(start) - inflow_avg[j].eval(start))
-                            #value1 = delays_avg[i].eval(start) - delays_avg[j].eval(start) + value3
-                            #value2 = delays_avg[i].eval(end) - delays_avg[j].eval(end) + value3
-                            #value1 = round(value1,10)
-                            #value2 = round(value2,10)
                             diff_inf = inflow_avg[i] - inflow_avg[j]
                             diff_inf_1 = diff_inf.mult_scalar(2*epsilon)
                             diff_un = delays_avg[i] - delays_avg[j]
