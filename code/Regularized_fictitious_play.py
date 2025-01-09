@@ -312,7 +312,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                 value = 0
                             elif value1 > 0 and value2 <= 0:
                                 gradient = (value2 - value1)/(end - start)
-                                point = start - value1/gradient
+                                point = round(start - value1/gradient,12)
                                 if point not in diff.times:
                                     diff.times.append(point)
                                     diff.times.sort()
@@ -323,7 +323,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                                 value = inflow_avg[i].multiply(diff,start,point).integrate(start,point,False)
                             else:
                                 gradient = (value2 - value1)/(end - start)
-                                point = start - value1/gradient
+                                point = round(start - value1/gradient,12)
                                 if point not in diff.times:
                                     diff.times.append(point)
                                     diff.times.sort()
@@ -384,7 +384,7 @@ graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10]
 
 capacities = [1,2,3,1,3,1,2,1,1,1]
 travel_times = [1,2,1,1,1,1,2,1,1,1]
-net_inflow = RightConstant([0,5],[5,0],(0,5))
+net_inflow = RightConstant([0,5],[3,0],(0,5))
 
 p1 = [e1,e4,e6,e9]
 p2 = [e1,e4,e7]
