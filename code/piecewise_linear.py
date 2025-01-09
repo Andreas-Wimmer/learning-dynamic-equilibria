@@ -61,8 +61,7 @@ class PiecewiseLinear:
 
     def eval(self, at: float) -> float:
         assert (
-            round(self.domain[1] - at,12) >= 0 and round(at - self.domain[0],12) >= 0)
-        ), f"Function not defined at {at}; domain: {self.domain})."
+            self.domain[0] <= at <= self.domain[1])
         rnk = elem_rank(self.times, at)
         return self._eval_with_rank(at, rnk)
 
