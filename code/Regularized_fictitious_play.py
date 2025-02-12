@@ -404,7 +404,7 @@ paths = [p1,p2,p3,p4,p5,p6,p7,p8,p9]
 horizon = 5
 delta = 0.5
 epsilon = 0
-numSteps = 400
+numSteps = 500
 lamb = 0.0001
 
 reg_fictitious_play(graph, capacities, travel_times,
