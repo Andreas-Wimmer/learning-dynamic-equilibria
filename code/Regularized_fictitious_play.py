@@ -33,6 +33,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network.paths = paths
     gap_values = []
     storage_values = []
+    norm_differences = []
 
     breaks_net_inflow = net_inflow.times
     values = []
@@ -185,6 +186,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             accuracy_reached = True
 
         print("Norm difference: " + str(diff))
+        norm_differences.append(diff) 
         #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
         gap_steps = steps.copy()
 
