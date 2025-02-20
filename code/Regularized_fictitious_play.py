@@ -379,14 +379,14 @@ graph.edges = [e1,e2,e3]
 
 capacities = [1,3,2]
 travel_times = [1,1,0]
-net_inflow = RightConstant([0,],[3,0],(0,2))
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]
 
 paths = [p1,p2]
 horizon = 2
-delta = 0.125
+delta = 0.25
 epsilon = 0.1
 numSteps = 1000
 lamb = 0.00001
