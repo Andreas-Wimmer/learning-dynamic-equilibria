@@ -397,7 +397,7 @@ p4 = [e2,e6,e8]
 paths = [p1,p2,p3,p4]
 horizon = 5
 delta = 0.5
-epsilon = 0
+epsilon = 0.1
 numSteps = 1000
 lamb = 0.0001
 
