@@ -386,7 +386,7 @@ p2 = [e2,e3]
 
 paths = [p1,p2]
 horizon = 2
-delta = 0.25
+delta = 0.125
 epsilon = 0.1
 numSteps = 1000
 lamb = 0.00001
