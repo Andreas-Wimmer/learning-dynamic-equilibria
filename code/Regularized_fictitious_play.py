@@ -386,7 +386,7 @@ graph.nodes = {0:s,1:v,2:w,3:x,4:y,5:t}
 graph.edges = [e1,e2,e3,e4,e5,e6,e7,e8]
 
 capacities =   [1,1,1,1,1,1,2,2]
-travel_times = [1,1,1,1,1,1,2,2]
+travel_times = [1,1,1,1,1,1,2,1]
 net_inflow = RightConstant([0,5],[8,0],(0,5))
 
 p1 = [e1,e3,e7]
