@@ -406,7 +406,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     if value_4 < 0:
                         value_5 = 0
                     else:
-                        value_5 = value_4^2
+                        value_5 = value_4^^2
                     storMou = storMou + inflow_avg[i].eval(steps[j])*value_5
 
         print("")
