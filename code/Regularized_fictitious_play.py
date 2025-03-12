@@ -414,7 +414,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("")
         storMou_values.append(storMou)
 
-        if round(storMou,4) == 0:
+        if round(storMou,10) == 0:
             equilibrium_reached = True
             print("the dynamics reached a dynamic equilibrium")
 
