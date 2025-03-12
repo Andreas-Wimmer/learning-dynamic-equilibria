@@ -33,6 +33,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network.paths = paths
     gap_values = []
     storage_values = []
+    storMou_values = []
     norm_differences = []
 
     breaks_net_inflow = net_inflow.times
@@ -348,6 +349,75 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         if round(storage,4) == 0:
             equilibrium_reached = True
             print("the dynamics reached a dynamic equilibrium")
+
+        #8. We also compute the storage function that Mounce presents
+        storMou = 0
+
+        for i in range(len(network.paths)):
+            for f in range(len(network.paths)):
+                for j in range(len(steps) - 1):
+                    sum_delays_1 = 0
+                    sum_delays_2 = 0
+                    count_delays_1 = 0
+                    count_delays_2 = 0
+                    steps_in_1 = []
+                    steps_in_2 = []
+                    for k in range(len(delays_avg[i].times) - 1):
+                        if delays_avg[i].times[k] > steps[j] and delays_avg[i].times[k] < steps[j+1]:
+                            steps_in_1.append(delays_avg[i].times[k])
+                            count_delays_1 = count_delays_1 + 1
+                    if count_delays_1 != 0:
+                        weight = ((steps_in_1[0] - steps[j])/(steps[j + 1] - steps[j]))
+                        value = ((delays_avg[i].eval(steps_in_1[0]) + delays_avg[i].eval(steps[j]))/2)
+                        sum_delays_1 = sum_delays_1 + weight*value
+                        weight = ((steps[j + 1] - steps_in_1[-1])/(steps[j + 1] - steps[j]))
+                        value = ((delays_avg[i].eval(steps_in_1[-1]) + delays_avg[i].eval(steps[j + 1]))/2)
+                        sum_delays_1 = sum_delays_1 + weight*value
+                        for l in range(len(steps_in_1) - 1):
+                            weight = ((steps_in_1[l + 1] - steps_in_1[l])/(steps[j + 1] - steps[j]))
+                            value = ((delays_avg[i].eval(steps_in_1[l]) + delays_avg[i].eval(steps_in_1[l + 1]))/2)
+                            sum_delays_1 = sum_delays_1 + weight*value
+                    if count_delays_1 == 0:
+                        sum_delays_1 = ((delays_avg[i].eval(steps[j]) + delays_avg[i].eval(steps[j + 1]))/2)
+                        count_delays_1 = 1
+                    value_1 = sum_delays_1
+                    for k in range(len(delays_avg[f].times) - 1):
+                        if delays_avg[f].times[k] > steps[j] and delays_avg[f].times[k] < steps[j+1]:
+                            steps_in_2.append(delays_avg[f].times[k])
+                            count_delays_2 = count_delays_2 + 1
+                    if count_delays_2 != 0:
+                        weight = ((steps_in_2[0] - steps[j])/(steps[j + 1] - steps[j]))
+                        value = ((delays_avg[f].eval(steps_in_2[0]) + delays_avg[f].eval(steps[j]))/2)
+                        sum_delays_2 = sum_delays_2 + weight*value
+                        weight = ((steps[j + 1] - steps_in_2[-1])/(steps[j + 1] - steps[j]))
+                        value = ((delays_avg[f].eval(steps_in_2[-1]) + delays_avg[f].eval(steps[j + 1]))/2)
+                        sum_delays_2 = sum_delays_2 + weight*value
+                        for l in range(len(steps_in_2) - 1):
+                            weight = ((steps_in_2[l + 1] - steps_in_2[l])/(steps[j + 1] - steps[j]))
+                            value = ((delays_avg[f].eval(steps_in_2[l]) + delays_avg[f].eval(steps_in_2[l + 1]))/2)
+                            sum_delays_2 = sum_delays_2 + weight*value
+                    if count_delays_2 == 0:
+                        sum_delays_2 = ((delays_avg[f].eval(steps[j]) + delays_avg[f].eval(steps[j + 1]))/2)
+                        count_delays_2 = 1
+                    value_2 = sum_delays_2
+                    value_3 = 2*epsilon*(inflow_avg[i].eval(steps[j]) - inflow_avg[f].eval(steps[j]))
+                    value_4 = ((value_1 - value_2) + value_3)
+                    value_5 = 0
+                    if value_4 < 0:
+                        value_5 = 0
+                    else:
+                        value_5 = value_4^2
+                    storMou = storMou + inflow_avg[i].eval(steps[j])*value_5
+
+        print("")
+        print("Storage Mounce :" + str(storMou))
+        print("")
+        storMou_values.append(storMou)
+
+        if round(storMou,4) == 0:
+            equilibrium_reached = True
+            print("the dynamics reached a dynamic equilibrium")
+
                     
 
 
