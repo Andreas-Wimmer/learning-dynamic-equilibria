@@ -74,8 +74,8 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
         if net_inflow.times[i] not in steps:
             steps.append(net_inflow.times[i])
     steps.sort()
-    #Compute Update
     while counter_steps < numSteps and not accuracy_reached and not equilibrium_reached:
+        #Compute Update
         update = []
         for j in range(len(steps) - 1):
             current = []
@@ -143,117 +143,118 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
                             current[y] = current[y] + 0
             update.append(current)
 
-    #Update flow
-    inflow_old = inflow.copy()
-    inflow_dict_old = []
-    for i in range(len(network.paths)):
-         inflow_dict_old.append((network.paths[i], inflow_old[i]))
-    loader_old = NetworkLoader(network, inflow_dict_old)
-    result_old = loader_old.build_flow()
-    flow_old = next(result_old)
-    delays_old = loader_old.path_delay(horizon)
+        #Update flow
+        inflow_old = inflow.copy()
+        inflow_dict_old = []
+        for i in range(len(network.paths)):
+            inflow_dict_old.append((network.paths[i], inflow_old[i]))
+        loader_old = NetworkLoader(network, inflow_dict_old)
+        result_old = loader_old.build_flow()
+        flow_old = next(result_old)
+        delays_old = loader_old.path_delay(horizon)
 
-    values_new = []
-    for i in range(len(network.paths)):
-        values_new.append([])
-        for j in range(len(steps) - 1):
-            values_new[i].append(values[i][j] + update[j][i])
+        values_new = []
+        for i in range(len(network.paths)):
+            values_new.append([])
+            for j in range(len(steps) - 1):
+                values_new[i].append(values[i][j] + update[j][i])
 
-    inflows_new = []
-    for i in range(len(network.paths)):
-        inflows_new.append(RightConstant(steps, values_new[i],(0,horizon)))
+        inflows_new = []
+        for i in range(len(network.paths)):
+            inflows_new.append(RightConstant(steps, values_new[i],(0,horizon)))
 
-    inflow = inflows_new.copy()
-    new_dict = []
-    for i in range(len(network.paths)):
-        new_dict.append((network.paths[i],inflow[i]))
-    loader = NetworkLoader(network, new_dict)
-    result = loader.build_flow()
-    flow = next(result)
-    delays = loader.path_delay(horizon)
-    #Check norm difference
-    current_difference = 0
-    for i in range(len(network.paths)):
-        curr_path = 0
-        for j in range(len(steps) - 1):
-            diff = inflow[i].values[j] - inflow_old[i].values[j]
-            if diff >= 0:
-                diff = diff
-            else:
-                diff = (-1)*diff
-            squared = diff*diff
-            integral = squared*(steps[j+1] - steps[j])
-            curr_path = curr_path + integral
-        curr_path = math.sqrt(curr_path)
-        current_difference = current_difference + curr_path
-
-    norm_differences.append(current_difference)
-    print("Current norm difference: " + str(current_difference))
-    if current_difference <= lamb:
-        accuracy_reached = True
-    #Check value of Lyapunov function
-    storage = 0
-    for p in range(len(network.paths)):
-        for q in range(len(network.paths)):
-            for t in range(len(steps) - 1):
-                sum_delays_1 = 0
-                sum_delays_2 = 0
-                count_delays_1 = 0
-                count_delays_2 = 0
-                steps_in_1 = []
-                steps_in_2 = []
-                for k in range(len(delays[p].times) - 1):
-                    if delays[p].times[k] > steps[t] and delays[p].times[k] < steps[t+1]:
-                        steps_in_1.append(delays[p].times[k])
-                        count_delays_1 = count_delays_1 + 1
-                if count_delays_1 != 0:
-                    weight = ((steps_in_1[0] - steps[t])/(steps[t + 1] - steps[t]))
-                    value = ((delays[p].eval(steps_in_1[0]) + delays[p].eval(steps[t]))/2)
-                    sum_delays_1 = sum_delays_1 + weight*value
-                    weight = ((steps[t + 1] - steps_in_1[-1])/(steps[t + 1] - steps[t]))
-                    value = ((delays[p].eval(steps_in_1[-1]) + delays[p].eval(steps[t + 1]))/2)
-                    sum_delays_1 = sum_delays_1 + weight*value
-                    for l in range(len(steps_in_1) - 1):
-                        weight = ((steps_in_1[l + 1] - steps_in_1[l])/(steps[t + 1] - steps[t]))
-                        value = ((delays[p].eval(steps_in_1[l]) + delays[p].eval(steps_in_1[l + 1]))/2)
-                        sum_delays_1 = sum_delays_1 + weight*value
-                if count_delays_1 == 0:
-                    sum_delays_1 = ((delays[p].eval(steps[t]) + delays[p].eval(steps[t + 1]))/2)
-                    count_delays_1 = 1
-                value_1 = sum_delays_1
-                for k in range(len(delays[q].times) - 1):
-                    if delays[q].times[k] > steps[t] and delays[q].times[k] < steps[t+1]:
-                        steps_in_2.append(delays[q].times[k])
-                        count_delays_2 = count_delays_2 + 1
-                if count_delays_2 != 0:
-                    weight = ((steps_in_2[0] - steps[t])/(steps[t + 1] - steps[t]))
-                    value = ((delays[q].eval(steps_in_2[0]) + delays[q].eval(steps[t]))/2)
-                    sum_delays_2 = sum_delays_2 + weight*value
-                    weight = ((steps[t + 1] - steps_in_2[-1])/(steps[t + 1] - steps[t]))
-                    value = ((delays[q].eval(steps_in_2[-1]) + delays[q].eval(steps[t + 1]))/2)
-                    sum_delays_2 = sum_delays_2 + weight*value
-                    for l in range(len(steps_in_2) - 1):
-                        weight = ((steps_in_2[l + 1] - steps_in_2[l])/(steps[t + 1] - steps[t]))
-                        value = ((delays[q].eval(steps_in_2[l]) + delays[q].eval(steps_in_2[l + 1]))/2)
-                        sum_delays_2 = sum_delays_2 + weight*value
-                if count_delays_2 == 0:
-                    sum_delays_2 = ((delays[q].eval(steps[t]) + delays[q].eval(steps[t + 1]))/2)
-                    count_delays_2 = 1
-                value_2 = sum_delays_2
-                value_4 = (value_1 - value_2)
-                value_5 = 0
-                if value_4 < 0:
-                    value_5 = 0
+        inflow = inflows_new.copy()
+        new_dict = []
+        for i in range(len(network.paths)):
+            new_dict.append((network.paths[i],inflow[i]))
+        loader = NetworkLoader(network, new_dict)
+        result = loader.build_flow()
+        flow = next(result)
+        delays = loader.path_delay(horizon)
+        #Check norm difference
+        current_difference = 0
+        for i in range(len(network.paths)):
+            curr_path = 0
+            for j in range(len(steps) - 1):
+                diff = inflow[i].values[j] - inflow_old[i].values[j]
+                if diff >= 0:
+                    diff = diff
                 else:
-                    value_5 = value_4*value_4
-                value6 = inflow[p].eval(steps[t])*value_5
-                storage = storage + value6
+                    diff = (-1)*diff
+                squared = diff*diff
+                integral = squared*(steps[j+1] - steps[j])
+                curr_path = curr_path + integral
+            curr_path = math.sqrt(curr_path)
+            current_difference = current_difference + curr_path
+
+        norm_differences.append(current_difference)
+        print("Current norm difference: " + str(current_difference))
+        if current_difference <= lamb:
+            accuracy_reached = True
+        #Check value of Lyapunov function
+        storage = 0
+        for p in range(len(network.paths)):
+            for q in range(len(network.paths)):
+                for t in range(len(steps) - 1):
+                    sum_delays_1 = 0
+                    sum_delays_2 = 0
+                    count_delays_1 = 0
+                    count_delays_2 = 0
+                    steps_in_1 = []
+                    steps_in_2 = []
+                    for k in range(len(delays[p].times) - 1):
+                        if delays[p].times[k] > steps[t] and delays[p].times[k] < steps[t+1]:
+                            steps_in_1.append(delays[p].times[k])
+                            count_delays_1 = count_delays_1 + 1
+                    if count_delays_1 != 0:
+                        weight = ((steps_in_1[0] - steps[t])/(steps[t + 1] - steps[t]))
+                        value = ((delays[p].eval(steps_in_1[0]) + delays[p].eval(steps[t]))/2)
+                        sum_delays_1 = sum_delays_1 + weight*value
+                        weight = ((steps[t + 1] - steps_in_1[-1])/(steps[t + 1] - steps[t]))
+                        value = ((delays[p].eval(steps_in_1[-1]) + delays[p].eval(steps[t + 1]))/2)
+                        sum_delays_1 = sum_delays_1 + weight*value
+                        for l in range(len(steps_in_1) - 1):
+                            weight = ((steps_in_1[l + 1] - steps_in_1[l])/(steps[t + 1] - steps[t]))
+                            value = ((delays[p].eval(steps_in_1[l]) + delays[p].eval(steps_in_1[l + 1]))/2)
+                            sum_delays_1 = sum_delays_1 + weight*value
+                    if count_delays_1 == 0:
+                        sum_delays_1 = ((delays[p].eval(steps[t]) + delays[p].eval(steps[t + 1]))/2)
+                        count_delays_1 = 1
+                    value_1 = sum_delays_1
+                    for k in range(len(delays[q].times) - 1):
+                        if delays[q].times[k] > steps[t] and delays[q].times[k] < steps[t+1]:
+                            steps_in_2.append(delays[q].times[k])
+                            count_delays_2 = count_delays_2 + 1
+                    if count_delays_2 != 0:
+                        weight = ((steps_in_2[0] - steps[t])/(steps[t + 1] - steps[t]))
+                        value = ((delays[q].eval(steps_in_2[0]) + delays[q].eval(steps[t]))/2)
+                        sum_delays_2 = sum_delays_2 + weight*value
+                        weight = ((steps[t + 1] - steps_in_2[-1])/(steps[t + 1] - steps[t]))
+                        value = ((delays[q].eval(steps_in_2[-1]) + delays[q].eval(steps[t + 1]))/2)
+                        sum_delays_2 = sum_delays_2 + weight*value
+                        for l in range(len(steps_in_2) - 1):
+                            weight = ((steps_in_2[l + 1] - steps_in_2[l])/(steps[t + 1] - steps[t]))
+                            value = ((delays[q].eval(steps_in_2[l]) + delays[q].eval(steps_in_2[l + 1]))/2)
+                            sum_delays_2 = sum_delays_2 + weight*value
+                    if count_delays_2 == 0:
+                        sum_delays_2 = ((delays[q].eval(steps[t]) + delays[q].eval(steps[t + 1]))/2)
+                        count_delays_2 = 1
+                    value_2 = sum_delays_2
+                    value_4 = (value_1 - value_2)
+                    value_5 = 0
+                    if value_4 < 0:
+                        value_5 = 0
+                    else:
+                        value_5 = value_4*value_4
+                    value6 = inflow[p].eval(steps[t])*value_5
+                    storage = storage + value6
         
-        storMou_values.append(storage)
-        print("Current storage value: " + str(storage))
-        if storage <= lamb:
-            equilibrium_reached = True
-        counter = counter + 1
+            storMou_values.append(storage)
+            print("Current storage value: " + str(storage))
+            if storage <= lamb:
+                equilibrium_reached = True
+            counter = counter + 1
+
     #Check convergence and output flow
     if counter_steps > numSteps:
         print("Number of learning steps reached")
@@ -263,3 +264,29 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
         print("No convergence in the given number of steps")
     
     return inflow
+
+graph = DirectedGraph()
+s = Node(0,graph)
+u = Node(1,graph)
+t = Node(2,graph)
+e1 = Edge(s,u,0,graph)
+e2 = Edge(s,u,1,graph)
+e3 = Edge(u,t,2,graph)
+
+graph.nodes = {0:s,1:u,2:t}
+graph.edges = [e1,e2,e3]
+
+capacities = [1,3,2]
+travel_times = [1,1,1]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
+
+p1 = [e1,e3]
+p2 = [e2,e3]
+
+paths = [p1,p2]
+horizon = 2
+delta = 0.25
+numSteps = 100
+lamb = 0.00001
+
+path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb)
