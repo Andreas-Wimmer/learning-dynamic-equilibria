@@ -39,19 +39,30 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
         caps.append(max_cap)
 
     max_path = paths[caps.index(max(caps))]
+    
+    stop = 0
+    steps = []
+    while stop*delta <= horizon - delta:
+        steps.append(stop*delta)
+        stop = stop + 1
+    steps.append(horizon)
+    for i in range(len(net_inflow.times)):
+        if net_inflow.times[i] not in steps:
+            steps.append(net_inflow.times[i])
+    steps.sort()     
+
     for i in range(len(network.paths)):
         values.append([])
-        for j in range(len(breaks_net_inflow)):
+        for j in range(len(steps)):
             if network.paths[i] == max_path:
-                values[i].append(net_inflow.values[j])
+                values[i].append(net_inflow.eval(steps[j]))
             else:
                 values[i].append(0)
-            
-
+    
     inflows = []
     inflow_dict = []
     for i in range(len(network.paths)):
-        inflows.append(RightConstant(net_inflow.times, values[i], (0, horizon)))
+        inflows.append(RightConstant(steps, values[i], (0, horizon)))
         inflow_dict.append((network.paths[i], inflows[i]))
 
     inflow = inflows.copy()
@@ -63,17 +74,7 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
     counter_steps = 1
     accuracy_reached = False
     equilibrium_reached = False
-    stop = 0
-    steps = []
-    while stop*delta <= horizon - delta:
-        steps.append(stop*delta)
-        stop = stop + 1
-    steps.append(horizon)
-
-    for i in range(len(net_inflow.times)):
-        if net_inflow.times[i] not in steps:
-            steps.append(net_inflow.times[i])
-    steps.sort()
+    
     while counter_steps < numSteps and not accuracy_reached and not equilibrium_reached:
         #Compute Update
         update = []
