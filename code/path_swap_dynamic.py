@@ -187,6 +187,7 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
         curr_path = math.sqrt(curr_path)
         current_difference = current_difference + curr_path
 
+    norm_differences.append(current_difference)
     print("Current norm difference: " + str(current_difference))
     if current_difference <= lamb:
         accuracy_reached = True
@@ -247,10 +248,12 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
                     value_5 = value_4*value_4
                 value6 = inflow[p].eval(steps[t])*value_5
                 storage = storage + value6
-
-    print("Current storage value: " + str(storage))
-    if storage <= lamb:
-        equilibrium_reached = True
+        
+        storMou_values.append(storage)
+        print("Current storage value: " + str(storage))
+        if storage <= lamb:
+            equilibrium_reached = True
+        counter = counter + 1
     #Check convergence and output flow
     if counter_steps > numSteps:
         print("Number of learning steps reached")
