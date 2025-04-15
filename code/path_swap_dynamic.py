@@ -143,6 +143,7 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
                         else:
                             current[y] = current[y] + 0
             update.append(current)
+        update.append([0 for i in range(len(network.paths))])
 
         #Update flow
         inflow_old = inflow.copy()
@@ -157,8 +158,8 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
         values_new = []
         for i in range(len(network.paths)):
             values_new.append([])
-            for j in range(len(steps) - 1):
-                values_new[i].append(values[i][j] + update[j][i])
+            for j in range(len(steps)):
+                values_new[i].append(inflow[i].values[j] + update[j][i])
 
         inflows_new = []
         for i in range(len(network.paths)):
@@ -250,11 +251,11 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
                     value6 = inflow[p].eval(steps[t])*value_5
                     storage = storage + value6
         
-            storMou_values.append(storage)
-            print("Current storage value: " + str(storage))
-            if storage <= lamb:
-                equilibrium_reached = True
-            counter = counter + 1
+        storMou_values.append(storage)
+        print("Current storage value: " + str(storage))
+        if storage <= lamb:
+            equilibrium_reached = True
+        counter_steps = counter_steps + 1
 
     #Check convergence and output flow
     if counter_steps > numSteps:
@@ -279,7 +280,7 @@ graph.edges = [e1,e2,e3]
 
 capacities = [1,3,2]
 travel_times = [1,1,1]
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,4,0],(0,2))
 
 p1 = [e1,e3]
 p2 = [e2,e3]
