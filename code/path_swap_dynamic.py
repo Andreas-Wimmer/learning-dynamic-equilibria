@@ -270,25 +270,27 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
 graph = DirectedGraph()
 s = Node(0,graph)
 u = Node(1,graph)
-t = Node(2,graph)
+v = Node(2,graph)
+t = Node(3,graph)
 e1 = Edge(s,u,0,graph)
-e2 = Edge(s,u,1,graph)
-e3 = Edge(u,t,2,graph)
+e2 = Edge(s,v,1,graph)
+e3 = Edge(u,v,2,graph)
+e4 = Edge(v,t,3,graph)
 
-graph.nodes = {0:s,1:u,2:t}
-graph.edges = [e1,e2,e3]
+graph.nodes = {0:s,1:u,2:v,3:t}
+graph.edges = [e1,e2,e3,e4]
 
-capacities = [1,3,2]
-travel_times = [1,1,1]
-net_inflow = RightConstant([0,1,1.75,2],[4,4,4,0],(0,2))
+capacities = [4,2,2,6]
+travel_times = [1,1,2,1]
+net_inflow = RightConstant([0,4],[6,0],(0,4))
 
-p1 = [e1,e3]
-p2 = [e2,e3]
+p1 = [e1,e3,e4]
+p2 = [e2,e4]
 
 paths = [p1,p2]
-horizon = 2
+horizon = 4
 delta = 0.25
 numSteps = 500
-lamb = 0.000001
+lamb = 0.00001
 
 path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb)
