@@ -57,13 +57,12 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
             else:
                 values[i].append(0)
     
-    inflows = []
+    inflow = []
     inflow_dict = []
     for i in range(len(network.paths)):
-        inflows.append(RightConstant(steps, values[i], (0, horizon)))
-        inflow_dict.append((network.paths[i], inflows[i]))
+        inflow.append(RightConstant(steps, values[i], (0, horizon)))
+        inflow_dict.append((network.paths[i], inflow[i]))
 
-    inflow = inflows.copy()
     loader = NetworkLoader(network, inflow_dict)
     result = loader.build_flow()
     flow = next(result)
@@ -159,11 +158,11 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
             for j in range(len(steps)):
                 values_new[i].append(inflow[i].values[j] + update[j][i])
 
-        inflows_new = []
+        inflow_new = []
         for i in range(len(network.paths)):
-            inflows_new.append(RightConstant(steps, values_new[i],(0,horizon)))
+            inflow_new.append(RightConstant(steps, values_new[i],(0,horizon)))
 
-        inflow = inflows_new.copy()
+        inflow = inflow_new.copy()
         new_dict = []
         for i in range(len(network.paths)):
             new_dict.append((network.paths[i],inflow[i]))
