@@ -248,7 +248,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("Gap: " + str((-1)*sol_gap.fun))
         gap_values.append((-1)*sol_gap.fun)
         
-        if (-1)*sol_gap.fun <= lamb*lamb:
+        if (-1)*sol_gap.fun <= lamb*lamb*lamb:
             equilibrium_reached = True
             print("The empirical frequency has reached a regularized equilbrium")
 
