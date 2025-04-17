@@ -290,7 +290,7 @@ horizon = 2
 delta = 0.25
 numSteps = 500
 lamb = 0.000001
-epsilon = 0.05
+epsilon = 0
 
 reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
