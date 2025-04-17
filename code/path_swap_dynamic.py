@@ -27,9 +27,7 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
     storMou_values = []
     norm_differences = []
 
-    breaks_net_inflow = net_inflow.times
     values = []
-
     caps = []
     for i in range (len(network.paths)):
         max_cap = 0
