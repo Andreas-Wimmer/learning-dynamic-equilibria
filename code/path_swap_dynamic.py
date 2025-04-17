@@ -253,7 +253,7 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
         
         storMou_values.append(storage)
         print("Current storage value: " + str(storage))
-        if storage <= lamb:
+        if storage <= lamb*lamb:
             equilibrium_reached = True
         counter_steps = counter_steps + 1
 
