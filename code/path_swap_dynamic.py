@@ -13,7 +13,7 @@ import math
 from arrays import *
 
 def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths: List[Path], horizon: float, net_inflow: RightConstant,
-               delta: float, numSteps: int, lamb: float) -> List[RightConstant]:
+               delta: float, numSteps: int, lamb: float, step_length: float) -> List[RightConstant]:
     #Initialization
     network = Network()
     network.graph = graph
@@ -156,7 +156,7 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
         for i in range(len(network.paths)):
             values_new.append([])
             for j in range(len(steps)):
-                values_new[i].append(inflow[i].values[j] + update[j][i])
+                values_new[i].append(inflow[i].values[j] + step_length*update[j][i])
 
         inflow_new = []
         for i in range(len(network.paths)):
@@ -289,5 +289,6 @@ horizon = 4
 delta = 0.25
 numSteps = 500
 lamb = 0.00001
+step = 0.1
 
-path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb)
+path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb, step)
