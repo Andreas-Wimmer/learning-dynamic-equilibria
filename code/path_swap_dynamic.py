@@ -287,7 +287,7 @@ p2 = [e2,e4]
 paths = [p1,p2]
 horizon = 4
 delta = 0.25
-numSteps = 500
+numSteps = 1000
 lamb = 0.00001
 step = 0.1
 
