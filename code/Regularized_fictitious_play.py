@@ -272,7 +272,7 @@ graph = nguyen_network.nguyen_graph
 capacities = nguyen_network.capacities
 travel_times = nguyen_network.travel_times
 net_inflow = nguyen_network.u
-paths = nguyen_network.paths
+paths_in = nguyen_network.paths
 horizon = 300
 delta = 100
 numSteps = 1000
@@ -280,4 +280,4 @@ lamb = 0.0001
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
-                    net_inflow, paths, horizon, delta, epsilon, numSteps, lamb)
+                    net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
