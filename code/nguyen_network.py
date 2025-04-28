@@ -1,6 +1,8 @@
 #Here I implement the ngyuen network
 
 from graph import DirectedGraph, Edge, Node
+from network import Network, Commodity, Path
+from right_constant import RightConstant
 
 nguyen_graph = DirectedGraph()
 a = Node(1, nguyen_graph)
@@ -44,3 +46,14 @@ capacities = [5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/
 travel_times = [150,75,75,150,150,150,150,150,225,75,75,75,75,150,150,150,225,75,150]
 
 #Source node is a and sink node is b
+p_1 = [e_1,e_4,e_13]
+p_2 = [e_1,e_3,e_7,e_8,e_13]
+p_3 = [e_1,e_3,e_7,e_12,e_16]
+p_4 = [e_1,e_3,e_11,e_15,e_16]
+p_5 = [e_2,e_6,e_7,e_8,e_13]
+p_6 = [p_2,e_6,e_7,e_12,e_16]
+p_7 = [e_2,e_6,e_11,e_15,e_16]
+p_8 = [e_2,e_10,e_14,e_15,e_16]
+
+#Network inflow rate taken from the electric vehicles project
+u = RightConstant([0,300],[3,0],(0,3))
