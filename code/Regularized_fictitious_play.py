@@ -15,6 +15,7 @@ from machine_precision import eps
 from typing import List
 import math
 from arrays import *
+import nguyen_network
 
 
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
@@ -267,31 +268,15 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     else:
         print("The sequence of empirical frequencies neither converged nor reached a regularized equilibrium")
 
-graph = DirectedGraph()
-s = Node(0,graph)
-u = Node(1,graph)
-v = Node(2,graph)
-t = Node(3,graph)
-e1 = Edge(s,u,0,graph)
-e2 = Edge(s,v,1,graph)
-e3 = Edge(u,v,2,graph)
-e4 = Edge(v,t,3,graph)
-
-graph.nodes = {0:s,1:u,2:v,3:t}
-graph.edges = [e1,e2,e3,e4]
-
-capacities = [4,2,2,6]
-travel_times = [1,1,2,1]
-net_inflow = RightConstant([0,4],[8,0],(0,4))
-
-p1 = [e1,e3,e4]
-p2 = [e2,e4]
-
-paths = [p1,p2]
-horizon = 4
-delta = 0.25
+graph = nguyen_network.nguyen_graph
+capacities = nguyen_network.capacities
+travel_times = nguyen_network.travel_times
+net_inflow = nguyen_network.u
+paths = nguyen_network.paths
+horizon = 300
+delta = 100
 numSteps = 1000
-lamb = 0.00001
+lamb = 0.0001
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
