@@ -10,6 +10,7 @@ from piecewise_linear import PiecewiseLinear, identity
 from right_constant import RightConstant
 from machine_precision import eps
 import gap_function
+import nguyen_network
 
 def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_times: List[float],
                        network_inflow: RightConstant, T: float, paths = List[Path], 
@@ -80,35 +81,21 @@ def monotonicity_check(graph: DirectedGraph, capacities: List[float], travel_tim
     print(str(scalar_product))
     return scalar_product
 
-graph = DirectedGraph()
-s = Node(0,graph)
-v = Node(1,graph)
-t = Node(2,graph)
-e1 = Edge(s,v,0,graph)
-e2 = Edge(s,v,1,graph)
-e3 = Edge(v,t,2,graph)
+graph = nguyen_network.nguyen_graph
+capacities = nguyen_network.capacities
+travel_times = nguyen_network.travel_times
+net_inflow = nguyen_network.u
+paths = nguyen_network.paths
+horizon = 300
 
-graph.nodes = {0:s,1:v,2:t}
-graph.edges = [e1,e2,e3]
-
-capacities = [1,3,2]
-travel_times = [1,1,0]
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
-
-p1 = [e1,e3]
-p2 = [e2,e3]
-
-paths = [p1,p2]
-horizon = 2
-
-i1 = RightConstant([0,0.5,1,2],[1.5,0.5,0,0],(0,2))
-i2 = RightConstant([0,0.5,1,1.75,2],[1,2,1,3,0],(0,2))
-#i3 = RightConstant([0,1,2,5],[1,0,0,0],(0,5))
-#i4 = RightConstant([0,5],[0,0],(0,5))
-#i5 = RightConstant([0,1,2,4,5],[1,2,3,1,0],(0,5))
-#i6 = RightConstant([0,5],[0,0],(0,5))
-#i7 = RightConstant([0,1,2,4,5],[0.5,1,0.5,1.5,0],(0,5))
-#i8 = RightConstant([0,5],[0,0],(0,5))
+i1 = RightConstant([0,300],[0,0],(0,300))
+i2 = RightConstant([0,300],[0,0],(0,300))
+i3 = RightConstant([0,300],[0,0],(0,300))
+i4 = RightConstant([0,100,200,300],[2,1,1.5,0],(0,300))
+i5 = RightConstant([0,300],[0,0],(0,300))
+i6 = RightConstant([0,300],[0,0],(0,300))
+i7 = RightConstant([0,100,200,300],[1,2,1.5,0],(0,300))
+i8 = RightConstant([0,300],[0,0],(0,300))
 #i9 = RightConstant([0,1,2,4,5],[0.5,1,0.5,1.5,0],(0,5))
 #i10 = RightConstant([0,4],[0,0],(0,4))
 #i11 = RightConstant([0,4],[0,0],(0,4))
@@ -119,17 +106,17 @@ i2 = RightConstant([0,0.5,1,1.75,2],[1,2,1,3,0],(0,2))
 #i16 = RightConstant([0,4],[0,0],(0,4))
 #i17 = RightConstant([0,1,1.75,4],[1,2,1,0],(0,4))
 
-i18 = RightConstant([0,1,2],[1,0,0],(0,2))
-i19 = RightConstant([0,1,1.75,2],[1.5,1,3,0],(0,2))
-#i20 = RightConstant([0,2,5],[0.5,0,0],(0,5))
-#i21 = RightConstant([0,5],[0,0],(0,5))
-#i22 = RightConstant([0,2,4,5],[1.5,3,1,0],(0,5))
-#i23 = RightConstant([0,5],[0,0],(0,5))
-#i24 = RightConstant([0,2,4,5],[0.75,0.5,1.5,0],(0,5))
-#i25 = RightConstant([0,5],[0,0],(0,5))
-#i26 = RightConstant([0,2,4,5],[0.75,0.5,1.5,0],(0,5))
-#i27 = RightConstant([0,4],[0,0],(0,4))
-#i28 = RightConstant([0,4],[0,0],(0,4))
+i18 = RightConstant([0,300],[0,0],(0,300))
+i19 = RightConstant([0,300],[0,0],(0,300))
+i20 = RightConstant([0,300],[0,0],(0,300))
+i21 = RightConstant([0,300],[1.5,0],(0,300))
+i22 = RightConstant([0,300],[0,0],(0,300))
+i23 = RightConstant([0,300],[0,0],(0,300))
+i24 = RightConstant([0,300],[1.5,0],(0,300))
+i25 = RightConstant([0,300],[0,0],(0,300))
+#i26 = RightConstant([0,300],[0,0],(0,300))
+#i27 = RightConstant([0,300],[0,0],(0,300))
+#i28 = RightConstant([0,300],[0,0],(0,300))
 #i29 = RightConstant([0,4],[0,0],(0,4))
 #i30 = RightConstant([0,4],[0,0],(0,4))
 #i31 = RightConstant([0,4],[0,0],(0,4))
@@ -137,7 +124,7 @@ i19 = RightConstant([0,1,1.75,2],[1.5,1,3,0],(0,2))
 #i33 = RightConstant([0,4],[0,0],(0,4))
 #i34 = RightConstant([0,1,1.75,4],[1,2,1,0],(0,4))
 
-in_f = [i1,i2]
-in_g = [i18,i19]
+in_f = [i1,i2,i3,i4,i5,i6,i7,i8]
+in_g = [i18,i19,i20,i21,i22,i23,i24,i25]
 
 monotonicity_check(graph, capacities, travel_times, net_inflow, horizon, paths, in_f, in_g)
