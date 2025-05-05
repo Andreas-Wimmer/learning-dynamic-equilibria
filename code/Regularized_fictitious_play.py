@@ -28,8 +28,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network.graph = graph
     network.capacity = cap
     network.travel_time = travel
-    s = graph.nodes[0]
-    t = graph.nodes[len(graph.nodes) - 1]
+    s = graph.nodes[1]
+    t = graph.nodes[len(graph.nodes)]
     network_inflow = Commodity({s, net_inflow}, t, 1)
     network.commodities = [network_inflow]
     network.paths = paths
