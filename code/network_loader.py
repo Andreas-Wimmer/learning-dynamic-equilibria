@@ -35,14 +35,14 @@ class NetworkLoader:
                 {
                     i: path_inflow[1]
                     for i, path_inflow in enumerate(self.path_inflows)
-                    if v == path_inflow[0][0].node_from
+                    if v == path_inflow[0].edges[0].node_from
                 }
             )
             for v in network.graph.nodes.values()
         }
         self._network_inflow_changes = PriorityQueue(
             [
-                ((i, path[0].node_from, time), time)
+                ((i, path.edges[0].node_from, time), time)
                 for i, (path, inflow) in enumerate(path_inflows)
                 for time in inflow.times
             ]
@@ -52,7 +52,7 @@ class NetworkLoader:
             v: set(
                 i
                 for i, path_inflow in enumerate(self.path_inflows)
-                if path_inflow[0][-1].node_to == v
+                if path_inflow[0].edges[-1].node_to == v
             )
             for v in network.graph.nodes.values()
         }
@@ -84,14 +84,14 @@ class NetworkLoader:
         minimal_delay = []
         for i in range(len(self.network.paths)):
             minimal_delay.append(0)
-            for j in range(len(self.network.paths[i])):
-                index = self.network.paths[i][j].id
+            for j in range(len(self.network.paths[i].edges)):
+                index = self.network.paths[i].edges[j].id - 1
                 minimal_delay[i] = minimal_delay[i] + self.network.travel_time[index]
         path_delays = []
         for path in self.network.paths:
             delay_op = identity.restrict((0, float("inf")))
-            for edge in path:
-                index = edge.id
+            for edge in path.edges:
+                index = edge.id - 1
                 delay_op = arr_funcs[index].compose(delay_op)
             
             for i in range(len(delay_op.times)):
@@ -132,7 +132,7 @@ class NetworkLoader:
     def _get_active_edges(self, i: int, s: Node) -> List[Edge]:
         path = self.path_inflows[i][0]
         edge = None
-        for e in path:
+        for e in path.edges:
             if e.node_from == s:
                 edge = e
                 break
