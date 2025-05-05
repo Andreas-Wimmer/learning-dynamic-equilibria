@@ -27,7 +27,7 @@ class Path:
             return False
         
     def getNodesInPath(self) -> List[Node]:
-        nodeList = [self[0]._node_from]
+        nodeList = [self.edges[0]._node_from]
         for e in self.edges:
             nodeList.append(e._node_to)
         return nodeList
@@ -282,7 +282,7 @@ class Network:
                 if verbose: printPathInNetwork(self, p)
 
             # Get the last node in the partial path
-            last = path[-1]._node_to
+            last = path.edges[-1]._node_to
             if verbose: print("last ", last)
 
             # If the last node is the destination node then store the path
@@ -300,16 +300,16 @@ class Network:
                         printPathInNetwork(self,path), path.isNodeInPath(e._node_to))
                 if not path.isNodeInPath(e._node_to):
                     newpath = Path(path.edges)
-                    if verbose: print("newpath before append ", printPathInNetwork(newpath,self))
-                    newpath.append(e)
+                    if verbose: print("newpath before append ", printPathInNetwork(self,newpath))
+                    newpath.edges.append(e)
                     q.append(newpath)
-                    if verbose: print("newpath after append ", printPathInNetwork(newpath, self))
+                    if verbose: print("newpath after append ", printPathInNetwork(self,newpath))
 
         # Print pathList
         if verbose:
             print("\nTotal %d paths found from node %s to node %s:"%(len(pathList),src,dest))
             for i,p in enumerate(pathList):
-                print(i, len(p), printPathInNetwork(p, self))
+                print(i, len(p.edges), printPathInNetwork(self,p))
         return pathList
     
     def to_file(self, file_path: str):
@@ -323,8 +323,8 @@ class Network:
         
 def printPathInNetwork(G: Network, p: Path) -> str:
         s = str()
-        for e in p:
-            if len([i for i in e._node_from.outgoing_edges\
+        for e in p.edges:
+            if len([i for i in e._node_from._outgoing_edges\
                 if i._node_to == e._node_to]) > 1:
                     s += str(G.graph.edges.index(e))
             s += str(e)

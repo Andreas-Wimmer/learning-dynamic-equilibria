@@ -2,6 +2,7 @@
 
 from graph import DirectedGraph,Node,Edge
 from collections import deque
+from network import Network,Commodity,Path
 
 sioux_graph = DirectedGraph
 a = Node(1,sioux_graph)
@@ -124,6 +125,10 @@ travel_times = [360,240,360,300,240,240,240,240,120,360,120,240,300,300,240,120,
                 120,120,180,240,180,120,240,240,240,360,300,360,120,180,180,300,120,240,240,240,120,240,180,120]
 
 
-
-
+sioux_network = Network()
+sioux_network.graph = sioux_graph
+sioux_network.capacity = capacities
+sioux_network.travel_time = travel_times
+sioux_network.findPaths(a, t, False, True)
+print("Bla")
 
