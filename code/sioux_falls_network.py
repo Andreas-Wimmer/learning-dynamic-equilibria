@@ -130,13 +130,20 @@ sioux_network.graph = sioux_graph
 sioux_network.capacity = capacities
 sioux_network.travel_time = travel_times
 paths = sioux_network.findPaths(a, t)
-
+print("Bla")
 for i in range(len(paths)):
     is_path = True
     if paths[i].edges[0]._node_from != a or paths[i].edges[-1]._node_to != t:
         is_path = False
-    for j in range(len(paths[i]) - 1):
+    for j in range(len(paths[i].edges) - 1):
         if paths[i].edges[j]._node_to != paths[i].edges[j + 1]._node_from:
+            is_path = False
+    for node in paths[i].getNodesInPath():
+        counter = 0
+        for node_test in paths[i].getNodesInPath:
+            if node == node_test:
+                counter = counter + 1
+        if counter != 1:
             is_path = False
     if not is_path:
         print("Not an actual path")
