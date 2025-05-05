@@ -146,3 +146,5 @@ class DirectedGraph:
                     node._incoming_edges.append(edge)
                 else:
                     continue
+
+    

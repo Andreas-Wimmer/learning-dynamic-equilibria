@@ -8,8 +8,30 @@ import numpy as np
 from graph import DirectedGraph, Edge, Node
 from predictor_type import PredictorType
 from right_constant import RightConstant
+import math
+from collections import deque
 
-Path = List[Edge]
+class Path:
+    edges: List[Edge]
+
+    def __init__(self, e_list: List[Edge]):
+        self.edges = e_list
+
+    def isNodeInPath(self, x: Node) -> bool:
+        # print("nodes in path ", str(self.getNodesInPath()))
+        if x in self.getNodesInPath():
+            # print("False")
+            return True
+        else:
+            # print("True")
+            return False
+        
+    def getNodesInPath(self) -> List[Node]:
+        nodeList = [self[0]._node_from]
+        for e in self.edges:
+            nodeList.append(e._node_to)
+        return nodeList
+    
 class Commodity:
     sources: Dict[Node, RightConstant]
     sink: Node
@@ -218,6 +240,78 @@ class Network:
         )
         print(f"Average demand: {avg_demand}")
 
+    def printPathInNetwork(self, p: Path) -> str:
+        s = str()
+        for e in p:
+            if len([i for i in e._node_from.outgoing_edges\
+                if i._node_to == e._node_to]) > 1:
+                    s += str(self.graph.edges.index(e))
+            s += str(e)
+        return s
+
+    def findPaths(self, src, dest,excludeSelfLoopNodes: bool=False, verbose: bool=False) -> List[Path]:
+        if excludeSelfLoopNodes:
+            # Find nodes with self loops
+            selfLoopNodes = [e._node_from for e in self.graph.edges if e._node_from == e._node_to]
+        else:
+            selfLoopNodes = []
+        # print('Nodes with self loop: ', *(n for n in selfLoopNodes))
+
+        # Queue to store (partial) paths
+        q = deque()
+
+        # Add edges going out of the source to q
+        for e in self.graph.edges:
+            if e._node_from == src:
+                q.append(Path([e]))
+        # List to store the final paths
+        pathList = []
+        count = 0
+
+        while q:
+            count += 1
+            if verbose: print("\ncount:%d"%count)
+
+            # Get the (earliest generated) partial path
+            if verbose: print("q before pop")
+            for p in q:
+                if verbose: print(printPathInNetwork(self, p))
+            path = q.popleft()
+            # print("after pop ", printPathInNetwork(path, self), q)
+            for p in q:
+                if verbose: printPathInNetwork(self, p)
+
+            # Get the last node in the partial path
+            last = path[-1]._node_to
+            if verbose: print("last ", last)
+
+            # If the last node is the destination node then store the path
+            if last == dest:
+                if verbose: print("Found s-t Path:", printPathInNetwork(self,path))
+                pathList.append(path)
+
+            # Traverse all the nodes connected to the current node and push new partial
+            # path to queue
+            edgeListCurrNode = [e for e in self.graph.edges if (e._node_from == last and
+                e._node_to not in selfLoopNodes)]
+            if verbose: print("edgeListCurrNode ", len(edgeListCurrNode), edgeListCurrNode)
+            for e in edgeListCurrNode:
+                if verbose: print("edge %d" %self.graph.edges.index(e), e,
+                        printPathInNetwork(self,path), path.isNodeInPath(e._node_to))
+                if not path.isNodeInPath(e._node_to):
+                    newpath = Path(path.edges)
+                    if verbose: print("newpath before append ", printPathInNetwork(newpath,self))
+                    newpath.append(e)
+                    q.append(newpath)
+                    if verbose: print("newpath after append ", printPathInNetwork(newpath, self))
+
+        # Print pathList
+        if verbose:
+            print("\nTotal %d paths found from node %s to node %s:"%(len(pathList),src,dest))
+            for i,p in enumerate(pathList):
+                print(i, len(p), printPathInNetwork(p, self))
+        return pathList
+    
     def to_file(self, file_path: str):
         with open(file_path, "wb") as file:
             pickle.dump(self, file)
@@ -226,3 +320,12 @@ class Network:
     def from_file(file_path: str) -> Network:
         with open(file_path, "rb") as file:
             return pickle.load(file)
+        
+def printPathInNetwork(G: Network, p: Path) -> str:
+        s = str()
+        for e in p:
+            if len([i for i in e._node_from.outgoing_edges\
+                if i._node_to == e._node_to]) > 1:
+                    s += str(G.graph.edges.index(e))
+            s += str(e)
+        return s
