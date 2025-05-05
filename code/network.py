@@ -299,7 +299,7 @@ class Network:
                 if verbose: print("edge %d" %self.graph.edges.index(e), e,
                         printPathInNetwork(self,path), path.isNodeInPath(e._node_to))
                 if not path.isNodeInPath(e._node_to):
-                    newpath = Path(path.edges)
+                    newpath = Path(path.edges.copy())
                     if verbose: print("newpath before append ", printPathInNetwork(self,newpath))
                     newpath.edges.append(e)
                     q.append(newpath)
