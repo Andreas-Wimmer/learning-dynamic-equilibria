@@ -44,9 +44,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     caps = []
     for i in range (len(network.paths)):
         max_cap = 0
-        for j in range(len(network.paths[i])):
-            if capacities[network.paths[i][j].id] > max_cap:
-                max_cap = capacities[network.paths[i][j].id]
+        for j in range(len(network.paths[i].edges)):
+            if capacities[network.paths[i].edges[j].id] > max_cap:
+                max_cap = capacities[network.paths[i].edges[j].id]
         caps.append(max_cap)
 
     max_path = paths[caps.index(max(caps))]
@@ -254,11 +254,6 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             equilibrium_reached = True
             print("The empirical frequency has reached a regularized equilbrium")
 
-    diff_delays_avg = []
-    for i in range(len(network.paths)):
-        for j in range(len(network.paths)):
-            if i != j:
-                diff_delays_avg.append(delays_avg[i] - delays_avg[j])
 
     if equilibrium_reached and accuracy_reached:
         print("The sequence of empirical frequencies converged in the given precision to a regularized equilibrium with epsilon = " + str(epsilon))
