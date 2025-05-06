@@ -85,13 +85,13 @@ class NetworkLoader:
         for i in range(len(self.network.paths)):
             minimal_delay.append(0)
             for j in range(len(self.network.paths[i].edges)):
-                index = self.network.paths[i].edges[j].id - 1
+                index = self.network.paths[i].edges[j].id
                 minimal_delay[i] = minimal_delay[i] + self.network.travel_time[index]
         path_delays = []
         for path in self.network.paths:
             delay_op = identity.restrict((0, float("inf")))
             for edge in path.edges:
-                index = edge.id - 1
+                index = edge.id
                 delay_op = arr_funcs[index].compose(delay_op)
             
             for i in range(len(delay_op.times)):

@@ -149,3 +149,21 @@ for i in range(len(paths)):
     if not is_path:
         print("Not an actual path")
 
+average_minium_delay = 0
+minimal_delay = []
+for i in range (len(paths)):
+    minimal_delay.append(0)
+    for j in range(len(paths[i].edges)):
+            index = paths[i].edges[j].id - 1
+            minimal_delay[i] = minimal_delay[i] + travel_times[index]
+    average_minium_delay = average_minium_delay + minimal_delay[i]
+
+average_minium_delay = average_minium_delay/len(paths)
+print(average_minium_delay)
+
+new_paths = []
+for i in range(len(paths)):
+    if minimal_delay[i] <= average_minium_delay:
+        new_paths.append(paths[i])
+print(len(new_paths))
+
