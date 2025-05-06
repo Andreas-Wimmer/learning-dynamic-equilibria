@@ -271,6 +271,8 @@ class PiecewiseLinear:
     @lru_cache
     def compose(self, f: PiecewiseLinear) -> PiecewiseLinear:
         g = self
+        f.ensure_monotone()
+        g.ensure_monotone()
         # We calculate g ⚬ f
         assert (
             f.is_monotone()
@@ -408,9 +410,9 @@ class PiecewiseLinear:
         monotone_inc = True
         monotone_dec = True
         for i in range(len(self.values) - 1):
-            if round(self.values[i] - self.values[i + 1],6) >= 0:
+            if round(self.values[i] - self.values[i + 1],6) > 0:
                 monotone_inc = False
-            if round(self.values[i] - self.values[i + 1],6) <= 0:
+            if round(self.values[i] - self.values[i + 1],6) < 0:
                 monotone_dec = False
         return (monotone_inc or monotone_dec)
     
