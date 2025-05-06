@@ -41,19 +41,22 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     breaks_net_inflow = net_inflow.times
     values = []
 
-    #caps = []
-    #for i in range (len(network.paths)):
-    #    max_cap = 0
-    #    for j in range(len(network.paths[i].edges)):
-    #        if capacities[network.paths[i].edges[j].id] > max_cap:
-    #            max_cap = capacities[network.paths[i].edges[j].id]
-    #    caps.append(max_cap)
+    caps = []
+    for i in range (len(network.paths)):
+        max_cap = 0
+        for j in range(len(network.paths[i].edges)):
+            if capacities[network.paths[i].edges[j].id] > max_cap:
+                max_cap = capacities[network.paths[i].edges[j].id]
+        caps.append(max_cap)
 
-    #max_path = paths[caps.index(max(caps))]
+    max_path = paths[caps.index(max(caps))]
     for i in range(len(network.paths)):
         values.append([])
         for j in range(len(breaks_net_inflow)):
-            values[i].append((1/len(network.paths))*net_inflow.values[j])
+            if network.paths[i] == max_path:
+                values[i].append(net_inflow.values[j])
+            else:
+                values[i].append(0)
             
 
     inflows = []
@@ -247,9 +250,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("Gap: " + str((-1)*sol_gap.fun))
         gap_values.append((-1)*sol_gap.fun)
         
-        if (-1)*sol_gap.fun <= lamb*lamb*lamb:
-            equilibrium_reached = True
-            print("The empirical frequency has reached a regularized equilbrium")
+        #if (-1)*sol_gap.fun <= lamb*lamb*lamb:
+        #    equilibrium_reached = True
+        #    print("The empirical frequency has reached a regularized equilbrium")
 
 
     if equilibrium_reached and accuracy_reached:
@@ -264,13 +267,13 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 graph = sioux_falls_network.sioux_graph
 capacities = sioux_falls_network.capacities
 travel_times = sioux_falls_network.travel_times
-net_inflow = RightConstant([0,250],[5,0],(0,250))
+net_inflow = RightConstant([0,250],[8,0],(0,250))
 paths_in = sioux_falls_network.new_paths
 horizon = 250
 delta = 250
 numSteps = 100
 lamb = 0.1
-epsilon = 0.05
+epsilon = 0.1
 
 reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
