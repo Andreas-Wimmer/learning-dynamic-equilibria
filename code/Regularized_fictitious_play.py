@@ -185,8 +185,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(network.paths)):
             diff = diff + diff_inflows[i].integral().eval(horizon)
     
-        if round(diff, 12) <= lamb:
-            accuracy_reached = True
+        #if round(diff, 12) <= lamb:
+        #    accuracy_reached = True
 
         print("Norm difference: " + str(diff))
         norm_differences.append(diff) 
@@ -273,7 +273,7 @@ horizon = 100
 delta = 50
 numSteps = 500
 lamb = 0.00001
-epsilon = 0.05
+epsilon = 0.025
 
 reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
