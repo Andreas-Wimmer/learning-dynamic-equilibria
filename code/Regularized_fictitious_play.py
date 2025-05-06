@@ -270,10 +270,10 @@ travel_times = sioux_falls_network.travel_times
 net_inflow = RightConstant([0,100],[6,0],(0,100))
 paths_in = sioux_falls_network.new_paths
 horizon = 100
-delta = 25
+delta = 50
 numSteps = 500
 lamb = 0.1
-epsilon = 0.1
+epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
