@@ -272,7 +272,7 @@ paths_in = sioux_falls_network.new_paths
 horizon = 100
 delta = 50
 numSteps = 500
-lamb = 0.1
+lamb = 0.00001
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
