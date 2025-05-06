@@ -131,7 +131,7 @@ sioux_network.capacity = capacities
 sioux_network.travel_time = travel_times
 paths = sioux_network.findPaths(a, t)
 
-for i in range(2):
+for i in range(4):
     average_minium_delay = 0
     minimal_delay = []
     for i in range (len(paths)):
