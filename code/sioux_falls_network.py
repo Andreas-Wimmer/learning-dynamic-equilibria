@@ -131,23 +131,23 @@ sioux_network.capacity = capacities
 sioux_network.travel_time = travel_times
 paths = sioux_network.findPaths(a, t)
 
-#for i in range(3):
-#    average_minium_delay = 0
-#    minimal_delay = []
-#    for i in range (len(paths)):
-#        minimal_delay.append(0)
-#        for j in range(len(paths[i].edges)):
-#                index = paths[i].edges[j].id - 1
-#                minimal_delay[i] = minimal_delay[i] + travel_times[index]
-#        average_minium_delay = average_minium_delay + minimal_delay[i]
+for i in range(2):
+    average_minium_delay = 0
+    minimal_delay = []
+    for i in range (len(paths)):
+        minimal_delay.append(0)
+        for j in range(len(paths[i].edges)):
+                index = paths[i].edges[j].id - 1
+                minimal_delay[i] = minimal_delay[i] + travel_times[index]
+        average_minium_delay = average_minium_delay + minimal_delay[i]
 
-#    average_minium_delay = average_minium_delay/len(paths)
-#    print(average_minium_delay)
+    average_minium_delay = average_minium_delay/len(paths)
+    print(average_minium_delay)
 
-#    new_paths = []
-#    for i in range(len(paths)):
-#        if minimal_delay[i] <= average_minium_delay:
-#            new_paths.append(paths[i])
-#    print(len(new_paths))
-#    paths = new_paths.copy()
+    new_paths = []
+    for i in range(len(paths)):
+           if minimal_delay[i] <= average_minium_delay:
+            new_paths.append(paths[i])
+    print(len(new_paths))
+    paths = new_paths.copy()
 
