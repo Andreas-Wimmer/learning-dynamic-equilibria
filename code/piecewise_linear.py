@@ -271,8 +271,8 @@ class PiecewiseLinear:
     @lru_cache
     def compose(self, f: PiecewiseLinear) -> PiecewiseLinear:
         g = self
-        f.ensure_monotone()
-        g.ensure_monotone()
+        f.ensure_monotone(True)
+        g.ensure_monotone(True)
         # We calculate g ⚬ f
         assert (
             f.is_monotone()
