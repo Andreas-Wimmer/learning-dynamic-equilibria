@@ -267,10 +267,10 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 graph = sioux_falls_network.sioux_graph
 capacities = sioux_falls_network.capacities
 travel_times = sioux_falls_network.travel_times
-net_inflow = RightConstant([0,100],[6,0],(0,100))
+net_inflow = RightConstant([0,100],[10,0],(0,100))
 paths_in = sioux_falls_network.new_paths
 horizon = 100
-delta = 100
+delta = 50
 numSteps = 500
 lamb = 0.00001
 epsilon = 0.025
