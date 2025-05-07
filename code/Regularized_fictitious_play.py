@@ -272,7 +272,7 @@ paths_in = nguyen_network.paths
 horizon = 300
 delta = 30
 numSteps = 100000
-lamb = 0.1
+lamb = 0.01
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
