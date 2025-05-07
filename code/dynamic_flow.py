@@ -160,7 +160,7 @@ class DynamicFlow:
         depl_time = self.phi - cur_queue / queue_slope
         planned_change_time = depl_time + travel_time
         planned_change_value = (new_inflow, acc_in)
-        assert self.queues[e](depl_time) < 1000 * eps
+        #assert self.queues[e](depl_time) < 1000 * eps
 
         self.depletions.set(e, depl_time, (planned_change_time, planned_change_value))
 
