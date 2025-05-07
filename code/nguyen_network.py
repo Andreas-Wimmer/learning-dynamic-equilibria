@@ -46,14 +46,14 @@ capacities = [5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/
 travel_times = [150,75,75,150,150,150,150,150,225,75,75,75,75,150,150,150,225,75,150]
 
 #Source node is a and sink node is b
-p_1 = [e_1,e_4,e_13]
-p_2 = [e_1,e_3,e_7,e_8,e_13]
-p_3 = [e_1,e_3,e_7,e_12,e_16]
-p_4 = [e_1,e_3,e_11,e_15,e_16]
-p_5 = [e_2,e_6,e_7,e_8,e_13]
-p_6 = [e_2,e_6,e_7,e_12,e_16]
-p_7 = [e_2,e_6,e_11,e_15,e_16]
-p_8 = [e_2,e_10,e_14,e_15,e_16]
+p_1 = Path([e_1,e_4,e_13])
+p_2 = Path([e_1,e_3,e_7,e_8,e_13])
+p_3 = Path([e_1,e_3,e_7,e_12,e_16])
+p_4 = Path([e_1,e_3,e_11,e_15,e_16])
+p_5 = Path([e_2,e_6,e_7,e_8,e_13])
+p_6 = Path([e_2,e_6,e_7,e_12,e_16])
+p_7 = Path([e_2,e_6,e_11,e_15,e_16])
+p_8 = Path([e_2,e_10,e_14,e_15,e_16])
 paths = [p_1,p_2,p_3,p_4,p_5,p_6,p_7,p_8]
 
 #Network inflow rate taken from the electric vehicles project
