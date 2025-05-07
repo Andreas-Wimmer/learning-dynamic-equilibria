@@ -250,9 +250,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         print("Gap: " + str((-1)*sol_gap.fun))
         gap_values.append((-1)*sol_gap.fun)
         
-        #if (-1)*sol_gap.fun <= lamb*lamb*lamb:
-        #    equilibrium_reached = True
-        #    print("The empirical frequency has reached a regularized equilbrium")
+        if (-1)*sol_gap.fun <= lamb:
+            equilibrium_reached = True
+            print("The empirical frequency has reached a regularized equilbrium")
 
 
     if equilibrium_reached and accuracy_reached:
@@ -271,9 +271,9 @@ net_inflow = nguyen_network.u
 paths_in = nguyen_network.paths
 horizon = 500
 delta = 50
-numSteps = 500
-lamb = 0.00001
-epsilon = 0.025
+numSteps = 100000
+lamb = 0.1
+epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
