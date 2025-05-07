@@ -57,4 +57,4 @@ p_8 = [e_2,e_10,e_14,e_15,e_16]
 paths = [p_1,p_2,p_3,p_4,p_5,p_6,p_7,p_8]
 
 #Network inflow rate taken from the electric vehicles project
-u = RightConstant([0,500],[3,0],(0,500))
+u = RightConstant([0,500],[6,0],(0,500))

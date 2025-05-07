@@ -264,12 +264,12 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     else:
         print("The sequence of empirical frequencies neither converged nor reached a regularized equilibrium")
 
-graph = sioux_falls_network.sioux_graph
-capacities = sioux_falls_network.capacities
-travel_times = sioux_falls_network.travel_times
-net_inflow = RightConstant([0,100],[10,0],(0,100))
-paths_in = sioux_falls_network.new_paths
-horizon = 100
+graph = nguyen_network.nguyen_graph
+capacities = nguyen_network.capacities
+travel_times = nguyen_network.travel_times
+net_inflow = nguyen_network.u
+paths_in = nguyen_network.paths
+horizon = 500
 delta = 50
 numSteps = 500
 lamb = 0.00001
