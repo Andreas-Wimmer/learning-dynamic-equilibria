@@ -112,6 +112,8 @@ sioux_graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8,e_9,e_10,e_11,e_12,e_13,e_1
                      e_29,e_30,e_31,e_32,e_33,e_34,e_35,e_36,e_37,e_38,e_39,e_40,e_41,e_42,e_43,e_44,e_45,e_46,e_47,e_48,e_49,e_50,e_51,e_52,e_53,e_54,e_55,e_56,
                      e_57,e_58,e_59,e_60,e_61,e_62,e_63,e_64,e_65,e_66,e_67,e_68,e_69,e_70,e_71,e_72,e_73,e_74,e_75,e_76]
 
+edges = sioux_graph.edges.copy()
+
 capacities = [7.19450017,6.500964775,7.19450017,1.37727248,6.50096775,4.75292325,4.939665027,1.3635629805,4.939665027,1.37444318583,
               2.77,1.37727248,1.37444318583,1.3607187905,2.178209194,6.500964775,1.3607187905,2.1782809194,1.402831432,1.40161738417,
               2.77,1.402831432,3.865496783,3.865496783,2.77,3.75333376389,1.3485825472,1.38708630389,1.3635629805,2.77,1.3635629805,1.35458563527,
@@ -131,7 +133,7 @@ sioux_network.capacity = capacities
 sioux_network.travel_time = travel_times
 paths = sioux_network.findPaths(a, t)
 
-for i in range(3):
+for i in range(0):
     average_minium_delay = 0
     minimal_delay = []
     for i in range (len(paths)):
@@ -149,5 +151,5 @@ for i in range(3):
            if minimal_delay[i] <= average_minium_delay:
             new_paths.append(paths[i])
     print(len(new_paths))
-    paths = new_paths.copy()
+    #paths = new_paths.copy()
 
