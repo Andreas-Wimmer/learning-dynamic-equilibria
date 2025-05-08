@@ -94,10 +94,10 @@ in_f = []
 in_g = []
 for path in paths:
     if path.edges == [edges[0],edges[3],edges[14],edges[12],edges[23],edges[19],edges[17],edges[55]]:
-        in_f = RightConstant([0,50,100,150,200],[8,0,4,0],(0,200))
+        in_f = RightConstant([0,50,100,200],[8,0,4,0],(0,200))
         in_g = RightConstant([0,200],[4,0],(0,200))
     elif path.edges == [edges[1],edges[5],edges[8],edges[12],edges[23],edges[19],edges[17],edges[55]]:
-        in_f = RightConstant([0,50,100,150,200],[0,8,4,0],(0,200))
+        in_f = RightConstant([0,50,100,200],[0,8,4,0],(0,200))
         in_g = RightConstant([0,200],[4,0],(0,200))
     else:
         in_f = RightConstant([0,200],[0,0],(0,200))
