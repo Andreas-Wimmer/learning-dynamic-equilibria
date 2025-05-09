@@ -9,7 +9,7 @@ from dynamic_flow import DynamicFlow
 from piecewise_linear import PiecewiseLinear 
 from right_constant import RightConstant 
 import scipy
-from network_loader import NetworkLoader, Path
+from network_loader import NetworkLoader
 from machine_precision import eps
 from typing import List
 from arrays import *
@@ -18,9 +18,8 @@ import sioux_falls_network
 
 
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
-                         net_inflow: RightConstant, paths: list, horizon: float,
+                         net_inflow: RightConstant, paths: List[Path], horizon: float,
                          delta: float, epsilon: float, numSteps: int, lamb: float) -> List[RightConstant]:
-    #Steps that need to be taken:
     #Initialize the network, the commodity and various lists for saving values
     network = Network()
     network.graph = graph
