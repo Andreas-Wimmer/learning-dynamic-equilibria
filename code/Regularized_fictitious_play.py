@@ -296,8 +296,8 @@ p_2 = Path([e_2,e_3])
 paths_in = [p_1,p_2]
 horizon = 2
 delta = 0.05
-numSteps = 5
-lamb = 0.0001
+numSteps = 300
+lamb = 0.00001
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
