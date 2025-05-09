@@ -1,10 +1,11 @@
-#Here I implement the ngyuen network
+#Here we implement the ngyuen network
 
 from graph import DirectedGraph, Edge, Node
 from network import Network, Commodity, Path
 from right_constant import RightConstant
 
 nguyen_graph = DirectedGraph()
+#Set nodes
 a = Node(0, nguyen_graph)
 b = Node(1, nguyen_graph)
 c = Node(2, nguyen_graph)
@@ -18,7 +19,7 @@ j = Node(9, nguyen_graph)
 k = Node(10, nguyen_graph)
 l = Node(11, nguyen_graph)
 m = Node(12, nguyen_graph)
-
+#Set edges 
 e_1 = Edge(a,l,0,nguyen_graph)
 e_2 = Edge(a,e,1,nguyen_graph)
 e_3 = Edge(l,f,2,nguyen_graph)
@@ -38,11 +39,12 @@ e_16 = Edge(k,b,15,nguyen_graph)
 e_17 = Edge(i,m,16,nguyen_graph)
 e_18 = Edge(k,c,17,nguyen_graph)
 e_19 = Edge(m,c,18,nguyen_graph)
-
+#Set nodes and edges in graoh object
 nguyen_graph.nodes = {0:a,1:b,2:c,3:d,4:e,5:f,6:g,7:h,8:i,9:j,10:k,11:l,12:m}
 nguyen_graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8,e_9,e_10,e_11,e_12,e_13,e_14,e_15,e_16,e_17,e_18,e_19]
-
+#Set capacities
 capacities = [5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6,5/6]
+#Set travel times
 travel_times = [150,75,75,150,150,150,150,150,225,75,75,75,75,150,150,150,225,75,150]
 
 #Source node is a and sink node is b
@@ -56,5 +58,5 @@ p_7 = Path([e_2,e_6,e_11,e_15,e_16])
 p_8 = Path([e_2,e_10,e_14,e_15,e_16])
 paths = [p_1,p_2,p_3,p_4,p_5,p_6,p_7,p_8]
 
-#Network inflow rate taken from the electric vehicles project
+#Network inflow rate
 u = RightConstant([0,300],[4,0],(0,300))

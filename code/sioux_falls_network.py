@@ -5,6 +5,8 @@ from collections import deque
 from network import Network,Commodity,Path
 
 sioux_graph = DirectedGraph
+
+#Set nodes
 a = Node(0,sioux_graph)
 b = Node(1,sioux_graph)
 c = Node(2,sioux_graph)
@@ -30,6 +32,7 @@ v = Node(21,sioux_graph)
 w = Node(22,sioux_graph)
 x = Node(23,sioux_graph)
 
+#Set edges 
 e_1 = Edge(a,b,0,sioux_graph)
 e_2 = Edge(a,c,1,sioux_graph)
 e_3 = Edge(b,a,2,sioux_graph)
@@ -107,6 +110,7 @@ e_74 = Edge(x,m,73,sioux_graph)
 e_75 = Edge(x,u,74,sioux_graph)
 e_76 = Edge(w,x,75,sioux_graph)
 
+#Set nodes and edges in the graph object
 sioux_graph.nodes = {0:a,1:b,2:c,3:d,4:e,5:f,6:g,7:h,8:i,9:j,10:k,11:l,12:m,13:n,14:o,15:p,16:q,17:r,18:s,19:t,20:u,21:v,22:w,23:x}
 sioux_graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8,e_9,e_10,e_11,e_12,e_13,e_14,e_15,e_16,e_17,e_18,e_19,e_20,e_21,e_22,e_23,e_24,e_25,e_26,e_27,e_28,
                      e_29,e_30,e_31,e_32,e_33,e_34,e_35,e_36,e_37,e_38,e_39,e_40,e_41,e_42,e_43,e_44,e_45,e_46,e_47,e_48,e_49,e_50,e_51,e_52,e_53,e_54,e_55,e_56,
@@ -114,6 +118,7 @@ sioux_graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8,e_9,e_10,e_11,e_12,e_13,e_1
 
 edges = sioux_graph.edges.copy()
 
+#Set capacities
 capacities = [7.19450017,6.500964775,7.19450017,1.37727248,6.50096775,4.75292325,4.939665027,1.3635629805,4.939665027,1.37444318583,
               2.77,1.37727248,1.37444318583,1.3607187905,2.178209194,6.500964775,1.3607187905,2.1782809194,1.402831432,1.40161738417,
               2.77,1.402831432,3.865496783,3.865496783,2.77,3.75333376389,1.3485825472,1.38708630389,1.3635629805,2.77,1.3635629805,1.35458563527,
@@ -122,34 +127,40 @@ capacities = [7.19450017,6.500964775,7.19450017,1.37727248,6.50096775,4.75292325
               1.38708630388,1.452752795277,1.339986341944,6.500964775,5.466637975,6.500964775,4.04576476388,1.33998634194,1.389613211944,
               6.500964775,1.38961321194,1.4055312055,1.40991588694,1.4055312055,1.452752795277,1.3570437677,2.666439045833,1.40991588694,
               1.452752795277,1.388,1.367997390277,1.3888,1.4106967877,1.41423782,1.3570437677,1.4106967877]
+
+#Set travel times
 travel_times = [360,240,360,300,240,240,240,240,120,360,120,240,300,300,240,120,180,120,120,180,600,300,300,600,
                 180,180,300,360,240,480,360,300,360,240,240,360,180,180,240,240,300,240,360,300,180,180,300,240,120,180,480,120,
                 120,120,180,240,180,120,240,240,240,360,300,360,120,180,180,300,120,240,240,240,120,240,180,120]
 
+#Initiate network
 sioux_graph.reversed = False
 sioux_network = Network()
 sioux_network.graph = sioux_graph
 sioux_network.capacity = capacities
 sioux_network.travel_time = travel_times
+
+#Compute all paths from a to t
 paths = sioux_network.findPaths(a, t)
 
-for i in range(0):
-    average_minium_delay = 0
-    minimal_delay = []
-    for i in range (len(paths)):
-        minimal_delay.append(0)
-        for j in range(len(paths[i].edges)):
-                index = paths[i].edges[j].id - 1
-                minimal_delay[i] = minimal_delay[i] + travel_times[index]
-        average_minium_delay = average_minium_delay + minimal_delay[i]
-
-    average_minium_delay = average_minium_delay/len(paths)
-    print(average_minium_delay)
-
-    new_paths = []
-    for i in range(len(paths)):
-           if minimal_delay[i] <= average_minium_delay:
-            new_paths.append(paths[i])
-    print(len(new_paths))
-    #paths = new_paths.copy()
+#Optional (if total demand is also low enough): exclude the more expensive paths to make computations easier for RFP
+#for i in range(0):
+#    average_minium_delay = 0
+#    minimal_delay = []
+#    for i in range (len(paths)):
+#        minimal_delay.append(0)
+#        for j in range(len(paths[i].edges)):
+#                index = paths[i].edges[j].id - 1
+#                minimal_delay[i] = minimal_delay[i] + travel_times[index]
+#        average_minium_delay = average_minium_delay + minimal_delay[i]
+#
+#    average_minium_delay = average_minium_delay/len(paths)
+#    print(average_minium_delay)
+#
+#    new_paths = []
+#    for i in range(len(paths)):
+#           if minimal_delay[i] <= average_minium_delay:
+#            new_paths.append(paths[i])
+#    print(len(new_paths))
+#    paths = new_paths.copy()
 
