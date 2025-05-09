@@ -18,7 +18,7 @@ import sioux_falls_network
 
 
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
-                         net_inflow: RightConstant, paths: List[Path], horizon: float,
+                         net_inflow: RightConstant, paths: list, horizon: float,
                          delta: float, epsilon: float, numSteps: int, lamb: float) -> List[RightConstant]:
     #Steps that need to be taken:
     #Initialize the network, the commodity and various lists for saving values
