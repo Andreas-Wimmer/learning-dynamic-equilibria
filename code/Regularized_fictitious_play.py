@@ -4,16 +4,14 @@ from __future__ import annotations
 import scipy.optimize
 
 from graph import DirectedGraph, Node, Edge
-from network import Network, Commodity
+from network import Network, Commodity, Path
 from dynamic_flow import DynamicFlow
 from piecewise_linear import PiecewiseLinear 
 from right_constant import RightConstant 
-import numpy
 import scipy
 from network_loader import NetworkLoader, Path
 from machine_precision import eps
 from typing import List
-import math
 from arrays import *
 import nguyen_network
 import sioux_falls_network
