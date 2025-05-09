@@ -21,9 +21,9 @@ import sioux_falls_network
 
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
                          net_inflow: RightConstant, paths: List[Path], horizon: float,
-                         delta: float, epsilon: float, numSteps: int, lamb: float):
+                         delta: float, epsilon: float, numSteps: int, lamb: float) -> List[RightConstant]:
     #Steps that need to be taken:
-    #1. Initialization:
+    #Initialize the network, the commodity and various lists for saving values
     network = Network()
     network.graph = graph
     network.capacity = cap
@@ -34,37 +34,35 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network.commodities = [network_inflow]
     network.paths = paths
     gap_values = []
-    storage_values = []
-    storMou_values = []
     norm_differences = []
-
-    breaks_net_inflow = net_inflow.times
     values = []
 
-    caps = []
-    for i in range (len(network.paths)):
-        max_cap = 0
-        for j in range(len(network.paths[i].edges)):
-            if capacities[network.paths[i].edges[j].id] > max_cap:
-                max_cap = capacities[network.paths[i].edges[j].id]
-        caps.append(max_cap)
+    #Initialization of the path flow (can vary); for example uniform or everything into the path with highest capcacity
+    #Optional: search for path with highest capactiy
+    #caps = []
+    #for i in range (len(network.paths)):
+    #    max_cap = 0
+    #    for j in range(len(network.paths[i].edges)):
+    #        if capacities[network.paths[i].edges[j].id] > max_cap:
+    #            max_cap = capacities[network.paths[i].edges[j].id]
+    #    caps.append(max_cap)
 
-    max_path = paths[caps.index(max(caps))]
+    #max_path = paths[caps.index(max(caps))]
+
+    #Here: uniform initialization
     for i in range(len(network.paths)):
         values.append([])
-        for j in range(len(breaks_net_inflow)):
-            if network.paths[i] == max_path:
-                values[i].append(net_inflow.values[j])
-            else:
-                values[i].append(0)
+        for j in range(len(net_inflow.times)):
+            values[i].append((1/len(network.paths))*net_inflow.values[j])
             
-
+    #Initialize inflow dictionary
     inflows = []
     inflow_dict = []
     for i in range(len(network.paths)):
         inflows.append(RightConstant(net_inflow.times, values[i], (0, horizon)))
         inflow_dict.append((network.paths[i], inflows[i]))
 
+    #Initialize population average and the path delays according to the average path inflows
     loader_beg = NetworkLoader(network, inflow_dict)
     result_beg = loader_beg.build_flow()
     flow_beg = next(result_beg)
@@ -72,9 +70,14 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     delays_avg = delays_beg.copy()
     inflow_avg = inflows.copy()
     
+    #Set a counter for the number of steps (can be infinity) and flags, if the accuracy regarding the norm difference or the 
+    #Lyapunov function has been reached (accuracy can be 0)
     counter_steps = 1
     accuracy_reached = False
     equilibrium_reached = False
+
+    #Create set of intervals equidistantly according to delta (set of intervals can also be constructed differently)
+    #and accordingly the set of time steps
     stop = 0
     steps = []
     while stop*delta <= horizon - delta:
@@ -87,7 +90,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             steps.append(net_inflow.times[i])
     steps.sort()
     while counter_steps < numSteps and not accuracy_reached and not equilibrium_reached:
-        #2. Best-response problem: 
+        #Define the objective of the best response problem
         def obj(h):
             sums = 0
             for i in range(len(network.paths)):
@@ -118,6 +121,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     sums  = sums + value_1 + value_2
             return sums 
         
+        #Define the side-constraint securing the solution to be feasible w.r.t. the network inflow rate
         A = []
         for j in range(len(steps)):
             A.append([])
@@ -133,6 +137,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             net_bound.append(net_inflow.eval(steps[i]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
         
+        #Set the bounds such that the regularized best response is non-negative
         bounds = []
         start = []
         for i in range(len(network.paths)):
@@ -140,9 +145,10 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 bounds.append((0, float("inf")))
                 start.append(inflow_avg[i].eval(steps[j]))
 
+        #Compute the regularized best response
         sol = scipy.optimize.minimize(obj, start, bounds = bounds, constraints = constraint_1)
     
-        #3. Update the path inflows and run the edge-loading procedure
+        #Extract the solution of above best response problem into a dictionary of path inflows and run network loading
         inflows = []
         values = []
         inflow_dict = []
@@ -159,7 +165,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         result_new = loader_new.build_flow()
         flow_new = next(result_new)
         counter_steps = counter_steps + 1
-        #4. Update the population average and run the edge-loading procedure again
+        #Update the population average and recompute the path delay according to it
         old_avg = inflow_avg.copy()
 
         inflow_avg = []
@@ -175,7 +181,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         result_avg = loader_avg.build_flow()
         flow_avg = next(result_avg)
         delays_avg = loader_avg.path_delay(horizon)
-        #5. Calculate the difference of the new flow and the last flow for checking convergence
+        #Calculate the norm difference between the old population average and the new population average
         diff_inflows = []
         for i in range(len(network.paths)):
             curr_diff = inflow_avg[i] - old_avg[i]
@@ -185,14 +191,16 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(network.paths)):
             diff = diff + diff_inflows[i].integral().eval(horizon)
     
-        #if round(diff, 12) <= lamb:
-        #    accuracy_reached = True
+        #Check convergence w.r.t. the accuracy for the norm difference and save norm difference
+        if round(diff, 12) <= lamb:
+            accuracy_reached = True
 
         print("Norm difference: " + str(diff))
         norm_differences.append(diff) 
-        #6. Calculate the (regularized) gap for checking, if we get close to a dynamic equilibrium
+        #Compute the value of the Lyapunov function
         gap_steps = steps.copy()
 
+        #Define the objective of the Lyapunov function
         def obj_gap(h):
             sum_1 = 0
             for i in range(len(network.paths)):
@@ -224,6 +232,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                     sum_1 = sum_1 + (value_1 + value_2)*value_3
             return sum_1
 
+        #Define the feasibility set to be the set of feasible path inflows according to the given network inflow rate
         A = []
         for j in range(len(gap_steps)):
             A.append([])
@@ -239,6 +248,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             net_bound.append(net_inflow.eval(gap_steps[i]))
         constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
         
+        #Give the bounds such that the values of the minimizer of the above objective are non-negative and set the 
+        #initial value for the computation of the Lyapunov function to be the population average (can be changed)
         bounds = []
         start = []
         for i in range(len(network.paths)):
@@ -246,15 +257,17 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 bounds.append((0, float("inf")))
                 start.append(inflow_avg[i].eval(gap_steps[j]))
 
+        #Save the value of the Lyapunov function
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         print("Gap: " + str((-1)*sol_gap.fun))
         gap_values.append((-1)*sol_gap.fun)
         
-        #if (-1)*sol_gap.fun <= lamb:
-        #    equilibrium_reached = True
-        #    print("The empirical frequency has reached a regularized equilbrium")
+        #Check convergence w.r.t. to the accuracy for the Lyapunov function
+        if (-1)*sol_gap.fun <= lamb:
+            equilibrium_reached = True
+            print("The empirical frequency has reached a regularized equilbrium")
 
-
+    #Print the overall outcome of the computation
     if equilibrium_reached and accuracy_reached:
         print("The sequence of empirical frequencies converged in the given precision to a regularized equilibrium with epsilon = " + str(epsilon))
     elif equilibrium_reached:
@@ -264,15 +277,28 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     else:
         print("The sequence of empirical frequencies neither converged nor reached a regularized equilibrium")
 
-graph = sioux_falls_network.sioux_graph
-capacities = sioux_falls_network.capacities
-travel_times = sioux_falls_network.travel_times
-net_inflow = RightConstant([0,200],[8,0],(0,200))
-paths_in = sioux_falls_network.new_paths
-horizon = 200
-delta = 200
-numSteps = 300
-lamb = 0.01
+    #Return the computed population average
+    return inflow_avg
+
+
+#Initialize any network instance here
+graph = DirectedGraph
+s = Node(0,graph)
+v = Node(1,graph)
+t = Node(2,graph)
+e_1 = Edge(s,v,0,graph)
+e_2 = Edge(s,v,1,graph)
+e_3 = Edge(v,t,2,graph)
+graph.nodes = {0:s,1:v,2:t}
+graph.edges = [e_1,e_2,e_3]
+capacities = [1,3,2]
+travel_times = [1,0,0]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
+paths_in = [[e_1,e_3],[e_2,e_3]]
+horizon = 2
+delta = 0.05
+numSteps = 5
+lamb = 0.0001
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
