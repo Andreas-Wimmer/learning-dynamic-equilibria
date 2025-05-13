@@ -296,23 +296,13 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
 
 #Initialize any network instance here
-graph = DirectedGraph
-s = Node(0,graph)
-v = Node(1,graph)
-t = Node(2,graph)
-e_1 = Edge(s,v,0,graph)
-e_2 = Edge(s,v,1,graph)
-e_3 = Edge(v,t,2,graph)
-graph.nodes = {0:s,1:v,2:t}
-graph.edges = [e_1,e_2,e_3]
-capacities = [1,3,2]
-travel_times = [1,0,0]
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
-p_1 = Path([e_1,e_3])
-p_2 = Path([e_2,e_3])
-paths_in = [p_1,p_2]
-horizon = 2
-delta = 0.05
+graph = sioux_falls_network.sioux_graph
+capacities = sioux_falls_network.capacities
+travel_times = sioux_falls_network.travel_times
+net_inflow = RightConstant([0,200],[8,0],(0,200))
+paths_in = sioux_falls_network.new_paths
+horizon = 200
+delta = 200
 numSteps = 1000
 lamb = 0.00001
 epsilon = 0.05
