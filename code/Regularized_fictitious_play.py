@@ -56,6 +56,12 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 values[i].append(net_inflow.values[j])
             else:
                 values[i].append(0)
+
+    #Here: uniform initialization
+    #for i in range(len(network.paths)):
+    #    values.append([])
+    #    for j in range(len(net_inflow.times)):
+    #        values[i].append((1/len(network.paths))*net_inflow.values[j])
             
     #Initialize inflow dictionary
     inflows = []
