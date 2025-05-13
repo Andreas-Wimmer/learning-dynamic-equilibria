@@ -271,9 +271,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         gap_values.append((-1)*sol_gap.fun)
         
         #Check convergence w.r.t. to the accuracy for the Lyapunov function
-        if (-1)*sol_gap.fun <= lamb:
-            equilibrium_reached = True
-            print("The empirical frequency has reached a regularized equilbrium")
+        #if (-1)*sol_gap.fun <= lamb:
+        #    equilibrium_reached = True
+        #    print("The empirical frequency has reached a regularized equilbrium")
 
     end_time = time.time()
     print("Time take: " + str(end_time - start_time))
@@ -312,8 +312,8 @@ net_inflow = RightConstant([0,200],[8,0],(0,200))
 paths_in = sioux_falls_network.new_paths
 horizon = 200
 delta = 200
-numSteps = 1000
-lamb = 0.00001
+numSteps = 45
+lamb = 0.01
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
