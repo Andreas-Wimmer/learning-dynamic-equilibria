@@ -282,7 +282,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     for i in range(len(network.paths)):
         in_support = False
         for j in range(len(inflow_avg[i].values)):
-            if round(inflow_avg[i].values[j], 10) > 0:
+            if round(inflow_avg[i].values[j], 6) > 0:
                 in_support = True
         if in_support:
             size_support = size_support + 1
