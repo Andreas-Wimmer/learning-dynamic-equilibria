@@ -313,7 +313,7 @@ p_2 = Path([e_2,e_3])
 paths_in = [p_1,p_2]
 horizon = 2
 delta = 0.05
-numSteps = 300
+numSteps = 1000
 lamb = 0.00001
 epsilon = 0.05
 
