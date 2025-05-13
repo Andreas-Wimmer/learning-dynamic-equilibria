@@ -15,12 +15,14 @@ from typing import List
 from arrays import *
 import nguyen_network
 import sioux_falls_network
+import time
 
 
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
                          net_inflow: RightConstant, paths: List[Path], horizon: float,
                          delta: float, epsilon: float, numSteps: int, lamb: float) -> List[RightConstant]:
     #Initialize the network, the commodity and various lists for saving values
+    start_time = time.time()
     network = Network()
     network.graph = graph
     network.capacity = cap
@@ -263,6 +265,21 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         if (-1)*sol_gap.fun <= lamb:
             equilibrium_reached = True
             print("The empirical frequency has reached a regularized equilbrium")
+
+    end_time = time.time()
+    print("Time take: " + str(end_time - start_time))
+
+    size_support = 0
+    for i in range(len(network.paths)):
+        in_support = False
+        for j in range(len(inflow_avg[i].values)):
+            if round(inflow_avg[i].values[j], 10) > 0:
+                in_support = True
+        if in_support:
+            size_support = size_support + 1
+    print("Size of support: " + str(size_support))
+
+
 
     #Print the overall outcome of the computation
     if equilibrium_reached and accuracy_reached:
