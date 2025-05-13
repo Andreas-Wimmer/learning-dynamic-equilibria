@@ -144,7 +144,7 @@ sioux_network.travel_time = travel_times
 paths = sioux_network.findPaths(a, t)
 
 #Optional (if total demand is also low enough): exclude the more expensive paths to make computations easier for RFP
-for i in range(3):
+for i in range(2):
     average_minium_delay = 0
     minimal_delay = []
     for i in range (len(paths)):
