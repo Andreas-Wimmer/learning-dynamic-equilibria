@@ -329,10 +329,10 @@ capacities = [1,1,1,1,1,1,2,2]
 travel_times = [1,1,1,1,1,1,2,1]
 
 net_inflow = RightConstant([0,10],[5,0],(0,10))
-p_1 = [e_1,e_3,e_7]
-p_2 = [e_1,e_4,e_8]
-p_3 = [e_2,e_3,e_7]
-p_4 = [e_2,e_4,e_8]
+p_1 = Path([e_1,e_3,e_7])
+p_2 = Path([e_1,e_4,e_8])
+p_3 = Path([e_2,e_3,e_7])
+p_4 = Path([e_2,e_4,e_8])
 paths_in = [p_1,p_2,p_3,p_4]
 
 horizon = 10
