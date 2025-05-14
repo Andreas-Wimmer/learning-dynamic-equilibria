@@ -306,23 +306,23 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
 #Initialize any network instance here
 graph = DirectedGraph
-a = Node(0,graph)
+s = Node(0,graph)
 b = Node(1,graph)
 c = Node(2,graph)
 d = Node(3,graph)
 e = Node(4,graph)
-f = Node(5,graph)
+t = Node(5,graph)
 
-e_1 = Edge(a,b,0,graph)
-e_2 = Edge(a,c,1,graph)
+e_1 = Edge(s,b,0,graph)
+e_2 = Edge(s,c,1,graph)
 e_3 = Edge(b,d,2,graph)
 e_4 = Edge(b,e,3,graph)
 e_5 = Edge(c,d,4,graph)
 e_6 = Edge(c,e,5,graph)
-e_7 = Edge(d,f,7,graph)
-e_8 = Edge(e,f,7,graph)
+e_7 = Edge(d,t,7,graph)
+e_8 = Edge(e,t,7,graph)
 
-graph.nodes = {0:a,1:b,2:c,3:d,4:e,5:f}
+graph.nodes = {0:s,1:b,2:c,3:d,4:e,5:t}
 graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
 
 capacities = [1,1,1,1,1,1,2,2]
@@ -331,8 +331,8 @@ travel_times = [1,1,1,1,1,1,2,1]
 net_inflow = RightConstant([0,10],[5,0],(0,10))
 p_1 = Path([e_1,e_3,e_7])
 p_2 = Path([e_1,e_4,e_8])
-p_3 = Path([e_2,e_3,e_7])
-p_4 = Path([e_2,e_4,e_8])
+p_3 = Path([e_2,e_5,e_7])
+p_4 = Path([e_2,e_6,e_8])
 paths_in = [p_1,p_2,p_3,p_4]
 
 horizon = 10
