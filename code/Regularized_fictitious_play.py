@@ -336,7 +336,7 @@ p_4 = Path([e_2,e_6,e_8])
 paths_in = [p_1,p_2,p_3,p_4]
 
 horizon = 10
-delta = 0.5
+delta = 0.1
 numSteps = 100000
 lamb = 0.00001
 epsilon = 0.05
