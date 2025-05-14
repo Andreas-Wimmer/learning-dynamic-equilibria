@@ -305,15 +305,40 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
 
 #Initialize any network instance here
-graph = nguyen_network.nguyen_graph
-capacities = nguyen_network.capacities
-travel_times = nguyen_network.travel_times
-net_inflow = nguyen_network.u
-paths_in = nguyen_network.paths
-horizon = 300
-delta = 30
-numSteps = 1000
-lamb = 0.01
+graph = DirectedGraph
+a = Node(0,graph)
+b = Node(1,graph)
+c = Node(2,graph)
+d = Node(3,graph)
+e = Node(4,graph)
+f = Node(5,graph)
+
+e_1 = Edge(a,b,0,graph)
+e_2 = Edge(a,c,1,graph)
+e_3 = Edge(b,d,2,graph)
+e_4 = Edge(b,e,3,graph)
+e_5 = Edge(c,d,4,graph)
+e_6 = Edge(c,e,5,graph)
+e_7 = Edge(d,f,7,graph)
+e_8 = Edge(e,f,7,graph)
+
+graph.nodes = {0:a,1:b,2:c,3:d,4:e,5:f}
+graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
+
+capacities = [1,1,1,1,1,1,2,2]
+travel_times = [1,1,1,1,1,1,2,1]
+
+net_inflow = RightConstant([0,10],[5,0],(0,10))
+p_1 = [e_1,e_3,e_7]
+p_2 = [e_1,e_4,e_8]
+p_3 = [e_2,e_3,e_7]
+p_4 = [e_2,e_4,e_8]
+paths_in = [p_1,p_2,p_3,p_4]
+
+horizon = 10
+delta = 0.5
+numSteps = 100000
+lamb = 0.00001
 epsilon = 0.05
 
 reg_fictitious_play(graph, capacities, travel_times,
