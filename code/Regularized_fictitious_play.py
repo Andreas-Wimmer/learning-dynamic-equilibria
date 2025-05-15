@@ -17,10 +17,13 @@ import nguyen_network
 import sioux_falls_network
 import time
 
-
+#Graph contains the directed graph, cap the capacitites of the edges in the order of the edges in the edge list of the graph, similarly for travel containing the travel times,
+#net_inflow is the right-constatn network inflow rate, paths is the list of s-t-paths in the network, horizon is the time horizon, delta is the size of the interval the path 
+#inflows should be constant at, epsilon is the regularization weight, numSteps is the opitonal number of learning steps before termination, lamb is the optional accuracy to be 
+#reached for termination, size the step size (after all we are dealing with the discretization of an ODE) for the Euler scheme (other schemes would also be doable)
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
                          net_inflow: RightConstant, paths: List[Path], horizon: float,
-                         delta: float, epsilon: float, numSteps: int, lamb: float) -> List[RightConstant]:
+                         delta: float, epsilon: float, numSteps: int, lamb: float, size: float) -> List[RightConstant]:
     #Initialize the network, the commodity and various lists for saving values
     start_time = time.time()
     network = Network()
@@ -35,6 +38,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     gap_values = []
     norm_differences = []
     values = []
+    step_size = size
 
     #Initialization of the path flow (can vary); for example uniform or everything into the path with highest capcacity
     #Optional: search for path with highest capactiy
@@ -181,6 +185,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(network.paths)):
             func_1 = inflows[i].mult_scalar((1/counter_steps))
             func_2 = old_avg[i].mult_scalar(((counter_steps - 1)/counter_steps))
+            #Optional, only as test: give the opportunity to choose a step size for adding the new inflow
+            func_1_damped = func_1.mult_scalar(step_size)
             new_avg = func_1.__add__(func_2)
             inflow_avg.append(new_avg)
             inflow_dict_avg.append((network.paths[i], inflow_avg[i]))
