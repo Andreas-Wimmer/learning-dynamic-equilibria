@@ -15,6 +15,7 @@ from arrays import *
 def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths: List[Path], horizon: float, net_inflow: RightConstant,
                delta: float, numSteps: int, lamb: float, step_length: float) -> List[RightConstant]:
     #Initialization
+    graph.reversed = False
     network = Network()
     network.graph = graph
     network.capacity = cap
@@ -298,6 +299,6 @@ horizon = 10
 delta = 0.1
 numSteps = 100000
 lamb = 0.00001
-step = 0.1
+step = 0.05
 
 path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb, step)
