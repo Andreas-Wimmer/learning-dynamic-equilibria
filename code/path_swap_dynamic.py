@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from graph import DirectedGraph, Node, Edge
-from network import Network, Commodity
+from network import Network, Commodity, Path
 from dynamic_flow import DynamicFlow
 from piecewise_linear import PiecewiseLinear 
 from right_constant import RightConstant 
-from network_loader import NetworkLoader, Path
+from network_loader import NetworkLoader
 from machine_precision import eps
 from typing import List
 import math
@@ -31,9 +31,9 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
     caps = []
     for i in range (len(network.paths)):
         max_cap = 0
-        for j in range(len(network.paths[i])):
+        for j in range(len(network.paths[i].edges)):
             if cap[network.paths[i][j].id] > max_cap:
-                max_cap = cap[network.paths[i][j].id]
+                max_cap = cap[network.paths[i].edges[j].id]
         caps.append(max_cap)
 
     max_path = paths[caps.index(max(caps))]
