@@ -299,6 +299,6 @@ horizon = 10
 delta = 0.1
 numSteps = 100000
 lamb = 0.00001
-step = 0.05
+step = 0.005
 
 path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb, step)
