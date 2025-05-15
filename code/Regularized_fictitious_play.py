@@ -20,7 +20,8 @@ import time
 #Graph contains the directed graph, cap the capacitites of the edges in the order of the edges in the edge list of the graph, similarly for travel containing the travel times,
 #net_inflow is the right-constatn network inflow rate, paths is the list of s-t-paths in the network, horizon is the time horizon, delta is the size of the interval the path 
 #inflows should be constant at, epsilon is the regularization weight, numSteps is the opitonal number of learning steps before termination, lamb is the optional accuracy to be 
-#reached for termination, size the step size (after all we are dealing with the discretization of an ODE) for the Euler scheme (other schemes would also be doable)
+#reached for termination, size the step size (after all we are dealing with the discretization of an ODE) for the Euler scheme (other schemes doable; choosing this not to be 1
+# will probably slow down the convergence process, but will maybe enhance stability)
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
                          net_inflow: RightConstant, paths: List[Path], horizon: float,
                          delta: float, epsilon: float, numSteps: int, lamb: float, size: float) -> List[RightConstant]:
@@ -346,6 +347,7 @@ delta = 0.1
 numSteps = 100000
 lamb = 0.00001
 epsilon = 0.05
+size = 0.5
 
 reg_fictitious_play(graph, capacities, travel_times,
-                    net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
+                    net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb, size)
