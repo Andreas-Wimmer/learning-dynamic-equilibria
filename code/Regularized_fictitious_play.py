@@ -188,7 +188,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
             func_2 = old_avg[i].mult_scalar(((counter_steps - 1)/counter_steps))
             #Optional, only as test: give the opportunity to choose a step size for adding the new inflow
             func_1_damped = func_1.mult_scalar(step_size)
-            new_avg = func_1.__add__(func_2)
+            new_avg = func_1_damped.__add__(func_2)
             inflow_avg.append(new_avg)
             inflow_dict_avg.append((network.paths[i], inflow_avg[i]))
 
