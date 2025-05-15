@@ -168,7 +168,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for i in range(len(network.paths)):
             values.append([])
             for j in range(len(steps)):
-                values[i].append(sol.x[len(steps)*i + j]*size)
+                values[i].append(sol.x[len(steps)*i + j])
 
         for i in range(len(network.paths)):
             inflows.append(RightConstant(steps, values[i], (0, horizon)))
@@ -184,8 +184,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         inflow_avg = []
         inflow_dict_avg = []
         for i in range(len(network.paths)):
-            func_1 = inflows[i].mult_scalar((1/counter_steps))
-            func_2 = old_avg[i].mult_scalar(((counter_steps - 1)/counter_steps))
+            func_1 = inflows[i].mult_scalar((size/counter_steps))
+            func_2 = old_avg[i].mult_scalar(((counter_steps - size)/counter_steps))
             new_avg = func_1.__add__(func_2)
             inflow_avg.append(new_avg)
             inflow_dict_avg.append((network.paths[i], inflow_avg[i]))
