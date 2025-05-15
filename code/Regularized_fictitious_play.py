@@ -341,11 +341,11 @@ p_4 = Path([e_2,e_6,e_8])
 paths_in = [p_1,p_2,p_3,p_4]
 
 horizon = 10
-delta = 0.2
+delta = 0.5
 numSteps = 100000
 lamb = 0.00001
 epsilon = 0.05
-size = 0.25
+size = 0.1
 
 reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb, size)
