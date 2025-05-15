@@ -32,7 +32,7 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
     for i in range (len(network.paths)):
         max_cap = 0
         for j in range(len(network.paths[i].edges)):
-            if cap[network.paths[i][j].id] > max_cap:
+            if cap[network.paths[i].edges[j].id] > max_cap:
                 max_cap = cap[network.paths[i].edges[j].id]
         caps.append(max_cap)
 
