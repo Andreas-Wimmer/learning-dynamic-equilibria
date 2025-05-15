@@ -296,9 +296,9 @@ p_4 = Path([e_2,e_6,e_8])
 paths = [p_1,p_2,p_3,p_4]
 
 horizon = 10
-delta = 0.1
+delta = 0.05
 numSteps = 100000
 lamb = 0.00001
-step = 0.005
+step = 0.01
 
 path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb, step)
