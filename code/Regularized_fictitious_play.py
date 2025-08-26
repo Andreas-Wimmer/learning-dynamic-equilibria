@@ -129,7 +129,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         count_delays = 1
                     value_1 = sum_delays*h[len(steps)*i + j]
                     value_2 = epsilon*(h[len(steps)*i + j])**2
-                    sums  = sums + value_1 + value_2
+                    sums  = sums - value_1 + value_2
             return sums 
         
         #Define the side-constraint securing the solution to be feasible w.r.t. the network inflow rate
@@ -389,7 +389,7 @@ graph.nodes = {0:s,1:t}
 graph.edges = [e_1,e_2,e_3,e_4]
 
 capacities = [1,2,3,4]
-travel_times = [1,2,3,4]
+travel_times = [4,3,2,1]
 
 net_inflow = RightConstant([0,10],[5,0],(0,10))
 p_1 = Path([e_1])
