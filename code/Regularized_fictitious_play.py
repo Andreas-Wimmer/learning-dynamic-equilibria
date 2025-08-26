@@ -238,9 +238,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         sum_delays = ((delays_avg[i].eval(gap_steps[j]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
                         count_delays = 1
                     value_1 = sum_delays
-                    value_2 = 2*epsilon*(inflow_avg[i].eval(gap_steps[j]))
+                    value_2 = epsilon*(inflow_avg[i].eval(gap_steps[j]))
                     value_3 = h[len(gap_steps)*i + j] - inflow_avg[i].eval(gap_steps[j])
-                    sum_1 = sum_1 + (value_1 + value_2)*value_3
+                    sum_1 = sum_1 + (-value_1 + value_2)*value_3
             return sum_1
 
         #Define the feasibility set to be the set of feasible path inflows according to the given network inflow rate
