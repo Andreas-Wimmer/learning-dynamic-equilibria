@@ -34,6 +34,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network.paths = paths
     gap_values = []
     norm_differences = []
+    gap_prop_values = []
     values = []
 
     #Initialization of the path flow (can vary); for example uniform or everything into the path with highest capcacity
@@ -208,7 +209,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         #Compute the value of the Lyapunov function
         gap_steps = steps.copy()
 
-        #Define the objective of the Lyapunov function
+        #Define the objective of the Gap function based on the variational inequality characterization
         def obj_gap(h):
             sum_1 = 0
             for i in range(len(network.paths)):
@@ -265,13 +266,80 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                 bounds.append((0, float("inf")))
                 start.append(inflow_avg[i].eval(gap_steps[j]))
 
-        #Save the value of the Lyapunov function
+        #Save the value of this Gap function variant
         sol_gap = scipy.optimize.minimize(obj_gap, start, bounds=bounds, constraints=constraint_1)
         print("Gap: " + str((-1)*sol_gap.fun))
         gap_values.append((-1)*sol_gap.fun)
         
-        #Check convergence w.r.t. to the accuracy for the Lyapunov function
+        #Check convergence w.r.t. to the accuracy for this variant of the Gap function
         if (-1)*sol_gap.fun <= lamb:
+            equilibrium_reached = True
+            print("The empirical frequency has reached a regularized equilbrium")
+
+        #Now define the objective of the Gap function, which is proposed in the proof of Mertikopoulus
+        def obj_gap_prop(h):
+            sum_1 = 0
+            for i in range(len(network.paths)):
+                for j in range(len(gap_steps) - 1):
+                    sum_delays = 0
+                    count_delays = 0
+                    steps_in = []
+                    for k in range(len(delays_avg[i].times) - 1):
+                        if delays_avg[i].times[k] > gap_steps[j] and delays_avg[i].times[k] < gap_steps[j+1]:
+                            steps_in.append(delays_avg[i].times[k])
+                            count_delays = count_delays + 1
+                    if count_delays != 0:
+                        weight = ((steps_in[0] - gap_steps[j])/(gap_steps[j + 1] - gap_steps[j]))
+                        value = ((delays_avg[i].eval(steps_in[0]) + delays_avg[i].eval(gap_steps[j]))/2)
+                        sum_delays = sum_delays + weight*value
+                        weight = ((gap_steps[j + 1] - steps_in[-1])/(gap_steps[j + 1] - gap_steps[j]))
+                        value = ((delays_avg[i].eval(steps_in[-1]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
+                        sum_delays = sum_delays + weight*value
+                        for l in range(len(steps_in) - 1):
+                            weight = ((steps_in[l + 1] - steps_in[l])/(gap_steps[j + 1] - gap_steps[j]))
+                            value = ((delays_avg[i].eval(steps_in[l]) + delays_avg[i].eval(steps_in[l + 1]))/2)
+                            sum_delays = sum_delays + weight*value
+                    if count_delays == 0:
+                        sum_delays = ((delays_avg[i].eval(gap_steps[j]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
+                        count_delays = 1
+                    value_1 = sum_delays
+                    value_2 = epsilon*(h[len(gap_steps)*i + j]**2 - inflow_avg[i].eval(gap_steps[j])**2)
+                    value_3 = h[len(gap_steps)*i + j] - inflow_avg[i].eval(gap_steps[j])
+                    sum_1 = sum_1 + value_1*value_3 - value_2
+            return sum_1
+        
+        #Define the feasibility set to be the set of feasible path inflows according to the given network inflow rate
+        A = []
+        for j in range(len(gap_steps)):
+            A.append([])
+            for k in range(len(network.paths)):
+                for g in range(len(gap_steps)):
+                    if j == g:
+                        A[j].append(1)
+                    else:
+                        A[j].append(0)
+
+        net_bound = []
+        for i in range(len(gap_steps)):
+            net_bound.append(net_inflow.eval(gap_steps[i]))
+        constraint_1 = scipy.optimize.LinearConstraint(A, net_bound, net_bound)
+        
+        #Give the bounds such that the values of the minimizer of the above objective are non-negative and set the 
+        #initial value for the computation of the Lyapunov function to be the population average (can be changed)
+        bounds = []
+        start = []
+        for i in range(len(network.paths)):
+            for j in range(len(gap_steps)):
+                bounds.append((0, float("inf")))
+                start.append(inflow_avg[i].eval(gap_steps[j]))
+
+        #Save the value of this Gap function variant
+        sol_gap_prop = scipy.optimize.minimize(obj_gap_prop, start, bounds=bounds, constraints=constraint_1)
+        print("Gap proposed: " + str((-1)*sol_gap_prop.fun))
+        gap_prop_values.append((-1)*sol_gap_prop.fun)
+        
+        #Check convergence w.r.t. to the accuracy for this variant of the Gap function
+        if (-1)*sol_gap_prop.fun <= lamb:
             equilibrium_reached = True
             print("The empirical frequency has reached a regularized equilbrium")
 
@@ -307,37 +375,29 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 #Initialize any network instance here
 graph = DirectedGraph
 s = Node(0,graph)
-b = Node(1,graph)
-c = Node(2,graph)
-d = Node(3,graph)
-e = Node(4,graph)
-t = Node(5,graph)
+t = Node(1,graph)
 
-e_1 = Edge(s,b,0,graph)
-e_2 = Edge(s,c,1,graph)
-e_3 = Edge(b,d,2,graph)
-e_4 = Edge(b,e,3,graph)
-e_5 = Edge(c,d,4,graph)
-e_6 = Edge(c,e,5,graph)
-e_7 = Edge(d,t,7,graph)
-e_8 = Edge(e,t,7,graph)
+e_1 = Edge(s,t,0,graph)
+e_2 = Edge(s,t,1,graph)
+e_3 = Edge(s,t,2,graph)
+e_4 = Edge(s,t,3,graph)
 
-graph.nodes = {0:s,1:b,2:c,3:d,4:e,5:t}
-graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
+graph.nodes = {0:s,1:t}
+graph.edges = [e_1,e_2,e_3,e_4]
 
-capacities = [1,1,1,1,1,1,2,2]
-travel_times = [1,1,1,1,1,1,2,1]
+capacities = [1,2,3,4]
+travel_times = [1,2,3,4]
 
-net_inflow = RightConstant([0,10],[5,0],(0,10))
-p_1 = Path([e_1,e_3,e_7])
-p_2 = Path([e_1,e_4,e_8])
-p_3 = Path([e_2,e_5,e_7])
-p_4 = Path([e_2,e_6,e_8])
+net_inflow = RightConstant([0,10],[10,0],(0,10))
+p_1 = Path([e_1])
+p_2 = Path([e_2])
+p_3 = Path([e_3])
+p_4 = Path([e_4])
 paths_in = [p_1,p_2,p_3,p_4]
 
 horizon = 10
-delta = 0.1
-numSteps = 100000
+delta = 1
+numSteps = 10000
 lamb = 0.00001
 epsilon = 0.05
 
