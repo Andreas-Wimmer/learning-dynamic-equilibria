@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from graph import DirectedGraph, Node, Edge
-from network import Network, Commodity
+from network import Network, Commodity, Path
 from dynamic_flow import DynamicFlow
 from piecewise_linear import PiecewiseLinear 
 from right_constant import RightConstant 
-from network_loader import NetworkLoader, Path
+from network_loader import NetworkLoader
 from machine_precision import eps
 from typing import List
 import math
@@ -15,6 +15,7 @@ from arrays import *
 def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths: List[Path], horizon: float, net_inflow: RightConstant,
                delta: float, numSteps: int, lamb: float, step_length: float) -> List[RightConstant]:
     #Initialization
+    graph.reversed = False
     network = Network()
     network.graph = graph
     network.capacity = cap
@@ -31,9 +32,9 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
     caps = []
     for i in range (len(network.paths)):
         max_cap = 0
-        for j in range(len(network.paths[i])):
-            if cap[network.paths[i][j].id] > max_cap:
-                max_cap = cap[network.paths[i][j].id]
+        for j in range(len(network.paths[i].edges)):
+            if cap[network.paths[i].edges[j].id] > max_cap:
+                max_cap = cap[network.paths[i].edges[j].id]
         caps.append(max_cap)
 
     max_path = paths[caps.index(max(caps))]
@@ -264,31 +265,40 @@ def path_swap(graph: DirectedGraph, cap: List[float], travel: List[float], paths
     
     return inflow
 
-graph = DirectedGraph()
+graph = DirectedGraph
 s = Node(0,graph)
-u = Node(1,graph)
-v = Node(2,graph)
-t = Node(3,graph)
-e1 = Edge(s,u,0,graph)
-e2 = Edge(s,v,1,graph)
-e3 = Edge(u,v,2,graph)
-e4 = Edge(v,t,3,graph)
+b = Node(1,graph)
+c = Node(2,graph)
+d = Node(3,graph)
+e = Node(4,graph)
+t = Node(5,graph)
 
-graph.nodes = {0:s,1:u,2:v,3:t}
-graph.edges = [e1,e2,e3,e4]
+e_1 = Edge(s,b,0,graph)
+e_2 = Edge(s,c,1,graph)
+e_3 = Edge(b,d,2,graph)
+e_4 = Edge(b,e,3,graph)
+e_5 = Edge(c,d,4,graph)
+e_6 = Edge(c,e,5,graph)
+e_7 = Edge(d,t,7,graph)
+e_8 = Edge(e,t,7,graph)
 
-capacities = [4,2,2,6]
-travel_times = [1,2,1,1]
-net_inflow = RightConstant([0,4],[8,0],(0,4))
+graph.nodes = {0:s,1:b,2:c,3:d,4:e,5:t}
+graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
 
-p1 = [e1,e3,e4]
-p2 = [e2,e4]
+capacities = [1,1,1,1,1,1,2,2]
+travel_times = [1,1,1,1,1,1,2,1]
 
-paths = [p1,p2]
-horizon = 4
-delta = 0.25
-numSteps = 1000
+net_inflow = RightConstant([0,10],[5,0],(0,10))
+p_1 = Path([e_1,e_3,e_7])
+p_2 = Path([e_1,e_4,e_8])
+p_3 = Path([e_2,e_5,e_7])
+p_4 = Path([e_2,e_6,e_8])
+paths = [p_1,p_2,p_3,p_4]
+
+horizon = 10
+delta = 0.05
+numSteps = 100000
 lamb = 0.00001
-step = 0.1
+step = 0.01
 
 path_swap(graph, capacities, travel_times, paths, horizon, net_inflow, delta, numSteps, lamb, step)

@@ -19,10 +19,14 @@ from arrays import *
 #import sioux_falls_network
 import time
 
-
+#Graph contains the directed graph, cap the capacitites of the edges in the order of the edges in the edge list of the graph, similarly for travel containing the travel times,
+#net_inflow is the right-constatn network inflow rate, paths is the list of s-t-paths in the network, horizon is the time horizon, delta is the size of the interval the path 
+#inflows should be constant at, epsilon is the regularization weight, numSteps is the opitonal number of learning steps before termination, lamb is the optional accuracy to be 
+#reached for termination, size the step size (after all we are dealing with the discretization of an ODE) for the Euler scheme (other schemes doable; choosing this not to be 1
+# will probably slow down the convergence process, but will maybe enhance stability)
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
                          net_inflow: RightConstant, paths: List[Path], horizon: float,
-                         delta: float, epsilon: float, numSteps: int, lamb: float) -> List[RightConstant]:
+                         delta: float, epsilon: float, numSteps: int, lamb: float, size: float) -> List[RightConstant]:
     #Initialize the network, the commodity and various lists for saving values
     start_time = time.time()
     network = Network()
@@ -38,6 +42,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     norm_differences = []
     gap_prop_values = []
     values = []
+    step_size = size
 
     #Initialization of the path flow (can vary); for example uniform or everything into the path with highest capcacity
     #Optional: search for path with highest capactiy
@@ -182,8 +187,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         inflow_avg = []
         inflow_dict_avg = []
         for i in range(len(network.paths)):
-            func_1 = inflows[i].mult_scalar((1/counter_steps))
-            func_2 = old_avg[i].mult_scalar(((counter_steps - 1)/counter_steps))
+            func_1 = inflows[i].mult_scalar((size/counter_steps))
+            func_2 = old_avg[i].mult_scalar(((counter_steps - size)/counter_steps))
             new_avg = func_1.__add__(func_2)
             inflow_avg.append(new_avg)
             inflow_dict_avg.append((network.paths[i], inflow_avg[i]))
@@ -399,10 +404,11 @@ p_4 = Path([e_4])
 paths_in = [p_1,p_2,p_3,p_4]
 
 horizon = 10
-delta = 0.5
-numSteps = 10000
+delta = 0.1
+numSteps = 100000
 lamb = 0.00001
 epsilon = 0.05
+size = 0.1
 
 reg_fictitious_play(graph, capacities, travel_times,
-                    net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
+                    net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb, size)
