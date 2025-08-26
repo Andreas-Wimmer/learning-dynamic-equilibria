@@ -305,9 +305,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         sum_delays = ((delays_avg[i].eval(gap_steps[j]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
                         count_delays = 1
                     value_1 = sum_delays
-                    value_2 = epsilon*(inflow_avg[i].eval(gap_steps[j])**2 - h[len(gap_steps)*i + j]**2)
-                    value_3 = inflow_avg[i].eval(gap_steps[j]) - h[len(gap_steps)*i + j]
-                    sum_1 = sum_1 + value_1*value_3 - value_2
+                    value_2 = epsilon*(h[len(gap_steps)*i + j]**2 - inflow_avg[i].eval(gap_steps[j])**2)
+                    value_3 =  h[len(gap_steps)*i + j] - inflow_avg[i].eval(gap_steps[j])
+                    sum_1 = sum_1 - value_1*value_3 + value_2
             return sum_1
         
         #Define the feasibility set to be the set of feasible path inflows according to the given network inflow rate
@@ -376,6 +376,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
 #Initialize any network instance here
 graph = DirectedGraph
+graph.reversed = False
 s = Node(0,graph)
 t = Node(1,graph)
 
@@ -390,7 +391,7 @@ graph.edges = [e_1,e_2,e_3,e_4]
 capacities = [1,2,3,4]
 travel_times = [1,2,3,4]
 
-net_inflow = RightConstant([0,10],[10,0],(0,10))
+net_inflow = RightConstant([0,10],[5,0],(0,10))
 p_1 = Path([e_1])
 p_2 = Path([e_2])
 p_3 = Path([e_3])
@@ -398,7 +399,7 @@ p_4 = Path([e_4])
 paths_in = [p_1,p_2,p_3,p_4]
 
 horizon = 10
-delta = 1
+delta = 0.5
 numSteps = 10000
 lamb = 0.00001
 epsilon = 0.05
