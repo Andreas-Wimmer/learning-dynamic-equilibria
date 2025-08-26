@@ -13,8 +13,10 @@ from network_loader import NetworkLoader
 from machine_precision import eps
 from typing import List
 from arrays import *
-import nguyen_network
-import sioux_falls_network
+
+#The following are only needed, when we do experiments on the Nguyen or the Sioux Falls network
+#import nguyen_network
+#import sioux_falls_network
 import time
 
 
@@ -303,8 +305,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
                         sum_delays = ((delays_avg[i].eval(gap_steps[j]) + delays_avg[i].eval(gap_steps[j + 1]))/2)
                         count_delays = 1
                     value_1 = sum_delays
-                    value_2 = epsilon*(h[len(gap_steps)*i + j]**2 - inflow_avg[i].eval(gap_steps[j])**2)
-                    value_3 = h[len(gap_steps)*i + j] - inflow_avg[i].eval(gap_steps[j])
+                    value_2 = epsilon*(inflow_avg[i].eval(gap_steps[j])**2 - h[len(gap_steps)*i + j]**2)
+                    value_3 = inflow_avg[i].eval(gap_steps[j]) - h[len(gap_steps)*i + j]
                     sum_1 = sum_1 + value_1*value_3 - value_2
             return sum_1
         
