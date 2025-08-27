@@ -390,7 +390,7 @@ graph.nodes = {0:s,1:v,2:t}
 graph.edges = [e_1,e_2,e_3]
 
 capacities = [1,3,2]
-travel_times = [1,0,0]
+travel_times = [1,1,0]
 
 net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
 p_1 = Path([e_1,e_3])
