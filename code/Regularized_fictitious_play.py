@@ -391,7 +391,7 @@ graph.edges = [e_1,e_2,e_3,e_4]
 capacities = [1,2,3,4]
 travel_times = [4,3,2,1]
 
-net_inflow = RightConstant([0,2],[5,0],(0,2))
+net_inflow = RightConstant([0,5],[5,0],(0,5))
 p_1 = Path([e_1])
 p_2 = Path([e_2])
 p_3 = Path([e_3])
