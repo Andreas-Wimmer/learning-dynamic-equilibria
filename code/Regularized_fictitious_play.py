@@ -378,28 +378,27 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 graph = DirectedGraph
 graph.reversed = False
 s = Node(0,graph)
-t = Node(1,graph)
+v = Node(1,graph)
+t = Node(2,graph)
 
-e_1 = Edge(s,t,0,graph)
-e_2 = Edge(s,t,1,graph)
-e_3 = Edge(s,t,2,graph)
-e_4 = Edge(s,t,3,graph)
+e_1 = Edge(s,v,0,graph)
+e_2 = Edge(s,v,1,graph)
+e_3 = Edge(v,t,2,graph)
 
-graph.nodes = {0:s,1:t}
-graph.edges = [e_1,e_2,e_3,e_4]
 
-capacities = [1,2,3,4]
-travel_times = [4,3,2,1]
+graph.nodes = {0:s,1:v,2:t}
+graph.edges = [e_1,e_2,e_3]
 
-net_inflow = RightConstant([0,5],[5,0],(0,5))
-p_1 = Path([e_1])
-p_2 = Path([e_2])
-p_3 = Path([e_3])
-p_4 = Path([e_4])
-paths_in = [p_1,p_2,p_3,p_4]
+capacities = [1,3,2]
+travel_times = [1,0,0]
 
-horizon = 5
-delta = 0.2
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
+p_1 = Path([e_1,e_3])
+p_2 = Path([e_2,e_3])
+paths_in = [p_1,p_2]
+
+horizon = 2
+delta = 0.25
 numSteps = 10000
 lamb = 0.00001
 epsilon = 0.05
