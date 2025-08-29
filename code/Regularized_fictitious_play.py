@@ -400,7 +400,7 @@ p_2 = Path([e_2,e_4])
 paths_in = [p_1,p_2]
 
 horizon = 5
-delta = 0.25
+delta = 0.1
 numSteps = 10000
 lamb = 0.00001
 epsilon = 0.05
