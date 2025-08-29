@@ -411,7 +411,7 @@ delta = 0.25
 numSteps = 10000
 lamb = 0.00001
 epsilon = 0.05
-size = 0.1
+size = 0.5
 
 reg_fictitious_play(graph, capacities, travel_times,
                     net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb,size)
