@@ -380,27 +380,34 @@ graph.reversed = False
 s = Node(0,graph)
 v = Node(1,graph)
 w = Node(2,graph)
-t = Node(3,graph)
+x = Node(3,graph)
+y = Node(4,graph)
+t = Node(5,graph)
 
 e_1 = Edge(s,v,0,graph)
 e_2 = Edge(s,w,1,graph)
-e_3 = Edge(v,w,2,graph)
-e_4 = Edge(w,t,3,graph)
+e_3 = Edge(v,x,2,graph)
+e_4 = Edge(v,y,3,graph)
+e_5 = Edge(w,x,4,graph)
+e_6 = Edge(w,y,5,graph)
+e_7 = Edge(x,t,6,graph)
+e_8 = Edge(y,t,7,graph)
 
+graph.nodes = {0:s,1:v,2:w,3:x,4:y,5:t}
+graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8]
 
-graph.nodes = {0:s,1:v,2:w,3:t}
-graph.edges = [e_1,e_2,e_3,e_4]
+capacities = [1,1,1,1,1,1,2,2]
+travel_times = [2,1,1,1,1,1,1,1]
 
-capacities = [4,3,2,6]
-travel_times = [1,2,1,1]
+net_inflow = RightConstant([0,4],[4,0],(0,4))
+p_1 = Path([e_1,e_3,e_7])
+p_2 = Path([e_1,e_4,e_8])
+p_3 = Path([e_2,e_5,e_7])
+p_4 = Path([e_2,e_6,e_8])
+paths_in = [p_1,p_2,p_3,p_4]
 
-net_inflow = RightConstant([0,5],[10,0],(0,5))
-p_1 = Path([e_1,e_3,e_4])
-p_2 = Path([e_2,e_4])
-paths_in = [p_1,p_2]
-
-horizon = 5
-delta = 0.1
+horizon = 4
+delta = 0.25
 numSteps = 10000
 lamb = 0.00001
 epsilon = 0.05
