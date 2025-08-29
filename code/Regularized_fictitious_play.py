@@ -391,7 +391,7 @@ e_4 = Edge(w,t,3,graph)
 graph.nodes = {0:s,1:v,2:w,3:t}
 graph.edges = [e_1,e_2,e_3,e_4]
 
-capacities = [4,2,2,6]
+capacities = [4,2,3,6]
 travel_times = [1,2,1,1]
 
 net_inflow = RightConstant([0,5],[15,0],(0,5))
