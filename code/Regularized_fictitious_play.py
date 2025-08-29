@@ -382,18 +382,20 @@ t = Node(1,graph)
 
 e_1 = Edge(s,t,0,graph)
 e_2 = Edge(s,t,1,graph)
+e_3 = Edge(s,t,2,graph)
 
 
 graph.nodes = {0:s,1:t}
-graph.edges = [e_1,e_2]
+graph.edges = [e_1,e_2,e_3]
 
-capacities = [1,2]
-travel_times = [1,2]
+capacities = [1,2,3]
+travel_times = [1,2,3]
 
-net_inflow = RightConstant([0,2],[3,0],(0,2))
+net_inflow = RightConstant([0,2],[5,0],(0,2))
 p_1 = Path([e_1])
 p_2 = Path([e_2])
-paths_in = [p_1,p_2]
+p_3 = Path([e_3])
+paths_in = [p_1,p_2,p_3]
 
 horizon = 2
 delta = 0.1
