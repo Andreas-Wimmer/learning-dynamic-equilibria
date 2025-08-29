@@ -392,14 +392,14 @@ graph.edges = [e_1,e_2,e_3,e_4]
 capacities = [1,2,3,4]
 travel_times = [1,4,3,2]
 
-net_inflow = RightConstant([0,2],[6,0],(0,2))
+net_inflow = RightConstant([0,3],[10,0],(0,3))
 p_1 = Path([e_1])
 p_2 = Path([e_2])
 p_3 = Path([e_3])
 p_4 = Path([e_4])
 paths_in = [p_1,p_2,p_3,p_4]
 
-horizon = 2
+horizon = 3
 delta = 0.25
 numSteps = 10000
 lamb = 0.00001
