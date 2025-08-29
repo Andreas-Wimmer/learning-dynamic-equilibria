@@ -22,7 +22,7 @@ import time
 
 def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[float],
                          net_inflow: RightConstant, paths: List[Path], horizon: float,
-                         delta: float, epsilon: float, numSteps: int, lamb: float) -> List[RightConstant]:
+                         delta: float, epsilon: float, numSteps: int, lamb: float, step_size: float) -> List[RightConstant]:
     #Initialize the network, the commodity and various lists for saving values
     start_time = time.time()
     network = Network()
@@ -182,8 +182,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         inflow_avg = []
         inflow_dict_avg = []
         for i in range(len(network.paths)):
-            func_1 = inflows[i].mult_scalar((1/counter_steps))
-            func_2 = old_avg[i].mult_scalar(((counter_steps - 1)/counter_steps))
+            func_1 = inflows[i].mult_scalar((step_size/counter_steps))
+            func_2 = old_avg[i].mult_scalar(((counter_steps - step_size)/counter_steps))
             new_avg = func_1.__add__(func_2)
             inflow_avg.append(new_avg)
             inflow_dict_avg.append((network.paths[i], inflow_avg[i]))
@@ -411,6 +411,7 @@ delta = 0.25
 numSteps = 10000
 lamb = 0.00001
 epsilon = 0.05
+size = 0.1
 
 reg_fictitious_play(graph, capacities, travel_times,
-                    net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb)
+                    net_inflow, paths_in, horizon, delta, epsilon, numSteps, lamb,size)
