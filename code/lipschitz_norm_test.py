@@ -3,7 +3,7 @@
 #and also their ratio
 
 from __future__ import annotations
-
+import math
 from graph import DirectedGraph, Node, Edge
 from network import Network, Commodity, Path
 from dynamic_flow import DynamicFlow
@@ -29,13 +29,13 @@ def lipschitz_norm_test(graph: DirectedGraph, capacities: List[float], travel_ti
     
     inflows_1 = []
     inflows_2 = []
-    for i in range(network.paths):
+    for i in range(len(network.paths)):
         inflows_1.append(RightConstant(times, values_1[i], (0,horizon)))
         inflows_2.append(RightConstant(times, values_2[i],(0,horizon)))
 
     inflow_dict_1 = []
     inflow_dict_2 = []
-    for i in range(network.paths):
+    for i in range(len(network.paths)):
         inflow_dict_1.append((network.paths[i],inflows_1[i]))
         inflow_dict_2.append((network.pahts[i],inflows_2[i]))
 
@@ -48,3 +48,27 @@ def lipschitz_norm_test(graph: DirectedGraph, capacities: List[float], travel_ti
     flow_2 = next(result_2)
     delays_1 = loader_1.path_delay(horizon)
     delays_2 = loader_2.path_delay(horizon)
+
+    sum_1 = 0
+    for i in range(len(network.paths)):
+        for j in range(len(times)):
+            sum_1 = sum_1 + math.abs(inflows_1[i].values[j] - inflows_2[i].values[j])**2
+
+    norm_difference_inflows =  math.sqrt(sum_1)
+
+    time_delays = []
+    for i in range(len(network.paths)):
+        for j in range(len(delays_1[i].times)):
+            time_delays.append(delays_1[i].times[j])
+    
+    for i in range(len(network.paths)):
+        for j in range(len(delays_2[i].times)):
+            if delays_2[i].times[j] not in time_delays:
+                time_delays.append(delays_2[i].times[j])
+
+    time_delays.sort()
+
+    sum_2 = 0
+    for i in range(len(network.paths)):
+        for j in range(len(time_delays) - 1):
+            value = 
