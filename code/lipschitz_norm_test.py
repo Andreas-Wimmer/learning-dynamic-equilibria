@@ -68,7 +68,7 @@ def lipschitz_norm_test(graph: DirectedGraph, capacities: List[float], travel_ti
 
     time_delays.sort()
 
-    sum_2 = 0
-    for i in range(len(network.paths)):
-        for j in range(len(time_delays) - 1):
-            value = 
+    #sum_2 = 0
+    #for i in range(len(network.paths)):
+    #    for j in range(len(time_delays) - 1):
+    #        value = 
