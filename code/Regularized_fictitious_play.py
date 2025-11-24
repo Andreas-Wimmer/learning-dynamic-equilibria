@@ -41,30 +41,30 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 
     #Initialization of the path flow (can vary); for example uniform or everything into the path with highest capcacity
     #Optional: search for path with highest capactiy
-    caps = []
-    for i in range (len(network.paths)):
-        max_cap = 0
-        for j in range(len(network.paths[i].edges)):
-            if capacities[network.paths[i].edges[j].id] > max_cap:
-                max_cap = capacities[network.paths[i].edges[j].id]
-        caps.append(max_cap)
+    #caps = []
+    #for i in range (len(network.paths)):
+    #    max_cap = 0
+    #    for j in range(len(network.paths[i].edges)):
+    #        if capacities[network.paths[i].edges[j].id] > max_cap:
+    #            max_cap = capacities[network.paths[i].edges[j].id]
+    #    caps.append(max_cap)
 
-    max_path = paths[caps.index(max(caps))]
+    #max_path = paths[caps.index(max(caps))]
 
     #Here: initialization by path with highest capacity
-    for i in range(len(network.paths)):
-        values.append([])
-        for j in range(len(net_inflow.times)):
-            if network.paths[i] == max_path:
-                values[i].append(net_inflow.values[j])
-            else:
-                values[i].append(0)
-
-    #Here: uniform initialization
     #for i in range(len(network.paths)):
     #    values.append([])
     #    for j in range(len(net_inflow.times)):
-    #        values[i].append((1/len(network.paths))*net_inflow.values[j])
+    #        if network.paths[i] == max_path:
+    #            values[i].append(net_inflow.values[j])
+    #        else:
+    #            values[i].append(0)
+
+    #Here: uniform initialization
+    for i in range(len(network.paths)):
+        values.append([])
+        for j in range(len(net_inflow.times)):
+            values[i].append((1/len(network.paths))*net_inflow.values[j])
             
     #Initialize inflow dictionary
     inflows = []
@@ -378,44 +378,26 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 graph = DirectedGraph
 graph.reversed = False
 s = Node(0,graph)
-u = Node(1,graph)
-v = Node(2,graph)
-w = Node(3,graph)
-x = Node(4,graph)
-y = Node(5,graph)
-t = Node(6,graph)
+v = Node(1,graph)
+t = Node(2,graph)
 
-e_1 = Edge(s,u,0,graph)
+e_1 = Edge(s,v,0,graph)
 e_2 = Edge(s,v,1,graph)
-e_3 = Edge(s,w,2,graph)
-e_4 = Edge(u,v,3,graph)
-e_5 = Edge(w,v,4,graph)
-e_6 = Edge(v,x,5,graph)
-e_7 = Edge(v,t,6,graph)
-e_8 = Edge(v,y,7,graph)
-e_9 = Edge(x,t,8,graph)
-e_10 = Edge(y,t,9,graph)
+e_3 = Edge(v,t,2,graph)
 
-graph.nodes = {0:s,1:u,2:v,3:w,4:x,5:y,6:t}
-graph.edges = [e_1,e_2,e_3,e_4,e_5,e_6,e_7,e_8,e_9,e_10]
+graph.nodes = {0:s,1:v,2:t}
+graph.edges = [e_1,e_2,e_3]
 
-capacities = [1,2,3,1,3,1,2,1,1,1]
-travel_times = [1,2,1,1,1,1,2,1,1,1]
+capacities = [1,3,2]
+travel_times = [1,0,0]
 
-net_inflow = RightConstant([0,5],[3,0],(0,5))
-p_1 = Path([e_1,e_4,e_6,e_9])
-p_2 = Path([e_1,e_4,e_7])
-p_3 = Path([e_1,e_4,e_8,e_10])
-p_4 = Path([e_2,e_6,e_9])
-p_5 = Path([e_2,e_7])
-p_6 = Path([e_2,e_8,e_10])
-p_7 = Path([e_3,e_5,e_6,e_9])
-p_8 = Path([e_3,e_5,e_7])
-p_9 = Path([e_3,e_5,e_8,e_10])
-paths_in = [p_1,p_2,p_3,p_4,p_5,p_6,p_7,p_8,p_9]
+net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
+p_1 = Path([e_1,e_3])
+p_2 = Path([e_2,e_3])
+paths_in = [p_1,p_2]
 
-horizon = 5
-delta = 0.50
+horizon = 2
+delta = 0.05
 numSteps = 500
 lamb = 0.00001
 epsilon = 0.05
