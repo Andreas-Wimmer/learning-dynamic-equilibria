@@ -15,8 +15,8 @@ from typing import List
 from arrays import *
 
 #The following are only needed, when we do experiments on the Nguyen or the Sioux Falls network
-import nguyen_network
-#import sioux_falls_network
+#import nguyen_network
+import sioux_falls_network
 import time
 
 
@@ -377,29 +377,22 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
 #Initialize any network instance here
 graph = DirectedGraph
 graph.reversed = False
-s = Node(0,graph)
-v = Node(1,graph)
-t = Node(2,graph)
+graph = sioux_falls_network.sioux_graph
 
-e_1 = Edge(s,v,0,graph)
-e_2 = Edge(s,v,1,graph)
-e_3 = Edge(v,t,2,graph)
+graph.nodes = sioux_falls_network.sioux_graph.nodes
+graph.edges = sioux_falls_network.sioux_graph.edges
 
-graph.nodes = {0:s,1:v,2:t}
-graph.edges = [e_1,e_2,e_3]
+capacities = sioux_falls_network.capacities
+travel_times = sioux_falls_network.travel_times
 
-capacities = [1,3,2]
-travel_times = [1,0,0]
+net_inflow = RightConstant([0,200],[8,0],(0,200))
 
-net_inflow = RightConstant([0,1,1.75,2],[2.5,1,3,0],(0,2))
-p_1 = Path([e_1,e_3])
-p_2 = Path([e_2,e_3])
-paths_in = [p_1,p_2]
+paths_in = sioux_falls_network.paths
 
-horizon = 2
-delta = 0.05
-numSteps = 500
-lamb = 0.00001
+horizon = 200
+delta = 200
+numSteps = 1000
+lamb = 0.01
 epsilon = 0.05
 size = 1
 
