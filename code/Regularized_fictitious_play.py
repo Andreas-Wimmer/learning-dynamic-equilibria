@@ -274,9 +274,9 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         gap_values.append((-1)*sol_gap.fun)
         
         #Check convergence w.r.t. to the accuracy for this variant of the Gap function
-        if (-1)*sol_gap.fun <= lamb:
-            equilibrium_reached = True
-            print("The empirical frequency has reached a regularized equilbrium")
+        #if (-1)*sol_gap.fun <= lamb:
+        #    equilibrium_reached = True
+        #    print("The empirical frequency has reached a regularized equilbrium")
 
         #Now define the objective of the Gap function, which is proposed in the proof of Mertikopoulus
         def obj_gap_prop(h):
