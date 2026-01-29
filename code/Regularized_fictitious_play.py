@@ -1,6 +1,8 @@
-#Here we want to implement the learning dynamics on general networks
+#We implement the discrete version of regularized fictitious play in general networks
+#assuming right-constant network inflow rates
 from __future__ import annotations
 
+#Packages needed
 import scipy.optimize
 
 from graph import DirectedGraph, Node, Edge
@@ -16,7 +18,7 @@ from arrays import *
 
 #The following are only needed, when we do experiments on the Nguyen or the Sioux Falls network
 #import nguyen_network
-import sioux_falls_network
+#import sioux_falls_network
 import time
 
 
@@ -34,9 +36,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     network_inflow = Commodity({s, net_inflow}, t, 1)
     network.commodities = [network_inflow]
     network.paths = paths
-    gap_values = []
     norm_differences = []
-    gap_prop_values = []
+    gap_values = []
     values = []
 
     #Initialization of the path flow (can vary); for example uniform or everything into the path with highest capcacity
@@ -66,7 +67,7 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
         for j in range(len(net_inflow.times)):
             values[i].append((1/len(network.paths))*net_inflow.values[j])
             
-    #Initialize inflow dictionary
+    #Initialize inflow dictionary according to above values
     inflows = []
     inflow_dict = []
     for i in range(len(network.paths)):
@@ -81,8 +82,8 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     delays_avg = delays_beg.copy()
     inflow_avg = inflows.copy()
     
-    #Set a counter for the number of steps (can be infinity) and flags, if the accuracy regarding the norm difference or the 
-    #Lyapunov function has been reached (accuracy can be 0)
+    #Set a counter for the number of steps (can be infinity) and flags, if the accuracy regarding 
+    #the norm difference or the Lyapunov function has been reached (accuracy can be 0)
     counter_steps = 1
     accuracy_reached = False
     equilibrium_reached = False
@@ -99,34 +100,52 @@ def reg_fictitious_play(graph: DirectedGraph, cap: List[float], travel: List[flo
     for i in range(len(net_inflow.times)):
         if net_inflow.times[i] not in steps:
             steps.append(net_inflow.times[i])
+
     steps.sort()
+
+    #Going into the main while-loop, which represents the discrete learning process according to 
+    #the learning protocol of regularized ficitious play
+
     while counter_steps < numSteps and not accuracy_reached and not equilibrium_reached:
+
         #Define the objective of the best response problem
         def obj(h):
             sums = 0
+
+            #Summing over all paths and all intervals
             for i in range(len(network.paths)):
                 for j in range(len(steps) - 1):
                     sum_delays = 0
                     count_delays = 0
                     steps_in = []
+
+                    #Approximating the piecewise-linear path delay functions by a piecewise constant function
+                    #such that we can sum it instead of having to integrate it
                     for k in range(len(delays_avg[i].times) - 1):
+
                         if delays_avg[i].times[k] > steps[j] and delays_avg[i].times[k] < steps[j+1]:
                             steps_in.append(delays_avg[i].times[k])
                             count_delays = count_delays + 1
+
                     if count_delays != 0:
+
                         weight = ((steps_in[0] - steps[j])/(steps[j + 1] - steps[j]))
                         value = ((delays_avg[i].eval(steps_in[0]) + delays_avg[i].eval(steps[j]))/2)
                         sum_delays = sum_delays + weight*value
+
                         weight = ((steps[j + 1] - steps_in[-1])/(steps[j + 1] - steps[j]))
                         value = ((delays_avg[i].eval(steps_in[-1]) + delays_avg[i].eval(steps[j + 1]))/2)
                         sum_delays = sum_delays + weight*value
+
                         for l in range(len(steps_in) - 1):
                             weight = ((steps_in[l + 1] - steps_in[l])/(steps[j + 1] - steps[j]))
                             value = ((delays_avg[i].eval(steps_in[l]) + delays_avg[i].eval(steps_in[l + 1]))/2)
                             sum_delays = sum_delays + weight*value
+
                     if count_delays == 0:
                         sum_delays = ((delays_avg[i].eval(steps[j]) + delays_avg[i].eval(steps[j + 1]))/2)
                         count_delays = 1
+                        
                     value_1 = sum_delays*h[len(steps)*i + j]
                     value_2 = 0.5*epsilon*(h[len(steps)*i + j])**2
                     sums  = sums + value_1 + value_2
